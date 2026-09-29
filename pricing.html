@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pricing | YourCompany</title>
+  <meta name="description" content="Simple pricing in CAD: a one-time setup fee plus a monthly fee for each active user.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="logo" href="index.html" data-company>YourCompany</a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="pricing.html" class="active">Pricing</a>
+        <a href="#calculator">Calculator</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" style="padding-bottom: 24px;">
+      <div class="container">
+        <h1>Simple, transparent pricing</h1>
+        <p>A one-time setup fee plus a monthly fee for each active user. All prices are in Canadian dollars (CAD).</p>
+      </div>
+    </section>
+
+    <section style="padding-top: 0;">
+      <div class="container">
+        <div class="promo-banner">🎉 Introductory offer: <span data-promo></span> on user fees</div>
+
+        <div class="toggle-wrap">
+          <div class="toggle" role="group" aria-label="Billing period">
+            <button type="button" data-billing="monthly" aria-pressed="true">Monthly</button>
+            <button type="button" data-billing="yearly" aria-pressed="false">Yearly <span class="save-pill" id="save-pill"></span></button>
+          </div>
+        </div>
+
+        <div class="grid-3" id="plans"></div>
+      </div>
+    </section>
+
+    <section id="calculator">
+      <div class="container">
+        <h2 class="section-title">Estimate your cost</h2>
+        <p class="section-sub">Enter your team size and we'll pick the right plan and work out the total for you.</p>
+        <div class="card calc">
+          <div>
+            <div class="field">
+              <label for="calc-employees">How many employees does your company have?</label>
+              <input id="calc-employees" type="number" min="1" value="20" inputmode="numeric">
+              <div class="hint">This decides which plan applies to you.</div>
+            </div>
+            <div class="field">
+              <label for="calc-users">How many of them will use the software each month?</label>
+              <input id="calc-users" type="number" min="1" value="20" inputmode="numeric">
+              <div class="hint">You only pay for active users.</div>
+            </div>
+            <div class="field">
+              <label for="calc-billing">Billing</label>
+              <select id="calc-billing">
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly (save more)</option>
+              </select>
+            </div>
+          </div>
+          <div id="calc-summary"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <h2 class="section-title">Frequently asked questions</h2>
+        <div class="faq" style="margin-top: 28px;">
+          <details>
+            <summary>What is the one-time setup fee for?</summary>
+            <p>It covers installing and configuring the platform for your business, importing your data and training your team. You pay it once at the start.</p>
+          </details>
+          <details>
+            <summary>What counts as an "active user"?</summary>
+            <p>Anyone who logs in at least once during the month. Employees who don't use the platform that month aren't billed.</p>
+          </details>
+          <details>
+            <summary>How does the introductory offer work?</summary>
+            <p>For your first <span data-promo-months></span> months, the per-user fee is <span data-promo-pct></span>% off. After that, the regular price applies. The setup fee isn't discounted.</p>
+          </details>
+          <details>
+            <summary>What's the difference between monthly and yearly billing?</summary>
+            <p>Monthly billing is flexible and billed every month. Yearly billing is paid once a year and costs <span data-yearly-pct></span>% less.</p>
+          </details>
+          <details>
+            <summary>What if my company grows?</summary>
+            <p>If you move into a larger size group, we'll move you to the matching plan. Just let us know.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span data-year></span> <span data-company>YourCompany</span>. All rights reserved.</span>
+      <span>All prices in CAD, taxes not included.</span>
+    </div>
+  </footer>
+
+  <!-- Contact form popup -->
+  <div class="modal" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="card modal-box">
+      <div class="modal-head">
+        <h3 id="modal-title">Get started</h3>
+        <button class="close-btn" type="button" data-close aria-label="Close">×</button>
+      </div>
+      <form id="contact-form">
+        <div class="row-2">
+          <div class="field">
+            <label for="f-name">Your name *</label>
+            <input id="f-name" name="name" required>
+          </div>
+          <div class="field">
+            <label for="f-company">Company *</label>
+            <input id="f-company" name="company" required>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="f-email">Email *</label>
+            <input id="f-email" name="email" type="email" required>
+          </div>
+          <div class="field">
+            <label for="f-phone">Phone</label>
+            <input id="f-phone" name="phone" type="tel">
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label for="f-plan">Plan</label>
+            <select id="f-plan" name="plan"></select>
+          </div>
+          <div class="field">
+            <label for="f-billing">Billing</label>
+            <select id="f-billing" name="billing">
+              <option value="Monthly">Monthly</option>
+              <option value="Yearly">Yearly</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-users">Estimated active users</label>
+          <input id="f-users" name="users" type="number" min="1">
+        </div>
+        <div class="field">
+          <label for="f-message">Message</label>
+          <textarea id="f-message" name="message" rows="3" placeholder="Anything we should know?"></textarea>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Send request</button>
+      </form>
+      <div class="success" id="form-success" hidden>
+        <div class="check">✓</div>
+        <h3>Thank you!</h3>
+        <p id="success-text">We've received your request and will be in touch soon.</p>
+        <button class="btn btn-outline" type="button" data-close>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/site.js"></script>
+  <script src="assets/pricing.js"></script>
+</body>
+</html>

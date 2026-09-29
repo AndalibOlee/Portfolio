@@ -33,6 +33,7 @@ window.SITE_CONFIG = {
       setupFee: 5000,
       perUserMonthly: 50,
       features: [
+        "Fully customizable",
         "Full platform access",
         "Standard onboarding & setup",
         "Email support",
@@ -50,6 +51,7 @@ window.SITE_CONFIG = {
       popular: true,
       features: [
         "Everything in Starter",
+        "Custom workflows & branding",
         "Guided onboarding & data import",
         "Priority email & chat support",
         "Custom roles & permissions",
@@ -65,6 +67,7 @@ window.SITE_CONFIG = {
       perUserMonthly: 100,
       features: [
         "Everything in Growth",
+        "Custom features built for you",
         "Dedicated account manager",
         "Phone support & SLA",
         "Custom integrations",

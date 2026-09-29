@@ -743,7 +743,7 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
         <article class="svc" data-svc="forms">
           <div class="svc-top"><div class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6 3 12l5 6M16 6l5 6-5 6M13.5 4l-3 16"/></svg></div><span class="best">Best for: any size</span></div>
           <h3>Custom in-house ERP</h3>
-          <p>Online forms and approvals built around your policies, for card requests, travel, expense claims, purchase orders and HR.</p>
+          <p>Online forms and approvals built around your policies, for card requests, travel requests, travel claims, expense claims, purchase orders and HR.</p>
           <div class="get">You get</div>
           <ul><li>Forms staff can fill on any device</li><li>Automatic approvals and budget checks</li><li>Full audit trail and history on every record</li><li>Tailored to your policies, and you own it</li></ul>
           <a class="ask" href="#contact" data-interest="i-custom">Ask about this →</a>
@@ -804,7 +804,7 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
       <div class="board" aria-label="Sample request status board">
         <div class="board-top">
           <div><b>All requests</b><small>September 2026 · Sample</small></div>
-          <div class="board-sum"><span><i class="d warn"></i>5 in review</span><span><i class="d ok"></i>9 approved</span><span><i class="d paid"></i>14 paid</span></div>
+          <div class="board-sum"><span><i class="d warn"></i>6 in review</span><span><i class="d ok"></i>9 approved</span><span><i class="d paid"></i>14 paid</span></div>
         </div>
         <div class="board-scroll">
           <table class="bt">
@@ -812,6 +812,7 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
             <tbody>
               <tr data-go="card"><td class="mono">CC-2026-0412</td><td>Credit card</td><td>Youth Services</td><td class="num">$312.60</td><td>Finance</td><td><span class="st warn">Finance review</span></td></tr>
               <tr data-go="travel"><td class="mono">TR-2026-0088</td><td>Travel</td><td>Finance</td><td class="num">$1,335.00</td><td>Traveller</td><td><span class="st ok">Approved · booking</span></td></tr>
+              <tr data-go="tclaim"><td class="mono">TC-2026-0093</td><td>Travel claim</td><td>Administration</td><td class="num">$1,005.48</td><td>Finance</td><td><span class="st warn">Finance review</span></td></tr>
               <tr data-go="expense"><td class="mono">EC-2026-0231</td><td>Expense claim</td><td>Health &amp; Social</td><td class="num">$252.17</td><td>Finance</td><td><span class="st paid">Payment Sep 26</span></td></tr>
               <tr data-go="po"><td class="mono">PO-2026-0187</td><td>Purchase order</td><td>Public Works</td><td class="num">$11,560.00</td><td>Public Works</td><td><span class="st warn">Awaiting delivery</span></td></tr>
               <tr data-go="hr"><td class="mono">LV-2026-0154</td><td>Leave</td><td>Administration</td><td class="num">3 days</td><td>Office Manager</td><td><span class="st warn">Supervisor review</span></td></tr>
@@ -1007,7 +1008,8 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
           <div><b>Serving</b><span>Organizations across Haida Gwaii</span></div>
         </div>
       </div>
-      <form id="cform" novalidate>
+      <form id="cform" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+        <input type="hidden" name="form-name" value="contact"><p hidden><label>Leave this empty <input name="bot-field"></label></p><input type="hidden" name="meeting-time" id="f-when">
         <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" autocomplete="name"></div>
         <div class="field"><label for="f-org">Organization</label><input id="f-org" name="org" autocomplete="organization"></div>
         <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email"></div>
@@ -1016,16 +1018,16 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
         </div>
         <div class="field full"><span class="lbl">Interested in</span>
           <div class="checks">
-            <label><input type="checkbox" id="i-custom"> Forms &amp; in-house ERP</label>
-            <label><input type="checkbox" id="i-erp"> ERP selection &amp; setup</label>
-            <label><input type="checkbox" id="i-web"> Website</label>
-            <label><input type="checkbox" id="i-admin"> Admin &amp; governance</label>
+            <label><input type="checkbox" id="i-custom" name="interest" value="Forms & in-house ERP"> Forms &amp; in-house ERP</label>
+            <label><input type="checkbox" id="i-erp" name="interest" value="ERP selection & setup"> ERP selection &amp; setup</label>
+            <label><input type="checkbox" id="i-web" name="interest" value="Website"> Website</label>
+            <label><input type="checkbox" id="i-admin" name="interest" value="Admin & governance"> Admin &amp; governance</label>
           </div>
         </div>
         <div class="field full"><span class="lbl">How would you like to meet?</span>
           <div class="checks">
-            <label><input type="radio" name="meet" id="m-zoom" checked> Zoom</label>
-            <label><input type="radio" name="meet" id="m-person"> In person</label>
+            <label><input type="radio" name="meet" id="m-zoom" value="Zoom" checked> Zoom</label>
+            <label><input type="radio" name="meet" id="m-person" value="In person"> In person</label>
           </div>
         </div>
         <div class="field full cal" id="cal" hidden>
@@ -1039,7 +1041,7 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
         </div>
         <div class="field full"><label for="f-msg">What's the challenge?</label><textarea id="f-msg" name="msg" placeholder="e.g. Travel and card requests are on paper and month-end takes three weeks."></textarea></div>
         <div class="notice" id="notice" hidden></div>
-        <div class="form-foot"><small>Demo form: submissions are not sent yet.</small><button class="btn btn-accent" type="submit">Book my consultation</button></div>
+        <div class="form-foot"><small>We reply within two business days.</small><button class="btn btn-accent" type="submit">Book my consultation</button></div>
       </form>
     </div>
   </section>
@@ -1060,7 +1062,7 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
         <p class="foot-note">Business analysis, ERP and web services for non-profits, local and Indigenous governments.</p>
       </div>
       <div><h4>Services</h4><ul><li><a href="#services">In-house ERP</a></li><li><a href="#services">ERP selection</a></li><li><a href="#services">Website development</a></li></ul></div>
-      <div><h4>Examples</h4><ul><li><a href="#examples">Credit card requests</a></li><li><a href="#examples">Travel requests</a></li><li><a href="#examples">Expense claims</a></li><li><a href="#examples">Purchase orders</a></li><li><a href="#examples">HR &amp; leave</a></li></ul></div>
+      <div><h4>Examples</h4><ul><li><a href="#examples">Credit card requests</a></li><li><a href="#examples">Travel requests</a></li><li><a href="#examples">Travel claims</a></li><li><a href="#examples">Expense claims</a></li><li><a href="#examples">Purchase orders</a></li><li><a href="#examples">HR &amp; leave</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#pricing">Pricing</a></li><li><a href="#serve">Who we serve</a></li><li><a href="#approach">Approach</a></li><li><a href="#contact">Contact</a></li></ul></div>
     </div>
     <div class="foot-base"><span>© 2026 HG Web. All rights reserved. Content, design and logo may not be copied without permission.</span><span><a href="#terms" id="termsLink">Terms of Use</a> · Masset, Haida Gwaii</span></div>
@@ -1133,6 +1135,7 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
   var I={
     card:'<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 9.5h19M6 15h4"/>',
     travel:'<path d="M21 3 3 10.5l7 2.5 2.5 7z"/><path d="M10 13 21 3"/>',
+    tclaim:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2M3 12h18"/>',
     expense:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
     po:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/>',
     hr:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>'
@@ -1154,6 +1157,14 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
      route:[['Submitted','Finance Officer','Sep 18 · 14:30','done'],['Supervisor approval','Director of Finance','Sep 18 · 16:05','done'],['Budget & policy check','Per diem at policy rates','Sep 19 · 9:40','done'],['Booking confirmed','Flights & hotel attached','In progress','now'],['Travel claim','Submitted after return','','todo']],
      controls:['Per diem rates applied from your policy','Advance netted against the final claim','Approved trip auto-creates the expense claim'],
      replaces:'spreadsheet travel forms and manual per-diem math'},
+    {id:'tclaim',tab:'Travel claim',title:'Travel claim',no:'TC-2026-0093',
+     lede:'When staff get back, the approved trip becomes their claim. They add receipts, per diems and mileage are calculated, and any advance is subtracted automatically.',
+     fields:[['Traveller','Band Administrator'],['Trip','Masset → Victoria (return)'],['Dates','Sep 8 – 10, 2026'],['Linked request','TR-2026-0071 · approved'],['Budget line','Governance · training & travel'],['Payment method','Direct deposit']],
+     cols:['Expense','Receipt','Amount'],lines:[['Airfare (return)','✓','$598.00'],['Hotel, 2 nights','✓','$376.00'],['Meals, 3 days per diem','Policy','$210.00'],['Mileage to airport (44 km)','Log','$29.48'],['Taxi, Victoria','✓','$42.00'],['Less travel advance','','−$250.00']],total:['Owing to traveller','$1,005.48'],
+     note:'Per diems and mileage use your policy rates. The advance paid before the trip is subtracted automatically.',
+     route:[['Submitted','Band Administrator','Sep 11 · 9:20','done'],['Supervisor approval','Director of Operations','Sep 11 · 14:02','done'],['Finance review','Receipts & per diem checked','In review','now'],['Reimbursement','Next EFT payment run','','todo'],['Posted to ledger','Training & travel account','','todo']],
+     controls:['Starts from the approved travel request, no re-typing','Advance subtracted from the claim automatically','Per diem and mileage at your policy rates'],
+     replaces:'envelopes of receipts and hand-calculated per diems'},
     {id:'expense',tab:'Expense claim',title:'Expense claim',no:'EC-2026-0231',
      lede:'Staff snap a photo of each receipt, submit from their phone, and get paid in the next payment run.',
      fields:[['Claimant','Community Health Worker'],['Claim period','Sep 1 – 15, 2026'],['Program','Health & Social'],['Payment method','Direct deposit']],
@@ -1182,6 +1193,7 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
   var LOG={
     card:[['Sep 22 · 9:02','Program Coordinator','Created','Draft CC-2026-0412'],['Sep 22 · 9:10','Program Coordinator','Edited','Printing, program flyers',['$76.20','$94.50']],['Sep 22 · 9:12','Program Coordinator','Attached','vendor-quote.pdf'],['Sep 22 · 9:14','Program Coordinator','Submitted','Routed to Director, Youth Services'],['Sep 22 · 11:02','Director, Youth Services','Approved','Comment: “Within program budget.”'],['Sep 22 · 11:03','System','Budget check','$2,140 remaining on 6120 · Youth Wellness']],
     travel:[['Sep 18 · 14:12','Finance Officer','Created','Draft TR-2026-0088'],['Sep 18 · 14:26','Finance Officer','Edited','Return date',['Oct 15','Oct 16']],['Sep 18 · 14:30','Finance Officer','Submitted','Routed to Director of Finance'],['Sep 18 · 16:05','Director of Finance','Approved','Comment: “Combine with the vendor demo.”'],['Sep 19 · 9:40','System','Policy check','3-day per diem at policy rate'],['Sep 19 · 9:41','System','Advance created','$300.00 · next payment run']],
+    tclaim:[['Sep 11 · 9:02','Band Administrator','Created','Claim TC-2026-0093 from TR-2026-0071'],['Sep 11 · 9:15','Band Administrator','Attached','4 receipt photos'],['Sep 11 · 9:18','Band Administrator','Edited','Mileage to airport',['40 km','44 km']],['Sep 11 · 9:20','Band Administrator','Submitted','Routed to Director of Operations'],['Sep 11 · 14:02','Director of Operations','Approved','No comments'],['Sep 11 · 14:03','System','Advance applied','−$250.00 · owing $1,005.48']],
     expense:[['Sep 16 · 8:05','Community Health Worker','Created','Claim EC-2026-0231'],['Sep 16 · 8:18','Community Health Worker','Attached','3 receipt photos'],['Sep 16 · 8:22','Community Health Worker','Submitted','Routed to Health Programs Manager'],['Sep 16 · 13:10','Health Programs Manager','Approved','No comments'],['Sep 17 · 10:41','Finance Clerk','Edited','GL code, workshop materials',['6120','6135']],['Sep 17 · 10:45','Finance Clerk','Reviewed','Scheduled for EFT batch Sep 26']],
     po:[['Sep 2 · 10:00','Public Works Supervisor','Created','Requisition PO-2026-0187'],['Sep 5 · 15:18','Public Works Supervisor','Attached','3 supplier quotes'],['Sep 5 · 15:20','System','Quote check','Lowest compliant quote selected'],['Sep 8 · 9:05','CAO','Approved','Above $10,000 threshold'],['Sep 8 · 9:30','Finance Clerk','Issued','PO emailed to vendor'],['Sep 12 · 11:14','Finance Clerk','Edited','Freight, barge to Haida Gwaii',['$540.00','$620.00']]],
     hr:[['Sep 21 · 16:40','Administrative Assistant','Created','Request LV-2026-0154'],['Sep 21 · 16:46','Administrative Assistant','Edited','End date',['Oct 23','Oct 22']],['Sep 21 · 16:48','Administrative Assistant','Submitted','Routed to Office Manager'],['Sep 21 · 16:48','System','Balance check','Vacation 11.5 → 8.5 days']]
@@ -1299,7 +1311,16 @@ body[data-mood="storm"] .hero .lede,body[data-mood="storm"] .hero-copy .eyebrow{
     var name=f.name.value.trim(),org=f.org.value.trim(),em=f.email.value.trim();
     n.hidden=false;
     if(!name||!org||!/^\S+@\S+\.\S+$/.test(em)){n.textContent='Add your name, organization and a valid email so we can reply.';return;}
-    var bk=window.hgBooking&&window.hgBooking();n.textContent='Haw’aa, '+name.split(' ')[0]+'. '+(bk?'Your requested in-person time is '+bk+'. ':'')+'This is a demo site, so nothing was sent. On the live site, '+org+' would hear back within two business days.';
+    var bk=window.hgBooking&&window.hgBooking(),first=name.split(' ')[0];
+    document.getElementById('f-when').value=bk||'';
+    var btn=f.querySelector('[type=submit]');btn.disabled=true;n.textContent='Sending…';
+    /* sent to Netlify Forms; each message appears in Netlify and can be emailed to you */
+    fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams(new FormData(f)).toString()})
+      .then(function(r){if(!r.ok)throw 0;
+        n.textContent='Haw’aa, '+first+'. Your message was sent. '+(bk?'Your requested in-person time is '+bk+'. ':'')+org+' will hear back from us within two business days.';
+        f.reset();})
+      .catch(function(){n.textContent='Sorry, the message could not be sent from here. Please email us at info@hgweb.ca.';})
+      .then(function(){btn.disabled=false;});
   });
   /* ---- coastal moods: scene + sound ---- */
   (function(){

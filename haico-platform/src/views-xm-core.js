@@ -654,3 +654,10 @@ function vXmPage(q, slug) {
   return ph(p.title || p.name, p.description || "") + flashHtml() + body + (edit ? `<div class="xm-addbar"><button type="button" data-a="xmAddSection" data-page="/pages/${esc(slug)}">+ Add section</button>&nbsp;<button type="button" data-a="xmAddComp" data-page="/pages/${esc(slug)}" data-where="end">+ Add component</button></div>` : "");
 }
 route("/pages/:slug", null, vXmPage);
+
+/* ---- downloads outside claude.ai (a plain web host such as Netlify): save through the browser instead of the artifact capability ---- */
+{
+  const _dlOrig = DOWNLOADS;
+  const browserDl = { async save({ filename, data }) { const blob = data instanceof Blob ? data : new Blob([data], { type: /\.pdf$/i.test(filename) ? "application/pdf" : /\.zip$/i.test(filename) ? "application/zip" : /\.xlsx$/i.test(filename) ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : /\.json$/i.test(filename) ? "application/json" : "text/plain" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); return { status: "saved" }; } };
+  DOWNLOADS = function () { return _dlOrig().then((d) => d || browserDl); };
+}

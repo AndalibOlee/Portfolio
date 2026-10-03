@@ -1,0 +1,64 @@
+/* ==========================================================================
+   views-misc.js — buying, library, administration
+   ========================================================================== */
+function vPurchaseRequests() {
+  const list = inScope(S.purchaseRequests).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  const form = can(A, "procurement.create") ? card("Ask to buy something", `<form data-f="pr" class="form-grid"><div class="fld" style="grid-column:span 2"><label for="prDesc">What do you need?</label><input class="in" id="prDesc" name="description" placeholder="e.g. Replacement chainsaw chains × 12" required></div><div class="fld"><label for="prVen">Preferred supplier</label><input class="in" id="prVen" name="vendorName" placeholder="optional"></div><div class="fld"><label for="prAmt">Estimated cost (CAD)</label><input class="in num" id="prAmt" name="amount" inputmode="decimal" required></div><div class="fld"><label for="prBy">Needed by</label><input class="in" type="date" id="prBy" name="neededBy" value="${addDays(todayStr(), 14)}"></div>${A.companyIds == null || (A.companyIds.length > 1) ? `<div class="fld"><label for="prCo">Company</label>${coScopeSelect("prCo", "companyId", defCo())}</div>` : ""}<div class="form-row" style="grid-column:1/-1"><button class="btn pri">Send request</button><span class="hint">Manager approves; Finance from $5,000; Executive from $25,000.</span></div></form>`) : "";
+  return ph("Purchase Requests", "Ask, get approval, turn it into a purchase order.") + flashHtml() + form + `<div class="sect-l">Requests</div>`
+    + cardFlush("", table(["Request", "What", "Company", "Asked by", ">Estimate", "Status", ""], list.map((r) => `<tr><td class="mono">${esc(r.requestNumber)}</td><td>${esc(r.description)}${r.vendorName ? `<div class="hint">${esc(r.vendorName)}</div>` : ""}</td><td>${coTag(r.companyId)}</td><td>${esc(r.requestedByName)}</td>${td(money(r.amountCents), 1)}<td>${badge(r.status)}</td><td class="r">${r.status === "APPROVED" && can(A, "procurement.create") ? `<button class="btn sm pri" data-a="makePO" data-id="${r.id}">Create PO</button>` : r.status === "PENDING_APPROVAL" ? `<span class="hint">waiting for ${esc(whoIsNext(S, byId(S.approvals, r.approvalInstanceId) || {}))}</span>` : ""}</td></tr>`), "No purchase requests yet — every request starts here, then climbs the approval chain by amount."));
+}
+function vPOs() {
+  const list = inScope(S.purchaseOrders).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return ph("Purchase Orders", "Approved requests become numbered orders sent to the supplier.") + flashHtml()
+    + cardFlush("", table(["PO", "What", "Supplier", "Company", ">Amount", "Status"], list.map((p) => `<tr><td class="mono">${esc(p.poNumber)}</td><td>${esc(p.description)}</td><td>${esc(p.vendorName || "—")}</td><td>${coTag(p.companyId)}</td>${td(money(p.amountCents), 1)}<td>${badge(p.status)}</td></tr>`), "No purchase orders yet. Approve a purchase request and create the PO from it."));
+}
+function vReceiving() {
+  const list = inScope(S.purchaseOrders).filter((p) => p.status === "SENT");
+  return ph("Receiving", "Confirm what arrived against each open purchase order.") + flashHtml()
+    + cardFlush("", table(["PO", "What", "Supplier", ">Amount", ""], list.map((p) => `<tr><td class="mono">${esc(p.poNumber)}</td><td>${esc(p.description)}</td><td>${esc(p.vendorName || "—")}</td>${td(money(p.amountCents), 1)}<td class="r">${can(A, "procurement.receive") ? `<button class="btn sm pri" data-a="receivePO" data-id="${p.id}">Received in full</button>` : ""}</td></tr>`), "Nothing waiting to be received."));
+}
+function vProjects() {
+  const list = inScope(S.projects);
+  const { je } = ledgerIdx();
+  return ph("Projects", "Costs coded to a project roll up here from timesheets, bills and expenses.")
+    + `<div class="grid g3">${list.map((p) => { const spent = S.journalLines.filter((l) => l.projectId === p.id).reduce((s, l) => s + (l.debitCents || 0) - (l.creditCents || 0), 0); const hours = S.timesheetEntries.filter((e) => e.projectId === p.id).reduce((s, e) => s + (e.workedHours || 0), 0); const pct = Math.min(100, Math.round((spent / p.budgetCents) * 100)); return card(`<span class="mono">${esc(p.code)}</span>`, `<div style="font-weight:600;font-size:15px">${esc(p.name)}</div><div class="hint">${esc(co(p.companyId).displayName)} · led by ${esc(empName(byId(S.employees, p.managerId)))} · since ${dLong(p.startDate)}</div><div class="hbar" style="margin-top:12px"><span class="nm" style="width:auto">Spent</span><span class="tr"><i style="width:${pct}%;background:${esc(co(p.companyId).colorTag)}"></i></span><span class="num" style="font-size:12px">${pct}%</span></div><dl class="kv" style="margin-top:8px"><dt>Budget</dt><dd class="num">${money(p.budgetCents)}</dd><dt>Posted costs</dt><dd class="num">${money(spent)}</dd><dt>Hours logged</dt><dd class="num">${hrs(hours)}</dd></dl>`, badge(p.status)); }).join("")}</div>`;
+}
+function vDocuments() {
+  const docs = S.documents;
+  const bills = inScope(S.apInvoices).filter((i) => i.attachments?.length);
+  return ph("Documents", "Policies, templates and every file attached to a transaction.")
+    + `<div class="grid g2">${cardFlush("Library", table(["Title", "Category", "File", ">Size"], docs.map((d) => `<tr><td><strong>${esc(d.title)}</strong></td><td><span class="badge tone-grey">${esc(d.category)}</span></td><td class="mono" style="font-size:12px">${esc(d.fileName)}</td>${td(`${Math.round(d.sizeBytes / 1024)} KB`, 1)}</tr>`)))}
+      ${cardFlush("Attached to bills", table(["File", "Bill", "Added by"], bills.flatMap((i) => i.attachments.map((a) => `<tr class="click" data-go="/finance/ap/${i.id}"><td>📎 ${esc(a.name)}</td><td class="mono">${esc(i.invoiceNumber)}</td><td>${esc(a.by)} · ${esc(ago(a.at))}</td></tr>`)), "Drop a PDF on Bills to Pay to attach one."))}</div>`;
+}
+
+/* ---------------- administration ---------------- */
+function vUsers() {
+  const users = [...S.users].sort((a, b) => a.displayName.localeCompare(b.displayName));
+  return ph("Users & Access", `${users.length} sign-ins · roles decide what each person can open; every page checks again server-side.`)
+    + cardFlush("", table(["Person", "Email", "Roles", "Scope", "Employee"], users.map((u) => { const rs = S.userRoles.filter((r) => r.userId === u.id); const e = u.employeeId ? byId(S.employees, u.employeeId) : null; return `<tr><td><strong>${esc(u.displayName)}</strong>${u.isDemoUser ? ` <span class="badge tone-amber">demo · ${esc(u.demoLabel)}</span>` : ""}${u.isSuperAdmin ? ` <span class="badge tone-ink">super admin</span>` : ""}</td><td class="mono" style="font-size:12px">${esc(u.email)}</td><td>${rs.map((r) => `<span class="badge tone-teal" style="margin:1px">${esc(ROLES[r.roleCode]?.name || r.roleCode)}</span>`).join(" ") || "—"}</td><td>${[...new Set(rs.map((r) => (r.companyId ? co(r.companyId).displayName : "All companies")))].join(", ") || "—"}</td><td>${e ? goLink(`/hr/employees/${e.id}`, e.employeeNumber) : "—"}</td></tr>`; })))
+    + `<div class="sect-l">Roles</div>` + cardFlush("", table(["Role", "What it can do", ">Permissions"], Object.entries(ROLES).map(([code, r]) => `<tr><td><strong>${esc(r.name)}</strong><div class="hint mono">${esc(code)}</div></td><td style="font-size:12px">${esc([...ROLE_PERMS[code]].slice(0, 8).join(", "))}${ROLE_PERMS[code].size > 8 ? ` … +${ROLE_PERMS[code].size - 8}` : ""}</td>${td(ROLE_PERMS[code].size, 1)}</tr>`)));
+}
+function vFeedback() {
+  const list = [...S.feedback].sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  const kinds = { SUGGESTION: "Suggestion", PROBLEM: "Something's wrong", QUESTION: "Question" };
+  return ph("Feedback", "What people wrote with the Feedback button, and which page they were on.") + flashHtml()
+    + cardFlush("", table(["When", "From", "Kind", "Note", "Page", "Status", ""], list.map((f) => `<tr><td>${esc(ago(f.createdAt))}</td><td>${esc(f.byName)}</td><td><span class="badge ${f.kind === "PROBLEM" ? "tone-red" : f.kind === "QUESTION" ? "tone-blue" : "tone-teal"}">${esc(kinds[f.kind])}</span></td><td style="max-width:420px">${esc(f.text)}</td><td class="mono" style="font-size:12px">${esc(f.page)}</td><td>${badge(f.status)}</td><td class="r"><button class="btn sm" data-a="fbResolve" data-id="${f.id}">${f.status === "RESOLVED" ? "Reopen" : "Mark done"}</button></td></tr>`), "No feedback yet. Every page has a Feedback button bottom-left."));
+}
+function vCompanies() {
+  return ph("Companies", "The Haico group: one head office and three operating companies, each with its own books, bank account and people.")
+    + `<div class="grid g2">${S.companies.map((c) => { const people = S.employees.filter((e) => e.companyId === c.id && e.status !== "TERMINATED").length; const bank = S.bankAccounts.find((b) => b.companyId === c.id); return card(`<span class="chip"><span class="sq" style="width:12px;height:12px;background:${esc(c.colorTag)}"></span><strong>${esc(c.displayName)}</strong></span>`, `<dl class="kv"><dt>Legal name</dt><dd>${esc(c.legalName)}</dd><dt>Business no.</dt><dd class="mono">${esc(c.businessNumber || "—")}</dd><dt>Industry</dt><dd>${esc(c.industry)}</dd><dt>Base</dt><dd>${esc(c.city)}, ${esc(c.province)}</dd><dt>People</dt><dd>${people}</dd><dt>Bank</dt><dd>${esc(bank?.institution || "—")} <span class="mono">${esc(bank?.accountNumberMasked || "")}</span></dd><dt>Fiscal year end</dt><dd>${MON[(c.fiscalYearEndMonth || 12) - 1]}</dd><dt>Locations</dt><dd>${esc(S.locations.filter((l) => l.companyId === c.id).map((l) => l.name).join(", "))}</dd></dl>`, badge(c.isActive === false ? "INACTIVE" : "ACTIVE")); }).join("")}</div>`;
+}
+function vWorkflows() {
+  return ph("Approval Rules", "Who approves what, and from which amount. Edit a threshold and the next request follows the new rule.") + flashHtml()
+    + `<div class="grid g2">${S.workflows.map((w) => cardFlush(`<strong>${esc(w.name)}</strong> <span class="hint mono">${esc(w.code)}</span>`, table(["Step", "Approver", "Starts at"], S.workflowSteps.filter((s) => s.workflowId === w.id).sort((a, b) => a.sequence - b.sequence).map((s) => `<tr><td>${s.sequence}. ${esc(s.name)}</td><td>${s.approverType === "MANAGER" ? `<span class="badge tone-blue">Reporting line</span>` : `<span class="badge tone-teal">${esc(ROLES[s.roleCode]?.name || s.roleCode)}</span>`}</td><td>${can(A, "admin.workflows") ? `<form data-f="threshold" data-id="${s.id}" class="form-row" style="gap:6px"><input class="in num" style="width:120px;height:32px;text-align:right" inputmode="decimal" name="threshold" value="${(s.thresholdMinCents || 0) / 100}" aria-label="Threshold for ${esc(s.name)}"><button class="btn sm">Save</button></form>` : `<span class="num">${money(s.thresholdMinCents || 0)}</span>`}</td></tr>`)))).join("")}</div>`;
+}
+function vAudit() {
+  const list = [...S.audit].reverse();
+  return ph("Audit Log", "Append-only. Every sign-in, approval, posting and setting change — there is no edit or delete path.")
+    + cardFlush("", table(["When", "Who", "Module", "Action", "What happened"], list.map((x) => `<tr><td style="white-space:nowrap">${esc(dTime(x.at))}</td><td>${esc(x.actorName)}</td><td><span class="badge tone-grey">${esc(x.module)}</span></td><td class="mono" style="font-size:11px">${esc(x.action)}</td><td>${esc(x.summary)}${x.companyId ? `<div class="hint">${esc(co(x.companyId)?.displayName || "")}</div>` : ""}</td></tr>`), "Nothing logged yet in this shared session. Act anywhere in the platform and it appears here."));
+}
+function vSettings() {
+  return ph("System Settings", "Platform-wide configuration.")
+    + `<div class="grid g2">${card("This demo", `<dl class="kv"><dt>Edition</dt><dd>Live browser edition of the HAICO Group platform</dd><dt>Data</dt><dd>${SYNC.mode === "live" ? "Shared — everyone with the link sees the same books, live" : "This browser only"}</dd><dt>Actions applied</dt><dd class="num">${S.applied}</dd><dt>Ignored actions</dt><dd class="num">${S.rejected.length}</dd><dt>Demo password</dt><dd class="mono">TEST26!</dd></dl>${SYNC.mode === "live" && A.isSuper ? `<div class="form-row" style="margin-top:12px"><button class="btn dng" data-a="resetAll">Reset the demo for everyone</button><span class="hint">Removes every action anyone has taken and returns to the original demo company.</span></div>` : ""}`)}
+      ${card("Design rules that hold everywhere", `<ul style="margin:0;padding-left:18px;line-height:1.7;font-size:13px"><li>Money is integer cents — no floating-point drift.</li><li>Every posting is balanced and dated in an open period.</li><li>Authorization is checked on every action, not just in menus.</li><li>Approvals follow the reporting line; nobody approves their own request.</li><li>The audit log is append-only.</li><li>Overtime, tax tables and thresholds are configuration, not code.</li></ul>`)}</div>`;
+}

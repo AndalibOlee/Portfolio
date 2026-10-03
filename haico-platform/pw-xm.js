@@ -113,8 +113,8 @@ const check = (ok, msg) => { if (!ok) { fails.push(msg); console.log("  FAIL", m
   await shot("employee-home-configured");
   console.log("8) view as + edit mode + actions blocked");
   await login("Administrator"); await go("/admin/experience/preview"); await page.click('[data-a="xmViewAs"][data-id="u1"]'); await page.waitForTimeout(300);
-  check((await page.locator(".xm-pv").innerText()).includes("VIEWING AS MIA TANAKA"), "preview banner names the person");
-  check((await page.locator(".side .me").innerText()).includes("Mia Tanaka"), "sidebar shows the previewed person");
+  check((await page.locator(".xm-pv").innerText()).includes("VIEWING AS KIONA CARDINAL"), "preview banner names the person");
+  check((await page.locator(".side .me").innerText()).includes("Kiona Cardinal"), "sidebar shows the previewed person");
   const blocked = await page.evaluate(() => { const before = S.audit.length; const ok = act("leave.withdraw", { requestId: "nope" }); return !ok && S.audit.length === before && SYNC.events.every((e) => e.type !== "leave.withdraw"); });
   check(blocked, "real actions are blocked in preview");
   await page.click('[data-a="xmEditMode"][data-v="1"]'); await page.waitForTimeout(300); await shot("preview-edit-mode");

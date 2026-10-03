@@ -122,7 +122,7 @@ Object.assign(R, {
     if (e.status === "TERMINATED") fail(`${empName(e)}'s employment has already ended.`);
     const u = S.users.find((x) => x.employeeId === e.id);
     if (u?.id === ctx.actor.id) fail("You can't end your own employment here.");
-    if (u?.isDemoUser) fail("This person is one of the demo sign-ins on the login page, so they stay on staff. Try one of the Taan Forest crew such as Lena Percy or Jonas Quintal — their pay is posted, so the ROE fills in.");
+    if (u?.isDemoUser) fail("This person is one of the demo sign-ins on the login page, so they stay on staff. Try one of the Taan Forest crew such as Kaylee Bear or Tanner Moosomin — their pay is posted, so the ROE fills in.");
     if (!p.lastDay) fail("Enter the last day worked and paid.");
     if (p.lastDay < e.startDate) fail("The last day is before they started.");
     if (!ROE_REASONS[p.reasonCode]) fail("Choose the reason for the Record of Employment.");

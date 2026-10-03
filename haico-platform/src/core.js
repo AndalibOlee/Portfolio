@@ -171,10 +171,10 @@ let freshState = function () {
   S.audit = []; S.feedback = []; S.purchaseRequests = []; S.purchaseOrders = S.purchaseOrders || []; S.approvalActions = [];
   S.applied = 0; S.rejected = []; S.emails = []; S.requests = []; S.files = [];
   // approval workflows for the request centre (group defaults)
-  const addWf = (id, code, name, steps) => { S.workflows.push({ id, code, name, isActive: true }); steps.forEach(([seq, nm, type, role, min], i) => S.workflowSteps.push({ id: `${id}_s${i + 1}`, workflowId: id, sequence: seq, name: nm, approverType: type, roleCode: role || undefined, thresholdMinCents: min })); };
-  addWf("wf_travel_request", "TRAVEL_REQUEST", "Travel requests", [[1, "Manager approval", "MANAGER", null, 0], [2, "Finance approval", "ROLE", "FINANCE_MANAGER", 200000]]);
-  addWf("wf_credit_card", "CREDIT_CARD_PURCHASE", "Credit card purchases", [[1, "Manager approval", "MANAGER", null, 0], [2, "Finance approval", "ROLE", "FINANCE_MANAGER", 100000]]);
-  addWf("wf_travel_claim", "TRAVEL_CLAIM", "Travel claims", [[1, "Manager approval", "MANAGER", null, 0], [2, "Finance approval", "ROLE", "FINANCE_MANAGER", 50000]]);
+  const addWf = (id, code, name, steps) => { if (S.workflows.some((w) => w.code === code)) return; S.workflows.push({ id, code, name, isActive: true }); steps.forEach(([seq, nm, type, role, min], i) => S.workflowSteps.push({ id: `${id}_s${i + 1}`, workflowId: id, sequence: seq, name: nm, approverType: type, roleCode: role || undefined, thresholdMinCents: min })); };
+  addWf("wf_travel_request", "TRAVEL_REQUEST", "Travel requests", [[1, "Manager approval", "MANAGER", null, 0], [2, "Director approval", "ROLE", "EXECUTIVE", 500000]]);
+  addWf("wf_credit_card", "CREDIT_CARD_PURCHASE", "Credit card purchases", [[1, "Manager approval", "MANAGER", null, 0], [2, "Director approval", "ROLE", "EXECUTIVE", 500000]]);
+  addWf("wf_travel_claim", "TRAVEL_CLAIM", "Travel claims", [[1, "Manager approval", "MANAGER", null, 0], [2, "Director approval", "ROLE", "EXECUTIVE", 500000]]);
   for (const r of S.payrollRuns) r.warnings = r.warnings || [];
   // the seed export wrote a couple of timestamps as epoch milliseconds; the views expect ISO strings
   for (const b of S.apInvoices) if (typeof b.matchedAt === "number") b.matchedAt = new Date(b.matchedAt).toISOString();

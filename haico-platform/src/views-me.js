@@ -10,7 +10,8 @@ function userLabel(u) {
 }
 const WAVE = `<svg class="wave" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65 L1000 120 L0 120 Z" fill="var(--wave-fill)"/><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65" fill="none" stroke="#e8352a" stroke-width="9" stroke-linecap="round"/></svg>`;
 function vLogin() {
-  const users = S.users.filter((u) => u.isActive !== false).sort((a, b) => a.displayName.localeCompare(b.displayName));
+  const LOGIN_FIRST = ["u1", "u2", "u3", "u4", "u7", "u6"]; // Employee, Manager, HR, Finance, CEO, System Administrator — then everyone else A–Z
+  const users = S.users.filter((u) => u.isActive !== false).sort((a, b) => { const ia = LOGIN_FIRST.indexOf(a.id), ib = LOGIN_FIRST.indexOf(b.id); if (ia >= 0 || ib >= 0) return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); return a.displayName.localeCompare(b.displayName); });
   const demo = S.users.filter((u) => u.isDemoUser).sort((a, b) => a.demoLabel.localeCompare(b.demoLabel));
   const cos = [...S.companies].sort((a, b) => a.code.localeCompare(b.code));
   return `<div class="login light"><div class="brandp light">
@@ -20,15 +21,14 @@ function vLogin() {
     </div>
     <div class="formp"><div class="box">
       <h2>Sign in</h2><p class="muted" style="margin:4px 0 0">Use your HaiCo account</p>
-      ${UI.loginError ? `<div class="msg err" style="margin-top:16px">That password didn't work. Every demo account uses ${esc(DEMO_PASSWORD)}.</div>` : ""}
+      ${UI.loginError ? `<div class="msg err" style="margin-top:16px">Choose your name first.</div>` : ""}
       <form data-f="login" style="margin-top:22px;display:grid;gap:14px">
         <div class="fld"><label for="lgUser">Who are you?</label><select class="in" id="lgUser" name="userId" required>${opt("", `Choose your name (${users.length} people)`, true)}${users.map((u) => opt(u.id, userLabel(u))).join("")}</select></div>
-        <div class="fld"><label for="lgPw">Password</label><input class="in" id="lgPw" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required></div>
-        <button class="btn pri" style="height:44px;font-size:15px">Sign in</button>
+        <button class="btn pri" style="height:44px;font-size:15px">OK</button>
       </form>
       <div class="or">OR EXPLORE WITH A DEMO ROLE</div>
       <div class="roles">${demo.map((u) => `<button class="btn" data-a="demoLogin" data-id="${u.id}">${esc(u.demoLabel)}</button>`).join("")}</div>
-      <p class="hint" style="text-align:center;margin-top:20px;line-height:1.7">Every demo account uses the password <span class="pw">${esc(DEMO_PASSWORD)}</span>. You can switch roles anytime from the banner inside the app.<br>${SYNC.mode === "live" ? "This demo is live: everyone with the link works in the same company data." : "Changes you make are kept in this browser."}</p>
+      <p class="hint" style="text-align:center;margin-top:20px;line-height:1.7">Demo only: no password — pick a name and press OK. You can switch roles anytime from the banner inside the app.<br>${SYNC.mode === "live" ? "This demo is live: everyone with the link works in the same company data." : "Changes you make are kept in this browser."}</p>
     </div></div></div>`;
 }
 function vChoose() {

@@ -141,7 +141,7 @@ function signOut() { UI.userId = null; UI.chosenCompany = false; UI.pop = null; 
 /* ---------------- forms ---------------- */
 const fd = (form) => Object.fromEntries(new FormData(form).entries());
 const FORMS = {
-  login(f) { const d = fd(f); if (d.password !== DEMO_PASSWORD || !d.userId) { UI.loginError = true; safeRender(); return; } signIn(d.userId); },
+  login(f) { const d = fd(f); if (!d.userId) { UI.loginError = true; safeRender(); return; } signIn(d.userId); },
   feedback(f) { const d = fd(f); if (act("feedback.create", { kind: d.kind, text: d.text, page: d.page }, "Thanks — your note went to the administrators.")) UI.pop = null; safeRender(); },
   leave(f) { const d = fd(f); if (act("leave.request", { leaveTypeId: d.leaveTypeId, start: d.start, end: d.end || d.start, hours: d.hours, partialHours: d.partialHours, notes: d.notes, files: takeFiles("leave") }, `Request sent to ${A.employee?.managerId ? empName(byId(S.employees, A.employee.managerId)) : "your approver"}.`)) go("/me/time-off"); },
   expense(f) { const d = fd(f); const file = f.querySelector('input[type=file]')?.files?.[0]; if (act("expense.submit", { merchant: d.merchant, categoryCode: d.categoryCode, amountCents: toCents(d.amount), date: d.date, purpose: d.purpose, receipt: file?.name || UI.files.expense?.[0]?.name, files: takeFiles("expense") }, "Claim sent for approval.")) safeRender(); },

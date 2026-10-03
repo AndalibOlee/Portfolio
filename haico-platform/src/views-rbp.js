@@ -1,11 +1,11 @@
 /* ==========================================================================
    views-rbp.js — People › Reviews, Benefits & Pension.
    Three tabs: Performance Reviews (/hr/reviews), Benefits (/hr/benefits), Pension (/hr/pension).
-   HR (hr.employees.edit) views and edits; Finance (Finance Manager, Accountant) views and downloads only.
+   HR (hr.employees.edit) views and edits; Finance (Finance Manager, Accountant, Payroll Administrator) views and downloads only.
    Adds demo benefit plans and enrolments, and a group pension plan with members, contributions and remittances.
    ========================================================================== */
 
-const RBP_FIN_ROLES = ["FINANCE_MANAGER", "ACCOUNTANT"];
+const RBP_FIN_ROLES = ["FINANCE_MANAGER", "ACCOUNTANT", "PAYROLL_ADMIN"]; // finance side: view + download only
 const rbpFinance = (auth = A) => !!auth && (auth.roleCodes || []).some((r) => RBP_FIN_ROLES.includes(r));
 const rbpEdit = (auth = A) => !!auth && can(auth, "hr.employees.edit");
 /** Benefits and Pension: HR (view + edit) and Finance (view + download) */

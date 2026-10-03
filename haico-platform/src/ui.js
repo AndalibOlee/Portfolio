@@ -246,7 +246,7 @@ function buildNav() {
   const people = [];
   item(people, "people", "People", "directory", (has("hr.onboarding.manage") ? navSafe(() => inScope(S.employees).filter((e) => e.status === "ONBOARDING").length) : 0) + (has("hr.employees.view") ? navSafe(() => (typeof hr2ExpiringCerts === "function" ? hr2ExpiringCerts(60).length : 0)) : 0));
   if (attendanceAdmin()) item(people, "hr-time", "Time & Attendance", "calendarclock", navSafe(() => (has("timesheets.view") ? inScope(S.timesheets).filter((t) => t.status === "SUBMITTED").length : 0) + (has("leave.view") ? inScope(S.leaveRequests).filter((r) => r.status === "PENDING_APPROVAL").length : 0)));
-  item(people, "hr-talent", "Reviews, Benefits & Pension", "star", navSafe(() => (has("hr.employees.edit") ? (S.benefitEnrollments || []).filter((b) => b.status === "REQUESTED").length + (S.pensionRemittances || []).filter((r) => r.status === "DUE" && inView(S, A, r.companyId)).length : 0)));
+  item(people, "hr-talent", typeof rbpView === "function" && !rbpView() ? "Performance Reviews" : "Reviews, Benefits & Pension", "star", navSafe(() => (has("hr.employees.edit") ? (S.benefitEnrollments || []).filter((b) => b.status === "REQUESTED").length + (S.pensionRemittances || []).filter((r) => r.status === "DUE" && inView(S, A, r.companyId)).length : 0)));
   push("People", people);
   // ---- Payroll ----
   const pay = [];

@@ -130,7 +130,7 @@ const check = (ok, msg) => { if (!ok) { fails.push(msg); console.log("  FAIL", m
   await page.click('[data-a="xmRestore"][data-v="1"]'); await page.waitForTimeout(150); check((await modalText()).includes("Restore the Page & Experience configuration from Version 1?"), "restore asks for confirmation");
   await page.click('[data-a="xmRestoreConfirm"]'); await page.waitForTimeout(400);
   check(await page.evaluate(() => S.xmPublished?.version === 3 && S.xmVersions[2].restoredFrom === 1 && JSON.stringify(S.xmVersions[2].config) === JSON.stringify(S.xmVersions[0].config)), "restored version 1 as version 3 (identical configuration)");
-  check(await page.evaluate(() => S.employees.length === 18 && S.audit.some((a) => /restored/.test(a.summary))), "restore touched no data and is audited");
+  check(await page.evaluate(() => S.employees.length === 19 && S.audit.some((a) => /restored/.test(a.summary))), "restore touched no data and is audited");
   const pkg = await page.evaluate(() => xmPackage(S.xmPublished.config, { version: 3, createdBy: "t", createdDate: "2026-10-02T00:00:00Z", publishedDate: "2026-10-02T00:00:00Z" }));
   const known = ["schema", "nav", "pages", "customPages", "labels", "customTerms", "typography", "density", "overrides"];
   const sensitive = /TEST26|@haico\.demo|accountNumber|EMP-\d{4}|grossCents|password|token/i.test(JSON.stringify(pkg));

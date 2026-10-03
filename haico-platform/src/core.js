@@ -390,6 +390,28 @@ function applyOutcome(S, ctx, inst, outcome) {
 /* ---------------- time ---------------- */
 const settingsFor = (S, companyId) => S.payrollSettings.find((s) => s.companyId === companyId) || { dailyOtThreshold: 8, dailyDoubleOtThreshold: 12, weeklyOtThreshold: 40, standardHoursPerDay: 8, timesheetCadence: "BIWEEKLY" };
 const LEAVE_FIELD = { VACATION: "vacationHours", SICK: "sickHours", PERSONAL: "personalHours", BANKED_OT: "otherLeaveHours", OTHER: "otherLeaveHours" };
+/** banked overtime: employees never request it — they use it on the timesheet, at most up to a full day (regular + banked) and never more than they have */
+const BANKED_DAY_MAX = 8;
+/** banked hours drawn on timesheets: sent (pending) and approved / paid (used); the sheet being edited is left out */
+function bankedTsUse(S, empId, excludeSheetId, year = 2026) {
+  const out = { used: 0, pending: 0 };
+  for (const t of S.timesheets) {
+    if (t.employeeId !== empId || t.id === excludeSheetId || !String(t.periodStart).startsWith(String(year))) continue;
+    const k = t.status === "SUBMITTED" ? "pending" : ["APPROVED", "LOCKED"].includes(t.status) ? "used" : null;
+    if (!k) continue;
+    for (const e of S.timesheetEntries) if (e.timesheetId === t.id) out[k] += e.bankedOtHours || 0;
+  }
+  return out;
+}
+/** banked hours this person can still use (balance less approved, paid and waiting use) */
+function bankedAvail(S, empId, excludeSheetId, year = 2026) {
+  const lt = S.leaveTypes.find((x) => x.code === "BANKED_OT");
+  const b = lt && S.leaveBalances.find((x) => x.employeeId === empId && x.leaveTypeId === lt.id && x.year === year);
+  const ent = b ? b.entitledHours + (b.carriedOverHours || 0) : 0;
+  const lv = lt ? S.leaveRequests.filter((r) => r.employeeId === empId && r.leaveTypeId === lt.id && r.status === "PENDING_APPROVAL").reduce((s, r) => s + r.totalHours, 0) : 0;
+  const u = bankedTsUse(S, empId, excludeSheetId, year);
+  return Math.max(0, ent - (b?.usedHours || 0) - u.used - u.pending - lv);
+}
 const HOUR_FIELDS = ["workedHours", "statHours", "bankedOtHours", "vacationHours", "sickHours", "personalHours", "otherLeaveHours"];
 
 function recomputeSheet(S, sheet) {
@@ -571,6 +593,7 @@ const R = {
     const emp = myEmp(S, ctx);
     const lt = byId(S.leaveTypes, p.leaveTypeId);
     if (!lt) fail("Choose a type of time off.");
+    if (lt.code === "BANKED_OT") fail("Banked overtime isn't requested — use it on your timesheet, in the Banked OT column.");
     if (!p.start) fail("Choose the first day.");
     const end = p.end || p.start;
     if (end < p.start) fail("Dates are reversed — the last day is before the first.");
@@ -637,6 +660,14 @@ const R = {
     if (sheet && ["APPROVED", "LOCKED"].includes(sheet.status)) fail(`This timesheet is ${sheet.status === "LOCKED" ? "locked by payroll" : "already approved"}.`);
     if (sheet && sheet.status === "SUBMITTED") fail("This timesheet is waiting for your manager — it can't be changed right now.");
     sheet = ensureSheet(S, ctx, emp, start);
+    // banked overtime: regular + banked stays within a full day, and the period never uses more than the person has
+    {
+      const byDay = new Map(); let bankedAll = 0;
+      for (const e of p.entries || []) { if (e.date < start || e.date > end) continue; const w = Math.min(24, Math.max(0, Number(e.worked) || 0)), b = Math.min(24, Math.max(0, Number(e.banked) || 0)); const d = byDay.get(e.date) || { w: 0, b: 0 }; d.w += w; d.b += b; byDay.set(e.date, d); bankedAll += b; }
+      for (const [date, d] of byDay) if (d.b > 0 && d.w + d.b > BANKED_DAY_MAX + 1e-9) fail(`${dLong(date)}: regular plus banked hours can't go over ${BANKED_DAY_MAX} in a day — with ${hrs(d.w)} regular hours you can use at most ${hrs(Math.max(0, BANKED_DAY_MAX - d.w))} banked.`);
+      const avail = bankedAvail(S, emp.id, sheet.id);
+      if (bankedAll > avail + 1e-9) fail(`You have ${hrs(avail)} banked hours available — this timesheet uses ${hrs(bankedAll)}.`);
+    }
     S.timesheetEntries = S.timesheetEntries.filter((e) => !(e.timesheetId === sheet.id && !e.isAutoFilled && !e.sourceLeaveRequestId));
     for (const e of p.entries || []) {
       const w = Math.min(24, Math.max(0, Number(e.worked) || 0)), b = Math.min(24, Math.max(0, Number(e.banked) || 0));

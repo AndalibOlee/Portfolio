@@ -126,8 +126,9 @@ const SECTIONS = [
   { key: "my-requests", label: "My Requests & Expenses", tabs: [{ href: "/me/requests", label: "My Requests & Expenses", match: ["/me/expenses"], perm: "@employee" }] },
   { key: "my-tasks", label: "My Tasks", tabs: [{ href: "/me/tasks", label: "My Tasks", perm: "@employee" }] },
   { key: "my-profile", label: "My Profile", tabs: [
-    { href: "/me/profile", label: "Overview", perm: "@employee" }, { href: "/me/profile/benefits", label: "Pay & benefits", perm: "@employee" }, { href: "/me/reviews", label: "Reviews", perm: "@employee" },
-    { href: "/me/certifications", label: "Certificates", perm: "@employee" }, { href: "/me/looks", label: "Look" }] },
+    { href: "/me/profile", label: "Overview", perm: "@employee" }, { href: "/me/profile/employment", label: "Employment", perm: "@employee" }, { href: "/me/profile/benefits", label: "Pay & benefits", perm: "@employee" },
+    { href: "/me/profile/time", label: "Time & time off", perm: "@employee" }, { href: "/me/reviews", label: "Reviews", perm: "@employee" }, { href: "/me/certifications", label: "Certificates", perm: "@employee" },
+    { href: "/me/profile/documents", label: "Documents", perm: "@employee" }] },
   { key: "my-pay", label: "My Pay", tabs: [{ href: "/me/pay", label: "My Pay", perm: "@employee" }] },
   { key: "my-documents", label: "My Documents", tabs: [{ href: "/me/documents", label: "My Documents", perm: "@employee" }] },
   { key: "team", label: "My Team", tabs: [
@@ -138,12 +139,15 @@ const SECTIONS = [
     { href: "/finance/expenses", label: "Expense claims", perm: () => can(A, "expenses.view") && can(A, "expenses.approve") && !can(A, "ap.view") }] },
   { key: "people", label: "People", tabs: [
     { href: "/hr/employees", label: "Employees", perm: "hr.employees.view" }, { href: "/people/directory", label: "Directory", perm: ["@employee", "hr.employees.view"] }, { href: "/people/org-chart", label: "Org chart", perm: ["@employee", "hr.employees.view"] },
-    { href: "/hr/departments", label: "Departments", perm: "hr.org.manage" }, { href: "/hr/onboarding", label: "Onboarding", perm: "hr.onboarding.manage" }, { href: "/hr/hiring", label: "Hiring", perm: "hr.employees.edit" }] },
+    { href: "/hr/departments", label: "Departments", perm: "hr.org.manage" }, { href: "/hr/onboarding", label: "Onboarding", perm: "hr.onboarding.manage" }, { href: "/hr/hiring", label: "Hiring", perm: "hr.employees.edit" },
+    { href: "/hr/certifications", label: "Certificates", perm: "hr.employees.view" }] },
   { key: "hr-time", label: "Time & Attendance", tabs: [
     { href: "/hr/timesheets", label: "Timesheets", perm: () => can(A, "timesheets.view") && attendanceAdmin() }, { href: "/payroll/timesheet-status", label: "By pay period", perm: () => (can(A, "payroll.view") || can(A, "hr.employees.edit")) && attendanceAdmin() },
     { href: "/hr/leave", label: "Time off", perm: () => can(A, "leave.view") && attendanceAdmin() }] },
-  { key: "hr-talent", label: "Performance & Benefits", tabs: [
-    { href: "/hr/reviews", label: "Performance reviews", perm: "hr.employees.view" }, { href: "/hr/certifications", label: "Certificates", perm: "hr.employees.view" }, { href: "/hr/benefits", label: "Benefits", perm: "hr.employees.edit" }] },
+  { key: "hr-talent", label: "Reviews, Benefits & Pension", tabs: [
+    { href: "/hr/reviews", label: "Performance Reviews", perm: () => typeof rbpReviewsView === "function" && rbpReviewsView() },
+    { href: "/hr/benefits", label: "Benefits", perm: () => typeof rbpView === "function" && rbpView() },
+    { href: "/hr/pension", label: "Pension", perm: () => typeof rbpView === "function" && rbpView() }] },
   { key: "ops-payroll", label: "Payroll", tabs: [
     { href: "/payroll/runs", label: "Pay runs", perm: "payroll.view" }, { href: "/payroll/statements", label: "Statements", perm: "payroll.view" }, { href: "/payroll/yearend", label: "Year-end", perm: "payroll.view" },
     { href: "/payroll/remittances", label: "CRA remittances", perm: "payroll.view" }, { href: "/payroll/roe", label: "Records of Employment", perm: ["payroll.view", "hr.employees.edit"] }, { href: "/payroll/settings", label: "Settings", perm: "payroll.view" }] },
@@ -240,9 +244,9 @@ function buildNav() {
   push("Team", team);
   // ---- People ----
   const people = [];
-  item(people, "people", "People", "directory", has("hr.onboarding.manage") ? navSafe(() => inScope(S.employees).filter((e) => e.status === "ONBOARDING").length) : 0);
+  item(people, "people", "People", "directory", (has("hr.onboarding.manage") ? navSafe(() => inScope(S.employees).filter((e) => e.status === "ONBOARDING").length) : 0) + (has("hr.employees.view") ? navSafe(() => (typeof hr2ExpiringCerts === "function" ? hr2ExpiringCerts(60).length : 0)) : 0));
   if (attendanceAdmin()) item(people, "hr-time", "Time & Attendance", "calendarclock", navSafe(() => (has("timesheets.view") ? inScope(S.timesheets).filter((t) => t.status === "SUBMITTED").length : 0) + (has("leave.view") ? inScope(S.leaveRequests).filter((r) => r.status === "PENDING_APPROVAL").length : 0)));
-  item(people, "hr-talent", "Performance & Benefits", "star", navSafe(() => (has("hr.employees.edit") ? (S.benefitEnrollments || []).filter((b) => b.status === "REQUESTED").length : 0) + (has("hr.employees.view") && typeof hr2ExpiringCerts === "function" ? hr2ExpiringCerts(60).length : 0)));
+  item(people, "hr-talent", "Reviews, Benefits & Pension", "star", navSafe(() => (has("hr.employees.edit") ? (S.benefitEnrollments || []).filter((b) => b.status === "REQUESTED").length + (S.pensionRemittances || []).filter((r) => r.status === "DUE" && inView(S, A, r.companyId)).length : 0)));
   push("People", people);
   // ---- Payroll ----
   const pay = [];
@@ -318,7 +322,8 @@ function render() {
     else body = r.view(q, ...path.match(r.re).slice(1));
   } catch (e) { console.error(e); body = `<div class="msg err">This page couldn't be drawn: ${esc(e.message)}</div>`; }
   app.innerHTML = banner() + `<div class="shell">${sidebar(path)}<div class="main">${topbar()}<main class="content" id="content"><div class="wrap">${sectionTabsHtml(path)}${body}</div></main>${footerHtml()}</div></div>${feedbackUi(path)}${modalHtml()}${UI.sideOpen ? '<div class="scrim" data-a="closeSide"></div>' : ""}`;
-  if (prevRoute === UI.route) { const c = document.querySelector(".content"); if (c) c.scrollTop = prevScroll; }
+  // the page rises in only when you arrive on it; a redraw of the same page (a click, a save) stays still
+  if (prevRoute === UI.route) { const c = document.querySelector(".content"); if (c) { c.scrollTop = prevScroll; c.classList.add("still"); } }
   render._route = UI.route;
   UI.dirty = false; UI.stale = false;
   afterRender();
@@ -347,11 +352,11 @@ function topbar() {
     <button class="topsrch" data-a="searchOpen" aria-label="Search" title="Search — or press / anywhere">${icon("search")}<span>Search people, bills, vendors…</span><kbd>/</kbd></button>
     <div class="sp"></div>${UI.stale ? `<button class="stale" data-a="refresh">New activity · Refresh</button>` : ""}${live}${sw}
     <button class="helpbtn top" data-go="/help"><span aria-hidden>?</span>How-to</button>
-    <button class="iconbtn" data-a="lookMenu" aria-label="Choose the look of the app" title="Look" aria-expanded="${UI.pop === "look"}">${icon("palette")}</button>
+    <button class="iconbtn" data-a="lookMenu" aria-label="Choose a look" title="Choose a look" aria-haspopup="dialog">${icon("palette")}</button>
     <button class="iconbtn" data-a="theme" aria-label="Switch light or dark" title="${UI.theme === "dark" ? "Dark — click for light" : UI.theme === "light" ? "Light — click for dark" : "Following your device — click for dark"}">${icon(UI.theme === "dark" ? "moon" : "sun")}</button>
     <button class="iconbtn" data-a="notifs" aria-label="Notifications">${icon("bell")}${unread ? `<span class="dot">${unread}</span>` : ""}</button>
     <button class="iconbtn" data-a="signout" aria-label="Sign out" title="Sign out">${icon("logout")}</button>
-    ${UI.pop === "notifs" ? notifPanel() : ""}${UI.pop === "look" ? lookPanel() : ""}</header>`;
+    ${UI.pop === "notifs" ? notifPanel() : ""}</header>`;
 }
 function notifPanel() {
   const list = myNotifs().slice(0, 30);
@@ -373,7 +378,7 @@ function feedbackUi(path) {
     <div class="form-row" style="margin-top:10px;justify-content:flex-end"><button type="button" class="btn sm" data-a="closePop">Cancel</button><button class="btn sm pri">Send</button></div>
     <div class="hint" style="margin-top:6px">Administrators see it in Administration → Feedback, with this page attached.</div></form>` : ""}`;
 }
-function modalHtml() { if (UI.modal === "EMAILS") return `<div class="scrim" data-a="closeModal"></div>${emailPanel()}`; if (UI.modal === "SEARCH") return `<div class="scrim" data-a="closeModal"></div><div class="modal srchm" role="dialog" aria-modal="true" aria-label="Search">${searchModalHtml()}</div>`; return UI.modal ? `<div class="scrim" data-a="closeModal"></div><div class="modal" role="dialog" aria-modal="true"${UI.modalWide ? ' style="width:min(1100px,calc(100vw - 32px))"' : ""}>${UI.modal}</div>` : ""; }
+function modalHtml() { if (UI.modal === "EMAILS") return `<div class="scrim" data-a="closeModal"></div>${emailPanel()}`; if (UI.modal === "LOOKS") return `<div class="scrim" data-a="closeModal"></div><div class="modal lookm" role="dialog" aria-modal="true" aria-label="Choose a look">${looksModalHtml()}</div>`; if (UI.modal === "SEARCH") return `<div class="scrim" data-a="closeModal"></div><div class="modal srchm" role="dialog" aria-modal="true" aria-label="Search">${searchModalHtml()}</div>`; return UI.modal ? `<div class="scrim" data-a="closeModal"></div><div class="modal" role="dialog" aria-modal="true"${UI.modalWide ? ' style="width:min(1100px,calc(100vw - 32px))"' : ""}>${UI.modal}</div>` : ""; }
 
 function vDenied(perm) { return ph("Not available for your role", "") + card("", `<p>This page needs the <span class="mono">${esc(typeof perm === "string" ? perm : "right")}</span> permission. Menus only show what the server would allow — switch role from the yellow bar to see it.</p><button class="btn" data-go="${homeFor()}">Go to my home page</button>`); }
 function vNotFound() { return ph("Page not found", "") + card("", `<button class="btn" data-go="${homeFor()}">Go to my home page</button>`); }

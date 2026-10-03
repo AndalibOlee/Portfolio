@@ -10,7 +10,7 @@ function userLabel(u) {
 }
 const WAVE = `<svg class="wave" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65 L1000 120 L0 120 Z" fill="var(--wave-fill)"/><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65" fill="none" stroke="#e8352a" stroke-width="9" stroke-linecap="round"/></svg>`;
 function vLogin() {
-  const LOGIN_FIRST = ["u1", "u2", "u3", "u4", "u7", "u6"]; // Employee, Manager, HR, Finance, CEO, System Administrator — then everyone else A–Z
+  const LOGIN_FIRST = ["u1", "u2", "u3", "u4", "u20", "u7", "u8", "u6"]; // the presentation order: Employee, Manager, HR, Finance, Payroll Administrator, CEO, Taan GM (receives the goods), System Administrator — then everyone else A–Z
   const users = S.users.filter((u) => u.isActive !== false).sort((a, b) => { const ia = LOGIN_FIRST.indexOf(a.id), ib = LOGIN_FIRST.indexOf(b.id); if (ia >= 0 || ib >= 0) return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); return a.displayName.localeCompare(b.displayName); });
   const demo = S.users.filter((u) => u.isDemoUser).sort((a, b) => a.demoLabel.localeCompare(b.demoLabel));
   const cos = [...S.companies].sort((a, b) => a.code.localeCompare(b.code));
@@ -44,8 +44,10 @@ function leaveBalances(empId, year = 2026) {
   return S.leaveTypes.map((lt) => {
     const b = S.leaveBalances.find((x) => x.employeeId === empId && x.leaveTypeId === lt.id && x.year === year);
     const pending = S.leaveRequests.filter((r) => r.employeeId === empId && r.leaveTypeId === lt.id && r.status === "PENDING_APPROVAL").reduce((s, r) => s + r.totalHours, 0);
-    const ent = b ? b.entitledHours + (b.carriedOverHours || 0) : 0, used = b?.usedHours || 0;
-    return { lt, ent, used, pending, avail: ent - used - pending, has: !!b };
+    const ent = b ? b.entitledHours + (b.carriedOverHours || 0) : 0;
+    let used = b?.usedHours || 0, pend = pending;
+    if (lt.code === "BANKED_OT") { const u = bankedTsUse(S, empId, null, year); used += u.used; pend += u.pending; }
+    return { lt, ent, used, pending: pend, avail: ent - used - pend, has: !!b };
   });
 }
 const myEntries = (empId) => S.payrollEntries.filter((p) => p.employeeId === empId).map((p) => ({ p, run: byId(S.payrollRuns, p.payrollRunId) })).filter((x) => x.run?.status === "POSTED").sort((a, b) => (a.run.payDate < b.run.payDate ? 1 : -1));
@@ -104,11 +106,11 @@ function vMyTime(q) {
   if (!UI.ts || UI.ts.key !== key || !editable) {
     UI.ts = { key, empId: e.id, start, days: meta.map((m) => ({ date: m.date, rows: m.manual.length ? m.manual : [{ dep: e.departmentId || "", prj: "", worked: 0, banked: 0 }] })) };
   }
+  UI.ts.bankAvail = bankedAvail(S, e.id, sheet?.id); UI.ts.dayMax = BANKED_DAY_MAX;
   UI.ts.meta = meta; UI.ts.rules = rulesOf(st); UI.ts.weekBreak = cad === "BIWEEKLY" ? 7 : -1; UI.ts.editable = editable;
   const comp = latestComp(e.id);
   UI.ts.rate = comp?.payType === "HOURLY" ? comp.hourlyRateCents : null;
   const deps = S.departments.filter((d) => d.companyId === e.companyId);
-  const prjs = S.projects.filter((p) => p.companyId === e.companyId && p.status === "ACTIVE");
   const dis = editable ? "" : " disabled";
   const totalsRow = (id, label) => `<tr class="wt"><td colspan="3" style="font-family:var(--font)">${label}</td>${["worked", "stat", "banked", "vac", "sick", "pers", "other"].map((k) => `<td id="${id}-${k}"></td>`).join("")}<td id="${id}-all" style="text-align:right"></td><td id="${id}-ot" style="text-align:right;font-size:11px;color:var(--t-amber)"></td></tr>`;
   let rows = "";
@@ -119,14 +121,15 @@ function vMyTime(q) {
     const lv = (v) => (v > 0 ? `<span class="lv">${v.toFixed(2)}</span>` : `<span class="lv e">0</span>`);
     d.rows.forEach((r, ri) => {
       rows += `<tr class="${m.we ? "we" : ""} ${m.stat ? "stat" : ""}"><td style="font-weight:600">${ri === 0 ? dShort(m.date) : ""}</td><td>${ri === 0 ? DOW[dowOf(m.date)] : ""}</td>
-      <td style="text-align:left"><span style="display:inline-flex;gap:4px"><select aria-label="Department ${dShort(m.date)}" data-ts="dep" data-d="${di}" data-r="${ri}"${dis}>${opt("", "— dept —", !r.dep)}${deps.map((x) => opt(x.id, `${x.code} — ${x.name}`, x.id === r.dep)).join("")}</select><select aria-label="Project ${dShort(m.date)}" data-ts="prj" data-d="${di}" data-r="${ri}"${dis}>${opt("", "— project —", !r.prj)}${prjs.map((x) => opt(x.id, x.code, x.id === r.prj)).join("")}</select></span></td>
+      <td style="text-align:left"><select aria-label="Department ${dShort(m.date)}" data-ts="dep" data-d="${di}" data-r="${ri}"${dis}>${opt("", "— dept —", !r.dep)}${deps.map((x) => opt(x.id, `${x.code} — ${x.name}`, x.id === r.dep)).join("")}</select></td>
       <td><input class="cell" inputmode="decimal" aria-label="Worked hours ${dShort(m.date)}" data-ts="worked" data-d="${di}" data-r="${ri}" value="${r.worked || ""}"${dis}></td>
       <td>${ri === 0 && m.stat ? `<span class="sh" title="${esc(m.stat.name)}">${m.stat.hours.toFixed(1)}</span>` : ""}</td>
-      <td><input class="cell" inputmode="decimal" aria-label="Banked hours ${dShort(m.date)}" data-ts="banked" data-d="${di}" data-r="${ri}" value="${r.banked || ""}"${dis}></td>
+      <td><input class="cell" inputmode="decimal" aria-label="Banked hours ${dShort(m.date)}" data-ts="banked" data-d="${di}" data-r="${ri}" value="${r.banked || ""}"${dis}${UI.ts.bankAvail <= 0 && !r.banked ? ' title="No banked hours available"' : ""}></td>
       <td>${ri === 0 ? lv(m.leave.vac) : ""}</td><td>${ri === 0 ? lv(m.leave.sick) : ""}</td><td>${ri === 0 ? lv(m.leave.pers) : ""}</td><td>${ri === 0 ? lv(m.leave.other) : ""}</td>
       <td class="num" style="text-align:right;font-weight:600" id="${ri === 0 ? `dt-${di}` : ""}"></td>
-      <td style="text-align:right">${editable ? (ri === 0 ? `<button class="lnk" style="font-size:11px" data-a="tsAdd" data-d="${di}" title="Split this day across two departments or projects">+ split</button>` : `<button class="lnk" style="font-size:11px;color:var(--danger)" data-a="tsDel" data-d="${di}" data-r="${ri}">remove</button>`) : ""}</td></tr>`;
+      <td style="text-align:right">${editable ? (ri === 0 ? `<button class="lnk" style="font-size:11px" data-a="tsAdd" data-d="${di}" title="Split this day across two departments">+ split</button>` : `<button class="lnk" style="font-size:11px;color:var(--danger)" data-a="tsDel" data-d="${di}" data-r="${ri}">remove</button>`) : ""}</td></tr>`;
     });
+    rows += `<tr class="tserr" id="tserr-${di}" hidden><td colspan="12" role="alert"></td></tr>`;
   });
   rows += totalsRow(UI.ts.weekBreak > 0 ? "w2" : "w1", UI.ts.weekBreak > 0 ? "Week 2 total" : "Week total");
   const prev = addDays(start, -1), next = addDays(end, 1);
@@ -137,9 +140,9 @@ function vMyTime(q) {
   return ph("My Timesheet", "Enter your hours for each day, then press Send for approval. Approved time off and stat holidays fill in by themselves.",
     `<div style="display:inline-flex;align-items:center;border:1px solid var(--input);border-radius:8px;background:var(--card)"><button class="lnk" style="padding:6px 12px" data-go="/me/time?period=${prev}" aria-label="Previous period">‹</button><span style="font-weight:600;font-size:13px;padding:0 4px">${periodLabel(start, end)}</span><button class="lnk" style="padding:6px 12px" data-go="/me/time?period=${next}" aria-label="Next period">›</button></div>${badge(status)}${editable ? `<button class="btn pri" data-a="tsSave" data-submit="1">Send for approval</button>` : ""}`)
     + flashHtml() + note
-    + `<section class="card" id="tsg"><div class="tw"><table class="tsg"><thead><tr><th>DATE</th><th>DAY</th><th style="text-align:left">DEPARTMENT / PROJECT</th><th>WORKED</th><th>STAT</th><th title="Overtime hours kept as time off instead of being paid">BANKED OT</th><th>VACATION</th><th>SICK</th><th>PERSONAL</th><th>OTHER</th><th style="text-align:right">DAY TOTAL</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    + `<div class="msg err" id="ts-bk-msg" role="alert" hidden></div><section class="card" id="tsg"><div class="tw"><table class="tsg"><thead><tr><th>DATE</th><th>DAY</th><th style="text-align:left">DEPARTMENT</th><th>WORKED</th><th>STAT</th><th title="Banked overtime you use for a day — paid from your banked balance. Regular plus banked can't go over ${BANKED_DAY_MAX} h in a day.">BANKED OT<div id="ts-bk-left" class="bkleft"></div></th><th>VACATION</th><th>SICK</th><th>PERSONAL</th><th>OTHER</th><th style="text-align:right">DAY TOTAL</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
       <div class="legend"><span><span class="sw" style="background:var(--leave)"></span>filled from approved time off — not typed</span><span><span class="sw" style="border:1.5px dashed var(--stat-border);background:var(--stat-bg)"></span>stat holiday (auto)</span><span style="margin-left:auto;color:var(--fg)" id="ts-sum"></span></div>
-      ${editable ? `<div class="legend" style="background:var(--row-head)"><button class="btn" data-a="tsSave" data-submit="0">Save draft</button><button class="btn pri" data-a="tsSave" data-submit="1">Send for approval</button><span>Overtime is worked out automatically — over ${st.dailyOtThreshold} h in a day or ${st.weeklyOtThreshold} h in a week.</span></div>` : ""}</section>
+      ${editable ? `<div class="legend" style="background:var(--row-head)"><button class="btn" data-a="tsSave" data-submit="0">Save draft</button><button class="btn pri" data-a="tsSave" data-submit="1">Send for approval</button><span>Overtime is worked out automatically — over ${st.dailyOtThreshold} h in a day or ${st.weeklyOtThreshold} h in a week. Banked OT: you have <strong class="num" style="color:var(--fg)">${hrs(UI.ts.bankAvail)} h</strong> to use; regular plus banked stays within ${BANKED_DAY_MAX} h a day.</span></div>` : ""}</section>
       <p class="hint" style="margin-top:10px">Need time off instead? ${goLink("/me/time-off", "Ask for time off →")}</p>`;
 }
 function tsWeek(days, meta, rules) {
@@ -158,6 +161,22 @@ function tsWeek(days, meta, rules) {
 function tsTotals() {
   const T = UI.ts; if (!T?.meta) return;
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  // banked overtime: never more than the balance, and regular + banked within a full day
+  let bankedAll = 0, bad = false;
+  T.days.forEach((d, i) => {
+    const w = d.rows.reduce((s, r) => s + (Number(r.worked) || 0), 0), b = d.rows.reduce((s, r) => s + (Number(r.banked) || 0), 0);
+    bankedAll += b;
+    const over = b > 0 && w + b > (T.dayMax || 8) + 1e-9, er = document.getElementById(`tserr-${i}`);
+    document.querySelectorAll(`[data-ts="banked"][data-d="${i}"]`).forEach((el) => { el.classList.toggle("bad", over); el.setAttribute("aria-invalid", over ? "true" : "false"); });
+    if (er) { er.hidden = !over; er.firstElementChild.textContent = over ? `${dShort(T.meta[i].date)}: regular plus banked hours can't go over ${T.dayMax || 8} in a day. With ${w.toFixed(2)} regular hours you can use at most ${Math.max(0, (T.dayMax || 8) - w).toFixed(2)} banked.` : ""; }
+    if (over) bad = true;
+  });
+  const left = (T.bankAvail || 0) - bankedAll, lel = document.getElementById("ts-bk-left");
+  if (lel) { lel.textContent = left < -1e-9 ? `${(-left).toFixed(2)} h over` : `${left.toFixed(2)} h left`; lel.classList.toggle("bad", left < -1e-9); lel.title = `Available ${(T.bankAvail || 0).toFixed(2)} h · used on this timesheet ${bankedAll.toFixed(2)} h`; }
+  if (left < -1e-9) { bad = true; document.querySelectorAll('[data-ts="banked"]').forEach((el) => { if (Number(el.value) > 0) { el.classList.add("bad"); el.setAttribute("aria-invalid", "true"); } }); }
+  const bkMsg = document.getElementById("ts-bk-msg");
+  if (bkMsg) { bkMsg.hidden = !(left < -1e-9); bkMsg.textContent = left < -1e-9 ? `Banked OT can't go above your available balance: you have ${(T.bankAvail || 0).toFixed(2)} h and this timesheet uses ${bankedAll.toFixed(2)} h.` : ""; }
+  T.invalid = bad;
   T.days.forEach((d, i) => { const m = T.meta[i]; const tot = d.rows.reduce((s, r) => s + (Number(r.worked) || 0) + (Number(r.banked) || 0), 0) + (m.stat?.hours || 0) + m.leave.vac + m.leave.sick + m.leave.pers + m.leave.other; set(`dt-${i}`, tot.toFixed(2)); });
   const wb = T.weekBreak;
   const w1 = tsWeek(wb > 0 ? T.days.slice(0, wb) : T.days, wb > 0 ? T.meta.slice(0, wb) : T.meta, T.rules);

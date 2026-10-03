@@ -103,18 +103,26 @@ function vOrgChart() {
 
 /* ---------------- My profile ---------------- */
 const PROFILE_PILLS = [["/me/profile", "My profile"], ["/me/profile/benefits", "Benefits"], ["/me/profile/events", "Events"]];
-const PROFILE_TABS = [["overview", "Overview"], ["journey", "Journey"], ["employment", "Employment"], ["departments", "Departments"], ["approvals", "Approvals"], ["time", "Time & attendance"], ["leave", "Leave"], ["documents", "Documents"], ["onboarding", "Onboarding"], ["history", "History"]];
 const kvRow = (k, v) => `<div class="prow"><span>${esc(k)}</span><span>${v ?? "—"}</span></div>`;
 const glance = (l, v, h = "") => `<div class="glance"><small>${esc(l.toUpperCase())}</small><b>${esc(v)}</b>${h ? `<span class="hint">${esc(h)}</span>` : ""}</div>`;
-function vProfile() {
-  const head = pillNav("My profile", PROFILE_PILLS, "/me/profile") + bigTitle("My profile", "Your own employee record — the same one HR keeps, seen from your side. Everyone in the organization has this.");
+/** My Profile is one row of tabs (Overview · Employment · Pay & benefits · Time & time off · Reviews · Certificates · Documents);
+    each profile page shows the record's parts that belong under it */
+const PROFILE_PAGES = {
+  overview: ["My profile", "Your own employee record — the same one HR keeps, seen from your side. Everyone in the organization has this.", ["overview"]],
+  employment: ["Employment", "Your job, pay, the departments you work in, your journey here, onboarding and the history of your record.", ["employment", "departments", "journey", "onboarding", "history"]],
+  time: ["Time & time off", "Your timesheets, time-off balances (banked overtime included) and requests, and the approvals you asked for or decided.", ["time", "leave", "approvals"]],
+  documents: ["Documents", "Documents and files kept on your record.", ["documents"]],
+};
+function vProfile(q, page) {
+  const [title, sub, keys] = PROFILE_PAGES[page] || PROFILE_PAGES.overview;
+  const head = pillNav("My profile", PROFILE_PILLS, "/me/profile") + bigTitle(title, sub);
   const e = A.employee;
   if (!e) return head + card("", empty("This account isn't linked to an employee"));
-  const tab = UI.tabs.prof || "overview";
-  const bar = `<div class="ptabs">${PROFILE_TABS.map(([k, l]) => `<button class="${tab === k ? "on" : ""}" data-a="tab" data-k="prof" data-v="${k}">${l}</button>`).join("")}</div>`;
   const bal = leaveBalances(e.id);
   const left = (code) => { const b = bal.find((x) => x.lt.code === code); return b ? b.ent - b.used : 0; };
   const dep = byId(S.departments, e.departmentId), mgr = e.managerId ? byId(S.employees, e.managerId) : null, comp = latestComp(e.id);
+  const parts = [];
+  for (const tab of keys) {
   let body = "";
   if (tab === "overview") {
     body = `<div class="grid g2"><section class="card pcard"><h2>${esc(empName(e))}</h2>${kvRow("Position", esc(byId(S.positions, e.positionId)?.title || "—"))}${kvRow("Department", dep ? `${esc(dep.code)} — ${esc(dep.name)}` : "—")}${kvRow("Reports to", mgr ? esc(empName(mgr)) : "—")}${kvRow("Employee number", esc(e.employeeNumber))}${kvRow("Company", esc(co(e.companyId).displayName))}${kvRow("Work email", esc(e.workEmail || "—"))}${kvRow("Work phone", esc(e.phone || "—"))}${kvRow("Status", badge(e.status))}<p class="hint" style="margin-top:12px">Your own record. HR and Finance keep it up to date — tell them if something is wrong.</p></section>
@@ -146,7 +154,7 @@ function vProfile() {
     body = cardFlush("Timesheets", table(["Period", ">Worked", ">Overtime", ">Leave", ">Stat", "Status", "Approved by"], sheets.map((s) => `<tr><td>${esc(periodLabel(s.periodStart, s.periodEnd))}</td>${td(hrs(s.workedHours), 1)}${td(hrs((s.overtimeHours || 0) + (s.doubleOtHours || 0)), 1)}${td(hrs(s.vacationHours + s.sickHours + s.personalHours + s.otherLeaveHours), 1)}${td(hrs(s.statHours), 1)}<td>${badge(s.status)}</td><td>${esc(s.approvedByName || "—")}</td></tr>`), "No timesheets yet."), `<button class="lnk" style="font-size:12px" data-go="/me/time">Open My Timesheet →</button>`);
   } else if (tab === "leave") {
     const reqs = S.leaveRequests.filter((r) => r.employeeId === e.id).sort((a, b) => (a.startDate < b.startDate ? 1 : -1));
-    body = `<div class="grid g2"><section class="card pcard"><h2>Balances · 2026</h2>${bal.filter((b) => b.has).map((b) => `<div class="dline"><div class="form-row" style="justify-content:space-between"><b><span class="sq" style="background:${esc(b.lt.color || "#17566b")}"></span> ${esc(b.lt.name)}</b><span class="num"><strong>${hrs(b.ent - b.used)} h</strong></span></div><span class="hint">${hrs(b.used)} used of ${hrs(b.ent)}</span></div>`).join("")}<button class="btn pri" style="margin-top:12px;border-radius:999px" data-go="/me/time-off">Request time off</button></section>
+    body = `<div class="grid g2"><section class="card pcard"><h2>Balances · 2026</h2>${bal.filter((b) => b.has || b.lt.code === "BANKED_OT").map((b) => `<div class="dline"><div class="form-row" style="justify-content:space-between"><b><span class="sq" style="background:${esc(b.lt.color || "#17566b")}"></span> ${esc(b.lt.name)}</b><span class="num"><strong>${hrs(b.ent - b.used)} h</strong></span></div><span class="hint">${hrs(b.used)} used of ${hrs(b.ent)}</span></div>`).join("")}<button class="btn pri" style="margin-top:12px;border-radius:999px" data-go="/me/time-off">Request time off</button></section>
       <section class="card pcard"><h2>Requests</h2>${reqs.map((r) => `<div class="row" style="padding:9px 0;border-top:1px solid var(--border)"><div class="grow"><div style="font-size:13.5px;font-weight:500">${esc(dLong(r.startDate))}${r.endDate !== r.startDate ? ` → ${esc(dLong(r.endDate))}` : ""}</div><div class="hint">${esc(byId(S.leaveTypes, r.leaveTypeId)?.name)} · ${hrs(r.totalHours)} h</div>${fileChips("LeaveRequest", r.id)}</div>${badge(r.status)}</div>`).join("") || empty("No time off requested yet")}</section></div>`;
   } else if (tab === "documents") {
     const docs = S.documents.filter((d) => d.employeeId === e.id);
@@ -160,7 +168,9 @@ function vProfile() {
     const rows = S.audit.filter((x) => (x.entityType === "Employee" && x.entityId === e.id) || x.actorName === A.user.displayName).slice(-40).reverse();
     body = `<section class="card pcard"><h2>History</h2><p class="hint">Changes to your record and things you did here, newest first.</p>${rows.map((x) => `<div style="padding:9px 0;border-top:1px solid var(--border);font-size:13.5px">${esc(x.summary)}<div class="hint">${esc(dTime(x.at))} · ${esc(x.actorName)}</div></div>`).join("") || empty("Nothing recorded yet")}</section>`;
   }
-  return head + bar + body;
+  parts.push(body);
+  }
+  return head + parts.join('<div style="height:14px"></div>');
 }
 function vBenefits() {
   const head = pillNav("My profile", PROFILE_PILLS, "/me/profile/benefits") + bigTitle("Benefits", "The group plans you're enrolled in, what comes off each pay, and what your employer adds on top.");

@@ -106,7 +106,7 @@ function toast(title, body, kind = "") {
 }
 
 /* ---------------- routes ---------------- */
-route("/me", null, () => { UI.route = "/dashboard"; return vDashboard(); }); route("/me/profile", null, vProfile); route("/me/profile/benefits", null, vBenefits); route("/me/profile/events", null, vEvents);
+route("/me", null, () => { UI.route = "/dashboard"; return vDashboard(); }); route("/me/profile", null, (q) => vProfile(q, "overview")); route("/me/profile/employment", null, (q) => vProfile(q, "employment")); route("/me/profile/time", null, (q) => vProfile(q, "time")); route("/me/profile/documents", null, (q) => vProfile(q, "documents")); route("/me/profile/benefits", null, vBenefits); route("/me/profile/events", null, vEvents);
 route("/people/directory", () => !!A.employee || can(A, "hr.employees.view"), vDirectory); route("/people/org-chart", () => !!A.employee || can(A, "hr.employees.view"), vOrgChart);
 route("/payroll/timesheet-status", () => can(A, "payroll.view") || can(A, "hr.employees.edit"), vTimesheetStatus); route("/me/time", null, vMyTime); route("/me/requests", null, vMyRequests); route("/me/time-off", null, vMyTimeOff); route("/me/pay", null, vMyPay);
 route("/me/pay/:id", null, (q, id) => vStatement(id, "/me/pay")); route("/me/requests/new/:type", null, vNewRequest); route("/me/requests/:id", null, vRequestDetail);
@@ -206,7 +206,7 @@ const ACTIONS = {
   emailOpen(el) { UI.emailOpen = UI.emailOpen === el.dataset.id ? null : el.dataset.id; safeRender(); },
   tsAdd(el) { UI.ts.days[+el.dataset.d].rows.push({ dep: A.employee?.departmentId || "", prj: "", worked: 0, banked: 0 }); UI.dirty = true; safeRender(); },
   tsDel(el) { UI.ts.days[+el.dataset.d].rows.splice(+el.dataset.r, 1); UI.dirty = true; safeRender(); },
-  tsSave(el) { const submit = el.dataset.submit === "1"; const entries = UI.ts.days.flatMap((d) => d.rows.filter((r) => (Number(r.worked) || 0) > 0 || (Number(r.banked) || 0) > 0).map((r) => ({ date: d.date, departmentId: r.dep || null, projectId: r.prj || null, worked: Number(r.worked) || 0, banked: Number(r.banked) || 0 }))); if (act("timesheet.save", { periodStart: UI.ts.start, submit, entries }, submit ? "Sent to your manager for approval." : "Draft saved.")) { UI.ts = null; safeRender(); } },
+  tsSave(el) { if (typeof tsTotals === "function") tsTotals(); if (UI.ts?.invalid) { toast("Check your banked hours", "Fix the banked overtime marked in red before saving.", "err"); return; } const submit = el.dataset.submit === "1"; const entries = UI.ts.days.flatMap((d) => d.rows.filter((r) => (Number(r.worked) || 0) > 0 || (Number(r.banked) || 0) > 0).map((r) => ({ date: d.date, departmentId: r.dep || null, projectId: r.prj || null, worked: Number(r.worked) || 0, banked: Number(r.banked) || 0 }))); if (act("timesheet.save", { periodStart: UI.ts.start, submit, entries }, submit ? "Sent to your manager for approval." : "Draft saved.")) { UI.ts = null; safeRender(); } },
   runCalc(el) { act("payroll.calculate", { runId: el.dataset.id }, "Calculated."); },
   runSend(el) { act("payroll.send", { runId: el.dataset.id }, "Sent to the Executive Director for approval."); },
   runPost(el) { act("payroll.post", { runId: el.dataset.id }, "Posted to the ledger. Statements are out."); },

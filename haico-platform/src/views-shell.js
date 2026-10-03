@@ -1,5 +1,5 @@
 /* ==========================================================================
-   views-shell.js — the look switcher (5 looks x light/dark), approval
+   views-shell.js — the look switcher (five looks — Haida Gwaii, Coastal, Cedar Bark, Spruce, Slate — x light/dark, chosen in a popup), approval
    categories shared by Home and Approvals, and the read-only timesheet view
    (/hr/timesheets/:id) with Approve / Send back for whoever may decide it.
    ========================================================================== */
@@ -7,18 +7,21 @@
 /* ---------------- looks (A's five looks and tokens; chooser screen laid out like B's) ---------------- */
 /** swatches are the light-mode background · sidebar accent · action colours, shown in the menu only */
 const LOOKS = [
-  ["cedar", "Cedar Classic", "Warm sand, serif headings", ["#f7f3ec", "#a03c28", "#3e6b34"]],
-  ["harbour", "Harbour Slate", "Cool slate and teal", ["#f4f6f7", "#17566b", "#4f95ab"]],
-  ["navy", "Boardroom Navy", "White and navy, crisp", ["#ffffff", "#1f3a75", "#5d7fc4"]],
-  ["moss", "Moss & Stone", "Stone greys and moss green", ["#f2f1ec", "#3f6b35", "#9bb87d"]],
-  ["graphite", "Graphite Compact", "Neutral greys, dense tables", ["#f1f1f2", "#1c1c1e", "#a03c28"]],
+  ["cedar", "Haida Gwaii", "Sand and cedar — the original look.", ["#f5efe3", "#a03c28", "#17566b"]],
+  ["harbour", "Coastal", "Cool sea-mist greys with ocean blue.", ["#f4f6f7", "#17566b", "#4f95ab"]],
+  ["navy", "Cedar Bark", "The original, with a dark cedar-bark sidebar.", ["#f5efe3", "#2e1e13", "#a03c28"]],
+  ["moss", "Spruce", "Soft forest greens, calm and bright.", ["#f2f1ec", "#3f6b35", "#9bb87d"]],
+  ["graphite", "Slate", "Neutral greys, a charcoal sidebar and a tighter layout.", ["#f1f1f2", "#2b2b30", "#a03c28"]],
 ];
-function lookPanel() {
-  const cur = LOOKS.some((l) => l[0] === UI.look) ? UI.look : "cedar";
-  const mode = UI.theme === "dark" || UI.theme === "light" ? UI.theme : "system";
-  return `<div class="pop lookpop" role="menu" aria-label="Look"><h4>Look</h4>${LOOKS.map(([id, label, hint, sw]) => `<button role="menuitemradio" aria-checked="${id === cur}" class="${id === cur ? "on" : ""}" data-a="setLook" data-v="${id}"><span class="sws" aria-hidden="true">${sw.map((c) => `<i style="background:${c}"></i>`).join("")}</span><span style="min-width:0"><b>${esc(label)}</b><small>${esc(hint)}</small></span>${id === cur ? icon("tick") : ""}</button>`).join("")}
-    <div class="modes" role="group" aria-label="Light or dark">${[["light", "Light"], ["dark", "Dark"], ["system", "Device"]].map(([k, l]) => `<button class="${mode === k ? "on" : ""}" data-a="setMode" data-v="${k}" aria-pressed="${mode === k}">${l}</button>`).join("")}</div>
-    <div class="modes" style="border-top:0;padding-top:2px"><button data-go="/me/looks" style="justify-content:center">See all looks →</button></div></div>`;
+const LOOK_MODES = [["light", "Light"], ["dark", "Dark"], ["system", "Follow my device"]];
+const lookMode = () => (UI.theme === "dark" || UI.theme === "light" ? UI.theme : "system");
+const lookSeg = () => `<div class="seg lookseg" role="group" aria-label="Light or dark">${LOOK_MODES.map(([k, l]) => `<button class="${lookMode() === k ? "on" : ""}" data-a="setMode" data-v="${k}" aria-pressed="${lookMode() === k}">${l}</button>`).join("")}</div>`;
+/** the "Choose a look" popup (top-bar palette button): preview cards, light / dark / device, Done */
+function looksModalHtml() {
+  const dark = lookIsDark();
+  return `<div class="lookm-h"><div><h3>Choose a look</h3><p class="hint" style="margin:2px 0 0;font-size:13px">Five styles close to the original. Your pick is saved on this device, for you only — everyone else keeps theirs.</p></div><button class="iconbtn" data-a="closeModal" aria-label="Close">✕</button></div>
+    <div class="looks">${LOOKS.map((l) => lookCard(l, dark)).join("")}</div>
+    <div class="form-row" style="justify-content:space-between;margin-top:16px;flex-wrap:wrap">${lookSeg()}<button class="btn pri" data-a="closeModal">Done</button></div>`;
 }
 /** the look's own tokens, read from the stylesheet (so the preview cards use exactly A's design tokens, never a second copy) */
 function lookTokens(id, dark) {
@@ -45,16 +48,16 @@ function lookCard(l, dark) {
 }
 /** /me/looks — the five looks as preview cards, light / dark / device underneath (B's chooser screen, A's looks) */
 function vLooks() {
-  const dark = lookIsDark(), mode = UI.theme === "dark" || UI.theme === "light" ? UI.theme : "system";
-  return ph("Choose a look", "Five styles, each in light and dark. Your pick is saved on this device, for you only — everyone else keeps theirs.")
+  const dark = lookIsDark();
+  return ph("Choose a look", "Five styles close to the original. Your pick is saved on this device, for you only — everyone else keeps theirs.")
     + flashHtml()
     + card("", `<div class="looks">${LOOKS.map((l) => lookCard(l, dark)).join("")}</div>
-      <div class="form-row" style="justify-content:space-between;margin-top:16px;flex-wrap:wrap"><div class="seg" role="group" aria-label="Light or dark">${[["light", "Light"], ["dark", "Dark"], ["system", "Follow my device"]].map(([k, l]) => `<button class="${mode === k ? "on" : ""}" data-a="setMode" data-v="${k}" aria-pressed="${mode === k}">${l}</button>`).join("")}</div><span class="hint">The palette button in the top bar switches looks from any page.</span></div>`);
+      <div class="form-row" style="justify-content:space-between;margin-top:16px;flex-wrap:wrap">${lookSeg()}<span class="hint">The palette button in the top bar opens this from any page.</span></div>`);
 }
 route("/me/looks", null, vLooks);
 window.ACTIONS_EXT.push({
-  lookMenu() { UI.pop = UI.pop === "look" ? null : "look"; safeRender(); },
-  setLook(el) { UI.look = el.dataset.v; UI.pop = null; applyTheme(); savePrefs(); safeRender(); if (el.dataset.stay) toast("Look changed", `${LOOKS.find((l) => l[0] === UI.look)?.[1] || UI.look} — only on this device.`, "ok"); },
+  lookMenu() { UI.pop = null; UI.modal = "LOOKS"; UI.modalWide = false; safeRender(); },
+  setLook(el) { UI.look = el.dataset.v; UI.pop = null; applyTheme(); savePrefs(); safeRender(); if (el.dataset.stay && UI.modal !== "LOOKS") toast("Look changed", `${LOOKS.find((l) => l[0] === UI.look)?.[1] || UI.look} — only on this device.`, "ok"); },
   setMode(el) { UI.theme = el.dataset.v; applyTheme(); savePrefs(); safeRender(); },
 });
 

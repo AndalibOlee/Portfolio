@@ -10,7 +10,8 @@ function userLabel(u) {
 }
 const WAVE = `<svg class="wave" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65 L1000 120 L0 120 Z" fill="var(--wave-fill)"/><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65" fill="none" stroke="#e8352a" stroke-width="9" stroke-linecap="round"/></svg>`;
 function vLogin() {
-  const LOGIN_FIRST = ["u1", "u2", "u3", "u4", "u20", "u5", "u7", "u8", "u6"]; // the presentation order: Employee, Manager, HR, Finance, Payroll Administrator, Director (Executive Director), CEO, Taan GM (receives the goods), System Administrator — then everyone else A–Z
+  const LOGIN_FIRST = ["u1", "u11", "u2", "u4", "u3", "u20", "u8", "u5", "u7", "u6"]; // the review-route order (docs/HaiCo_Review_Route.pdf): Employee, Accountant, Manager, Finance Manager, HR Manager, Payroll, Company Admin, Director, CEO, System Administrator — then everyone else A–Z
+  const STEP = { u1: 1, u11: 2, u2: 3, u4: 4, u3: 5, u20: 6, u8: 7, u5: 8, u7: 8, u6: 9 };
   const users = S.users.filter((u) => u.isActive !== false).sort((a, b) => { const ia = LOGIN_FIRST.indexOf(a.id), ib = LOGIN_FIRST.indexOf(b.id); if (ia >= 0 || ib >= 0) return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); return a.displayName.localeCompare(b.displayName); });
   const demo = S.users.filter((u) => u.isDemoUser).sort((a, b) => a.demoLabel.localeCompare(b.demoLabel));
   const cos = [...S.companies].sort((a, b) => a.code.localeCompare(b.code));
@@ -23,7 +24,7 @@ function vLogin() {
       <h2>Sign in</h2><p class="muted" style="margin:4px 0 0">Use your HaiCo account</p>
       ${UI.loginError ? `<div class="msg err" style="margin-top:16px">Choose your name first.</div>` : ""}
       <form data-f="login" style="margin-top:22px;display:grid;gap:14px">
-        <div class="fld"><label for="lgUser">Who are you?</label><select class="in" id="lgUser" name="userId" required>${opt("", `Choose your name (${users.length} people)`, true)}${users.map((u) => opt(u.id, userLabel(u))).join("")}</select></div>
+        <div class="fld"><label for="lgUser">Who are you?</label><select class="in" id="lgUser" name="userId" required>${opt("", `Choose your name (${users.length} people)`, true)}${users.map((u) => opt(u.id, `${STEP[u.id] ? STEP[u.id] + ". " : ""}${userLabel(u)}`)).join("")}</select></div>
         <button class="btn pri" style="height:44px;font-size:15px">OK</button>
       </form>
       <div class="or">OR EXPLORE WITH A DEMO ROLE</div>

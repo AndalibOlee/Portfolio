@@ -10,7 +10,7 @@ function userLabel(u) {
 }
 const WAVE = `<svg class="wave" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65 L1000 120 L0 120 Z" fill="var(--wave-fill)"/><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65" fill="none" stroke="#e8352a" stroke-width="9" stroke-linecap="round"/></svg>`;
 function vLogin() {
-  const LOGIN_FIRST = ["u1", "u2", "u3", "u4", "u20", "u7", "u8", "u6"]; // the presentation order: Employee, Manager, HR, Finance, Payroll Administrator, CEO, Taan GM (receives the goods), System Administrator — then everyone else A–Z
+  const LOGIN_FIRST = ["u1", "u2", "u3", "u4", "u20", "u5", "u7", "u8", "u6"]; // the presentation order: Employee, Manager, HR, Finance, Payroll Administrator, Director (Executive Director), CEO, Taan GM (receives the goods), System Administrator — then everyone else A–Z
   const users = S.users.filter((u) => u.isActive !== false).sort((a, b) => { const ia = LOGIN_FIRST.indexOf(a.id), ib = LOGIN_FIRST.indexOf(b.id); if (ia >= 0 || ib >= 0) return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib); return a.displayName.localeCompare(b.displayName); });
   const demo = S.users.filter((u) => u.isDemoUser).sort((a, b) => a.demoLabel.localeCompare(b.demoLabel));
   const cos = [...S.companies].sort((a, b) => a.code.localeCompare(b.code));

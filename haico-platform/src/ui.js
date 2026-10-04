@@ -126,9 +126,8 @@ const SECTIONS = [
   { key: "my-requests", label: "My Requests & Expenses", tabs: [{ href: "/me/requests", label: "My Requests & Expenses", match: ["/me/expenses"], perm: "@employee" }] },
   { key: "my-tasks", label: "My Tasks", tabs: [{ href: "/me/tasks", label: "My Tasks", perm: "@employee" }] },
   { key: "my-profile", label: "My Profile", tabs: [
-    { href: "/me/profile", label: "Overview", perm: "@employee" }, { href: "/me/profile/employment", label: "Employment", perm: "@employee" }, { href: "/me/profile/benefits", label: "Pay & benefits", perm: "@employee" },
-    { href: "/me/profile/time", label: "Time & time off", perm: "@employee" }, { href: "/me/reviews", label: "Reviews", perm: "@employee" }, { href: "/me/certifications", label: "Certificates", perm: "@employee" },
-    { href: "/me/profile/documents", label: "Documents", perm: "@employee" }] },
+    { href: "/me/profile", label: "Overview", perm: "@employee" }, { href: "/me/profile/employment", label: "Employment", perm: "@employee" }, { href: "/me/profile/benefits", label: "Pension & Benefits", perm: "@employee" },
+    { href: "/me/reviews", label: "Reviews", perm: "@employee" }, { href: "/me/certifications", label: "Certificates", perm: "@employee" }] },
   { key: "my-pay", label: "My Pay", tabs: [{ href: "/me/pay", label: "My Pay", perm: "@employee" }] },
   { key: "my-documents", label: "My Documents", tabs: [{ href: "/me/documents", label: "My Documents", perm: "@employee" }] },
   { key: "team", label: "My Team", tabs: [
@@ -136,11 +135,12 @@ const SECTIONS = [
     { href: "/hr/timesheets", label: "Timesheets", perm: () => can(A, "timesheets.view") && !attendanceAdmin() },
     { href: "/hr/leave", label: "Time off", perm: () => can(A, "leave.view") && !attendanceAdmin() },
     { href: "/hr/requests", label: "Requests", perm: () => seesMoneyRequests() && !can(A, "ap.view") },
-    { href: "/finance/expenses", label: "Expense claims", perm: () => can(A, "expenses.view") && can(A, "expenses.approve") && !can(A, "ap.view") }] },
+    { href: "/finance/expenses", label: "Expense claims", perm: () => can(A, "expenses.view") && can(A, "expenses.approve") && !can(A, "ap.view") },
+    { href: "/team/hiring", label: "Create New Hiring", perm: () => typeof hireCanRequest === "function" && hireCanRequest() }] },
   { key: "people", label: "People", tabs: [
     { href: "/hr/employees", label: "Employees", perm: "hr.employees.view" }, { href: "/people/directory", label: "Directory", perm: ["@employee", "hr.employees.view"] }, { href: "/people/org-chart", label: "Org chart", perm: ["@employee", "hr.employees.view"] },
     { href: "/hr/departments", label: "Departments", perm: "hr.org.manage" }, { href: "/hr/onboarding", label: "Onboarding", perm: "hr.onboarding.manage" }, { href: "/hr/hiring", label: "Hiring", perm: "hr.employees.edit" },
-    { href: "/hr/certifications", label: "Certificates", perm: "hr.employees.view" }] },
+    { href: "/hr/certifications", label: "Certificates", perm: "hr.employees.view" }, { href: "/hr/hiring-requests", label: "Hiring requests", perm: () => typeof hireIsHr === "function" && hireIsHr() }] },
   { key: "hr-time", label: "Time & Attendance", tabs: [
     { href: "/hr/timesheets", label: "Timesheets", perm: () => can(A, "timesheets.view") && attendanceAdmin() }, { href: "/payroll/timesheet-status", label: "By pay period", perm: () => (can(A, "payroll.view") || can(A, "hr.employees.edit")) && attendanceAdmin() },
     { href: "/hr/leave", label: "Time off", perm: () => can(A, "leave.view") && attendanceAdmin() }] },

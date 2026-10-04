@@ -87,8 +87,9 @@ function tsApply() {
   if (TS.col >= heads.length || (TS.col >= 0 && !heads[TS.col])) TS.col = -1;
   const title = (document.querySelector(".content .ph h1, .content h1")?.textContent || "this list").trim();
   const bar = document.createElement("div");
-  const anchor = found.main.closest(".tw") || found.main;
-  const inCard = !!anchor.closest(".card");
+  const lead = path === "/me/documents" ? found.tables[0] : found.main; // My Documents: the bar goes above the first list, searching all three
+  const anchor = lead.closest(".card") && path === "/me/documents" ? lead.closest(".card") : lead.closest(".tw") || lead;
+  const inCard = anchor.classList.contains("card") ? false : !!anchor.closest(".card");
   bar.className = "tsearch" + (inCard ? "" : " bare");
   bar.innerHTML = `<label class="ts-in">${icon("search")}<input id="tsQ" type="search" autocomplete="off" placeholder="Search ${esc(title.toLowerCase())}…" aria-label="Search this table" value="${esc(TS.q)}"><button type="button" class="ts-x" id="tsX" aria-label="Clear search"${TS.q ? "" : " hidden"}>✕</button></label>
     <select id="tsCol" aria-label="Search in"><option value="-1">All columns</option>${heads.map((h, i) => (h ? `<option value="${i}"${i === TS.col ? " selected" : ""}>${esc(h)}</option>` : "")).join("")}</select><span class="ts-n" id="tsN" aria-live="polite"></span>`;

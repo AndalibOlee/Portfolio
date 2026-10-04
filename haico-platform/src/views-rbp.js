@@ -234,7 +234,7 @@ hr3Route("/hr/pension", () => rbpView(), vPension);
   hr2CanSeeReview = function (r, auth = A) { if (_canSee(r, auth)) return true; const e = hr2Emp(r.employeeId); return rbpFinance(auth) && (!e || canSee(auth, e.companyId)); };
 }
 
-/** the person's own pension, under My Profile › Pay & benefits */
+/** the person's own pension, under My Profile › Pension & Benefits */
 function penMineHtml() {
   const e = A.employee, m = e && (S.pensionMembers || []).find((x) => x.employeeId === e.id), plan = penPlan();
   if (!e || !plan) return "";

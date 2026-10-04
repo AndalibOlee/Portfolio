@@ -76,7 +76,7 @@ function vAP(q) {
   const list = all.filter(groups[cur]).sort((a, b) => (a.dueDate < b.dueDate ? -1 : 1));
   const batches = inScope(S.apBatches).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)).slice(0, 8);
   const acts = [can(A, "ap.create") && `<button class="btn" data-a="newBill">New bill</button>`, can(A, "ap.create") && `<button class="btn" data-go="/finance/ap/batch">Batch entry</button>`, can(A, "ap.pay") && `<button class="btn pri" data-go="/finance/ap/pay">Payment batch</button>`].filter(Boolean).join("");
-  const drop = can(A, "ap.create") ? `<div class="drop" id="billDrop" style="margin-bottom:14px">Drag a vendor's PDF or photo anywhere on this box to start a new bill with it attached — or <button type="button" class="lnk" data-a="newBill">enter one by hand</button>.<input type="file" id="billFile" accept="application/pdf,image/*" hidden></div>` : "";
+  const drop = can(A, "ap.create") ? `<div class="drop" id="billDrop" style="margin-bottom:14px">Drag a vendor's PDF or photo (one or more) anywhere on this box to start a new bill with them attached — or <button type="button" class="lnk" data-a="newBill">enter one by hand</button>.<input type="file" id="billFile" accept="application/pdf,image/jpeg,image/png" multiple hidden></div>` : "";
   return ph("Bills to Pay · AP", "Vendor bills: enter, approve, pay. Approval posts the bill to the ledger; payment clears it from the bank.", acts) + flashHtml() + drop
     + tabs("ap", [["OPEN", "To pay", all.filter(groups.OPEN).length], ["WAITING", "In approval", all.filter(groups.WAITING).length], ["PAID", "Paid", all.filter(groups.PAID).length], ["ALL", "All", all.length]], cur)
     + cardFlush("", table(["Bill", "Vendor", "Company", "Due", ">Total", ">Still owed", "Status"], list.map((i) => `<tr class="click" data-go="/finance/ap/${i.id}"><td class="mono"><strong>${esc(i.invoiceNumber)}</strong>${i.attachments?.length ? " 📎" : ""}${i.batchId ? `<div class="hint">${esc(byId(S.apBatches, i.batchId)?.batchNumber || "")}</div>` : ""}</td><td>${esc(vendorName(i.vendorId))}<div class="hint">${esc(i.description)}</div></td><td>${coTag(i.companyId)}</td><td class="${i.dueDate < todayStr() && groups.OPEN(i) ? "" : ""}">${dLong(i.dueDate)}${i.dueDate < todayStr() && groups.OPEN(i) ? ` <span class="badge tone-red">overdue</span>` : ""}</td>${td(money(i.totalCents), 1)}${td(money(dueOf(i)), 1)}<td>${badge(i.status)}</td></tr>`), "No bills here."))
@@ -104,11 +104,12 @@ function vBill(q, id) {
 function billModal(draft) {
   const vendors = inScope(S.vendors).sort((a, b) => a.name.localeCompare(b.name));
   const d = draft || {};
-  return `<h3>New vendor bill</h3><p class="hint" style="margin:0 0 12px">${d.attachment ? `📎 ${esc(d.attachment.name)} attached (${Math.round(d.attachment.size / 1024)} KB)` : "Enter the bill as the vendor wrote it."}</p>
+  return `<h3>New vendor bill</h3><p class="hint" style="margin:0 0 12px">Enter the bill as the vendor wrote it, and attach the vendor's invoice.</p>
     <form data-f="bill" class="form-grid"><div class="fld" style="grid-column:1/-1"><label for="bVendor">Vendor</label><select class="in" id="bVendor" name="vendorId">${vendors.map((v) => opt(v.id, `${v.name} · ${co(v.companyId).displayName}`)).join("")}</select></div>
     <div class="fld"><label for="bNum">Invoice number</label><input class="in" id="bNum" name="invoiceNumber" required value="${esc(d.invoiceNumber || "")}"></div><div class="fld"><label for="bDate">Bill date</label><input class="in" type="date" id="bDate" name="invoiceDate" value="${todayStr()}"></div>
     <div class="fld"><label for="bAmt">Amount before tax</label><input class="in num" id="bAmt" name="subtotal" inputmode="decimal" placeholder="0.00" required></div><div class="fld"><label for="bGst">GST</label><select class="in" id="bGst" name="gst">${opt("1", "Add 5% GST", true)}${opt("", "No GST")}</select></div>
     <div class="fld" style="grid-column:1/-1"><label for="bDesc">What is it for?</label><input class="in" id="bDesc" name="description" placeholder="e.g. Diesel — harvest fleet"></div>
+    ${fileDrop("billNew", "Attachments", "The vendor's invoice, quotes or photos — PDF, JPG or PNG, one or more")}
     <div class="form-row" style="grid-column:1/-1;justify-content:flex-end"><button type="button" class="btn" data-a="closeModal">Cancel</button><button class="btn" name="submit" value="0">Save draft</button><button class="btn pri" name="submit" value="1">Send for approval</button></div></form>`;
 }
 function payModal(inv) {
@@ -131,7 +132,7 @@ function vAPBatch() {
       <td><select class="in" style="min-width:170px" data-apb="accountNumber" data-i="${i}" aria-label="Account ${i + 1}">${accts.map((a) => opt(a.number, `${a.number} — ${a.name}`, a.number === acct)).join("")}</select></td>
       <td><input class="in num" style="text-align:right;min-width:100px" inputmode="decimal" data-apb="subtotal" data-i="${i}" value="${esc(r.subtotal || "")}" aria-label="Amount ${i + 1}"></td>
       <td style="text-align:center"><input type="checkbox" data-apb="gst" data-i="${i}" ${r.gst === false ? "" : "checked"} aria-label="GST ${i + 1}"></td>
-      <td>${UI.apb.rows.length > 1 ? `<button type="button" class="lnk" style="color:var(--danger);font-size:12px" data-a="apbDel" data-i="${i}">remove</button>` : ""}</td></tr>`; }).join("")}
+      <td>${UI.apb.rows.length > 1 ? `<button type="button" class="lnk" style="color:var(--danger);font-size:12px" data-a="apbDel" data-i="${i}">remove</button>` : ""}</td></tr>${apbFilesRow(r, i)}`; }).join("")}
       <tr class="tot"><td colspan="6"><button type="button" class="lnk" data-a="apbAdd">+ add a row</button></td><td class="r num">${amount(tot)}</td><td colspan="2" class="hint">incl. GST</td></tr></tbody></table></div>
       <div class="form-row" style="margin-top:12px"><button class="btn" name="submit" value="0">Save batch as drafts</button><button class="btn pri" name="submit" value="1">Create and send all for approval</button><span class="hint">${esc(approvalSentence("AP_INVOICE"))}</span></div></form>`);
 }

@@ -167,7 +167,7 @@ injectCss(`
 const PROFILE_PILLS = [["/me/profile", "My profile"], ["/me/profile/benefits", "Benefits"], ["/me/profile/events", "Events"]];
 const kvRow = (k, v) => `<div class="prow"><span>${esc(k)}</span><span>${v ?? "—"}</span></div>`;
 const glance = (l, v, h = "") => `<div class="glance"><small>${esc(l.toUpperCase())}</small><b>${esc(v)}</b>${h ? `<span class="hint">${esc(h)}</span>` : ""}</div>`;
-/** My Profile is one row of tabs (Overview · Employment · Pay & benefits · Time & time off · Reviews · Certificates · Documents);
+/** My Profile is one row of tabs (Overview · Employment · Pension & Benefits · Reviews · Certificates);
     each profile page shows the record's parts that belong under it */
 const PROFILE_PAGES = {
   overview: ["My profile", "Your own employee record — the same one HR keeps, seen from your side. Everyone in the organization has this.", ["overview"]],
@@ -235,7 +235,7 @@ function vProfile(q, page) {
   return head + parts.join('<div style="height:14px"></div>');
 }
 function vBenefits() {
-  const head = pillNav("My profile", PROFILE_PILLS, "/me/profile/benefits") + bigTitle("Benefits", "The group plans you're enrolled in, what comes off each pay, and what your employer adds on top.");
+  const head = pillNav("My profile", PROFILE_PILLS, "/me/profile/benefits") + bigTitle("Pension & Benefits", "The group plans you're enrolled in, what comes off each pay, and what your employer adds on top.");
   const e = A.employee;
   if (!e) return head + card("", empty("This account isn't linked to an employee"));
   const CAT = { HEALTH: ["Extended health", "🩺"], DENTAL: ["Dental", "🦷"], LIFE: ["Life insurance", "🛡️"], DISABILITY: ["Disability", "🤝"], RRSP: ["Retirement savings", "🌱"], OTHER: ["Other", "✨"] };

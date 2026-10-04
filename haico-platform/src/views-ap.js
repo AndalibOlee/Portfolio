@@ -427,6 +427,6 @@ window.ACTIONS_EXT.push({
   apVendTab(el) { UI.filters.vend = el.dataset.v; safeRender(); },
   apVendGo(el) { UI.filters.vend = el.dataset.v || "bills"; go(`/finance/ap/vendors/${el.dataset.id}`); },
   apVendorNew() { UI.modal = apVendorModal(); safeRender(); setTimeout(() => document.getElementById("avName")?.focus(), 30); },
-  apNewBillFor(el) { UI.apDraft = null; UI.modal = billModal({}).replace(`<option value="${esc(el.dataset.id)}">`, `<option value="${esc(el.dataset.id)}" selected>`); safeRender(); },
+  apNewBillFor(el) { UI.apDraft = null; UI.files.billNew = []; UI.modal = billModal({}).replace(`<option value="${esc(el.dataset.id)}">`, `<option value="${esc(el.dataset.id)}" selected>`); safeRender(); },
 });
 document.addEventListener("change", (ev) => { const el = ev.target; if (el.id?.startsWith?.("apvCat-")) UI.filters.apvCat = el.value; });

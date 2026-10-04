@@ -47,7 +47,8 @@ function xmDiffHtml(changes, max = 400) {
 /** the nav catalog: every group and item the platform can show, independent of who is looking (mirrors buildNav) */
 const XM_NAV_CATALOG = [
   ["Home", [["home", "Home", "home"], ["approvals", "Approvals", "check"]]],
-  ["My work", [["my-time", "My Time", "clock"], ["my-timeoff", "My Time Off", "calendar"], ["my-requests", "My Requests & Expenses", "inbox"], ["my-tasks", "My Tasks", "tasks"]]],
+  ["Requests", [["my-requests", "Requests", "inbox"]]],
+  ["My work", [["my-time", "My Time", "clock"], ["my-timeoff", "My Time Off", "calendar"], ["my-tasks", "My Tasks", "tasks"]]],
   ["Me", [["my-profile", "My Profile", "user"], ["my-pay", "My Pay", "wallet"], ["my-documents", "My Documents", "folder"]]],
   ["Team", [["team", "My Team", "users"]]],
   ["People", [["people", "People", "directory"], ["hr-time", "Time & Attendance", "calendarclock"], ["hr-talent", "Reviews, Benefits & Pension", "star"]]],

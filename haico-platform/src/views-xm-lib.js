@@ -102,7 +102,7 @@ const XM_ACTIONS_LIB = [
   { id: "hr-timesheets", label: "Everyone's timesheets", icon: "clock", go: "/hr/timesheets", perm: "timesheets.view" },
   { id: "hr-leave", label: "Everyone's time off", icon: "calendar", go: "/hr/leave", perm: "leave.view" },
   { id: "pay-run", label: "Pay runs", icon: "banknote", go: "/payroll/runs", perm: "payroll.view" },
-  { id: "purchase-request", label: "Ask to buy something", icon: "cart", go: "/procurement/requests", perm: "procurement.create" },
+  { id: "purchase-request", label: "New purchase order", icon: "cart", go: "/requests/new/po", perm: "ess.access" },
   { id: "purchase-orders", label: "Purchase orders", icon: "cart", go: "/procurement/pos", perm: "procurement.view" },
   { id: "projects", label: "Projects", icon: "briefcase", go: "/projects", perm: "projects.view" },
   { id: "reports", label: "Reports", icon: "chart", go: "/reports", perm: (a) => can(a, "reports.view") || can(a, "finance.view") || can(a, "hr.employees.view") },

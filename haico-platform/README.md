@@ -5,6 +5,7 @@ Single-file ERP demo: `python3 build.py` concatenates `src/head.html` + `seed.js
 - `src/core.js` — state, permissions, reducers (`R["event.type"](S, p, ctx)`), `act()`, audit.
 - `src/ui.js` — shell: `SECTIONS` (section tabs), `buildNav()` (grouped menu with counts), `route(pattern, perm, view)`, modal/popover.
 - `src/views-*.js` — screens; later files win on route conflicts (`views-hr3.js`, `views-fin3.js` hold the merged additions).
+- `src/views-tsearch.js` — the small search bar (box + “Search in” column + count) above the main table on the pages listed in `TS_PAGES`.
 - `src/export.js` — Excel / PDF / CSV from one `dlButton(key)`; keys in `EXPORTS`.
 - `src/app.js` — FORMS / ACTIONS handlers (`window.FORMS_EXT` / `ACTIONS_EXT` from other files are merged in).
 - `src/views-xm-core.js` — Page & Experience Manager engine: configuration document, reducers (`xm.*` events, audited), effective configuration per company/role, navigation and page-structure apply layer, terminology, typography, preview / edit mode.

@@ -79,7 +79,7 @@ function crPlace() {
   const here = CR.list.filter((x) => x.pageKey === crKey());
   fab.innerHTML = `<span aria-hidden="true">✎</span> Request a change${crOpenCount(here) ? ` <span class="cr-n" aria-label="${crOpenCount(here)} on this page">${crOpenCount(here)}</span>` : ""}`;
 }
-function crToggle(on) { CR.open = on; CR.msg = ""; if (on && CR.comments?.canSendToClaude) CR.comments.canSendToClaude().then((v) => { CR.canSend = v; crRender(); }).catch(() => { CR.canSend = "off"; crRender(); }); crRender(); if (on) setTimeout(() => document.getElementById("crText")?.focus(), 30); else document.getElementById("crFab")?.focus(); }
+function crToggle(on) { CR.open = on; CR.msg = ""; if (on) crPermCheck(); if (on && CR.comments?.canSendToClaude) CR.comments.canSendToClaude().then((v) => { CR.canSend = v; crRender(); }).catch(() => { CR.canSend = "off"; crRender(); }); crRender(); if (on) setTimeout(() => document.getElementById("crText")?.focus(), 30); else document.getElementById("crFab")?.focus(); }
 
 function crItem(x) {
   const mine = x.by && x.by === CR.me, editable = mine && x.status === "new";
@@ -114,8 +114,21 @@ function crRender() {
   p.innerHTML = `<div class="cr-head"><h2>Changes to make</h2><button type="button" class="cr-x" data-cr="close" aria-label="Close">✕</button></div>
     <div class="cr-tabs" role="tablist"><button type="button" role="tab" aria-selected="${CR.tab === "page"}" class="${CR.tab === "page" ? "on" : ""}" data-cr="tab" data-v="page">This page (${here.length})</button><button type="button" role="tab" aria-selected="${CR.tab === "all"}" class="${CR.tab === "all" ? "on" : ""}" data-cr="tab" data-v="all">All pages (${crOpenCount(CR.list)} open)</button></div>
     <div class="cr-body">${body}</div>
-    <div class="cr-foot"><button type="button" class="cr-btn pri" data-cr="send" ${fresh.length && CR.canSend === "available" ? "" : "disabled"}>Send ${fresh.length || ""} new change${fresh.length === 1 ? "" : "s"} to Claude for review</button><p>${esc(sendNote)}</p></div>`;
+    <div class="cr-foot">${CR.perm === "denied" ? `<div class="cr-ctx" role="status">Sending is switched off because “Don’t allow” was chosen. Your notes are still saved. <button type="button" class="cr-btn" data-cr="perm">Turn sending back on</button></div>` : ""}<button type="button" class="cr-btn pri" data-cr="send" ${fresh.length && CR.canSend === "available" ? "" : "disabled"}>Send ${fresh.length || ""} new change${fresh.length === 1 ? "" : "s"} to Claude for review</button><p>${esc(sendNote)}</p></div>`;
   const ta = document.getElementById("crText"); if (ta && document.activeElement !== ta && keepText != null) { ta.value = CR.draft.text; }
+}
+
+/* a "Don't allow" on the comments prompt only blocks sending — notes still save. The viewer can turn it back on here. */
+async function crPermCheck() {
+  try { const pm = await window.claude.use("permissions"); CR.perm = pm ? await pm.state("comments") : null; } catch { CR.perm = null; }
+  if (CR.open) crRender();
+}
+async function crPermManage() {
+  try { const pm = await window.claude.use("permissions"); if (!pm) throw 0; await pm.manage(); CR.msg = ""; }
+  catch { CR.msg = "Open this page’s Permissions menu in claude.ai (top of the artifact) and allow Comments, then press Send again."; }
+  await crPermCheck();
+  try { CR.canSend = await CR.comments.canSendToClaude(); } catch {}
+  crRender();
 }
 
 /* ---------- actions ---------- */
@@ -123,6 +136,7 @@ document.addEventListener("click", async (ev) => {
   const b = ev.target.closest?.("[data-cr]"); if (!b || !b.closest("#crPanel")) return;
   const a = b.dataset.cr, d = CR.draft;
   if (a === "close") return crToggle(false);
+  if (a === "perm") return crPermManage();
   if (a === "tab") { CR.tab = b.dataset.v; return crRender(); }
   if (a === "kind") { d.kind = b.dataset.v; return crRender(); }
   if (a === "prio") { d.priority = b.dataset.v; return crRender(); }
@@ -148,7 +162,8 @@ document.addEventListener("click", async (ev) => {
       for (const x of fresh) { try { await CR.db.doc(`changes/${x.id}`).update({ status: "sent", sentAt: at }); } catch {} }
       CR.msg = "Sent for review. Claude will show each page with your request and the planned change for you to confirm.";
     } catch (e) {
-      CR.msg = e?.code === "consent_required" ? "Nothing was sent — allow commenting from this page, then press Send again." : e?.code === "forbidden" ? "Sending from this page is switched off for you. In the chat, say “build my changes”." : "Nothing was sent. In the chat, say “build my changes” and Claude reads the same list.";
+      CR.msg = e?.code === "consent_required" || e?.code === "forbidden" ? "Nothing was sent, but your notes are saved. Press “Turn sending back on”, or in the chat say “build my changes”." : "Nothing was sent, but your notes are saved. In the chat, say “build my changes” and Claude reads the same list.";
+      await crPermCheck();
     }
     return crRender();
   }

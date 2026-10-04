@@ -104,13 +104,12 @@ function vRcMine() {
   const mine = rcMine();
   const open = mine.filter((x) => ["submitted", "awaiting_director", "returned", "reapproval", "approved"].includes(x.status));
   const route = A.employee ? rcRoute(S, A.employee.id, todayStr(), [A.user.id]) : { ids: [], away: [] };
-  const earlier = A.employee && typeof statusRows === "function" ? statusRows(A.employee.id).filter((r) => r.kind !== "Time off") : [];
   return ph("My requests", "Everything you raised — for yourself, or for someone else — and where each one is sitting now.", "") + flashHtml()
     + (route.away.length ? `<div class="rc-note warn">${esc(rcNames(S, route.away).join(", "))} ${route.away.length > 1 ? "are" : "is"} on time off today, so anything you send also goes to ${esc(rcNames(S, route.ids.filter((x) => !route.away.includes(x))).join(", "))}. Whoever decides first, decides.</div>` : "")
     + `<div class="stats">${stat("Open", String(open.length), "waiting on someone, or with Finance", open.length ? "warn" : "")}${stat("Returned to you", String(mine.filter((x) => x.status === "returned").length), "fix and resubmit")}${stat("Done", String(mine.filter((x) => ["processed", "ready", "closed"].includes(x.status)).length), "processed, paid or PO ready", "good")}${stat("Everything", String(mine.length), "")}</div>`
     + `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:0 0 16px">${Object.entries(RC_KINDS).map(([k, v]) => `<button class="cocard" data-go="${v.href}" style="gap:3px;text-align:left"><b style="font-size:13.5px">New ${esc(v.label.toLowerCase())}</b><small style="font-size:11.5px">${esc({ travel: "Flights, ferries, hotel. Finance books it.", card: "Bought on the company card. No card details here.", expense: "Honorarium, mileage and meals for a meeting.", po: "A commitment to a supplier. Prints on one page.", reimb: "Something you paid for yourself — we pay you back." }[k])}</small></button>`).join("")}</div>`
     + cardFlush("Your requests", (mine.length ? rcFindBar("mine") : "") + rcRowsTable(mine, { empty: "You haven't raised anything yet. Start with one of the boxes above." }))
-    + (earlier.length ? `<div style="height:14px"></div>` + cardFlush("Earlier requests (before the Request Centre)", statusTable(earlier)) : "");
+;
 }
 function vRcAll() {
   const list = (S.rcRequests || []).filter((it) => rcCanSee(A, it)).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));

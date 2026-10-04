@@ -122,8 +122,8 @@ function vRcFinance() {
   const pos = (S.rcRequests || []).filter((it) => it.kind === "po" && ["ready", "reapproval"].includes(it.status) && canSee(A, it.companyId));
   return ph("Finance queue", "Approved and waiting. Travel and card purchases: record what was charged with GST and PST and attach the confirmation. Claims: record as paid. Purchase orders: record the invoice amount, then close.") + flashHtml()
     + `<div class="stats">${stat("To process", String(q.length), q.length ? "oldest first" : "nothing waiting", q.length ? "warn" : "good")}${stat("Open purchase orders", String(pos.filter((x) => x.status === "ready").length), money(pos.reduce((s, x) => s + (x.po.approvedCents || 0), 0)))}${stat("Reapproval", String(pos.filter((x) => x.status === "reapproval").length), "invoice beyond tolerance")}</div>`
-    + cardFlush("Approved — waiting for Finance", rcRowsTable(q, { who: true, empty: "Nothing is waiting for Finance." })) + `<div style="height:14px"></div>`
-    + cardFlush("Purchase orders — invoice amount and close", rcRowsTable(pos, { who: true, empty: "No open purchase orders." }));
+    + cardFlush("Approved — waiting for Finance", (q.length ? rcFindBar("finq") : "") + rcRowsTable(q, { who: true, empty: "Nothing is waiting for Finance." })) + `<div style="height:14px"></div>`
+    + cardFlush("Purchase orders — invoice amount and close", (pos.length ? rcFindBar("finpo") : "") + rcRowsTable(pos, { who: true, empty: "No open purchase orders." }));
 }
 
 /* ---------------- the forms ---------------- */
@@ -389,6 +389,25 @@ hr3Route("/me/requests/new/:type", null, (q, t) => { if (t === "time-off") { UI.
     return _vPurchaseRequestsRc().replace(/<section class="card "><div class="card-h"><span>Ask to buy something<\/span>[\s\S]*?<\/form><\/div><\/section>/, card("", `<div class="form-row" style="justify-content:space-between"><span>New orders start in <b>Requests › New Purchase Order</b> — supervisor approval, director level over ${money(S.rcSettings.poThresholdCents)}, then a one-page order to print.</span>${rcCanRaise() ? `<button class="btn pri" data-go="/requests/new/po">New purchase order</button>` : ""}</div>`));
   };
 }
+
+/* Approvals: a search box over the cards waiting on you */
+{
+  const _vApprovalsRc = vApprovals;
+  vApprovals = function (q) {
+    const html = _vApprovalsRc(q);
+    if (!html.includes('<div class="aprs">')) return html;
+    return html.replace('<div class="aprs">', `<div class="rc-find" style="border:0;padding:0 0 10px"><input class="in" type="search" id="aprQ" placeholder="Search by reference, person, type or amount" aria-label="Search what is waiting on you" value="${esc(UI.aprQ || "")}"><span class="hint" id="aprQn"></span></div><div class="aprs">`);
+  };
+}
+function aprFind() {
+  const box = document.getElementById("aprQ"); if (!box) return;
+  const words = (UI.aprQ = box.value).trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const cards = [...document.querySelectorAll(".aprs > .card")]; let n = 0;
+  for (const c of cards) { const ok = words.every((w) => c.textContent.toLowerCase().includes(w)); c.hidden = !ok; if (ok) n++; }
+  const out = document.getElementById("aprQn"); if (out) out.textContent = words.length ? `${n} of ${cards.length}` : "";
+}
+document.addEventListener("input", (ev) => { if (ev.target.id === "aprQ") aprFind(); });
+{ const _afterRenderApr = afterRender; afterRender = function () { const r = _afterRenderApr.apply(this, arguments); if (document.getElementById("aprQ")) aprFind(); return r; }; }
 
 /* ---------------- forms & actions ---------------- */
 /* a refused action redraws the page: put back what was typed, so nobody re-enters amounts or comments */

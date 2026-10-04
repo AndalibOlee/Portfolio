@@ -35,7 +35,6 @@ const TILES = [
   ["/me/requests/new/purchase", "🛒", "Purchase request", "Ask to buy something for work"],
   ["/me/expenses", "🧾", "Expense claim", "Get paid back for something you bought"],
   ["/me/requests/new/travel-claim", "🧭", "Travel claim", "After a trip: per diems, mileage, receipts"],
-  ["/me/time-off", "🌲", "Time off", "Vacation, sick, personal days"],
 ];
 
 function vMyRequests(q) {

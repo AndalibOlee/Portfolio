@@ -71,7 +71,7 @@ function vNewRequest(q, type) {
   const projects = S.projects.filter((p) => p.companyId === e.companyId && p.status === "ACTIVE");
   if (type === "travel-request") {
     const m = REQUEST_TYPES.TRAVEL_REQUEST;
-    return back + ph(m.label, m.help) + flashHtml() + card("", `<form data-f="travelRequest" class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    return back + ph(m.label, `${m.help} ${approvalSentence(m.workflow)}`) + flashHtml() + card("", `<form data-f="travelRequest" class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
       ${F("tDest", "Where to?", inp("tDest", "destination", 'required placeholder="e.g. Vancouver — CHN finance meeting"'), "", true)}
       ${F("tPur", "Purpose of the trip", inp("tPur", "purpose", 'required placeholder="e.g. Year-end audit planning with the auditors"'), "", true)}
       ${F("tStart", "Leaving", inp("tStart", "startDate", `type="date" required value="${today}"`))}${F("tEnd", "Returning", inp("tEnd", "endDate", 'type="date"'))}
@@ -80,11 +80,11 @@ function vNewRequest(q, type) {
       <div style="grid-column:1/-1;border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg)"><div class="sect-l" style="margin:0 0 8px">Estimated cost</div><div class="form-grid" style="grid-template-columns:repeat(4,minmax(0,1fr))">${F("tAir", "Airfare / ferry", moneyIn("tAir", "airfare"))}${F("tAcc", "Accommodation", moneyIn("tAcc", "accommodation"))}${F("tGrd", "Ground transport", moneyIn("tGrd", "groundTransport"))}${F("tOth", "Other", moneyIn("tOth", "other"))}</div><div class="hint" style="margin-top:6px">Per diem is added automatically: ${money(TRAVEL_RATES.perDiemCents)} per day away.</div></div>
       ${F("tNotes", "Anything else the approver should know?", `<textarea class="in" id="tNotes" name="notes"></textarea>`, "", true)}
       ${fileDrop("travelRequest", "Attachments", "Agenda, invitation, quotes — PDF, JPG or PNG")}
-      <div class="form-row" style="grid-column:1/-1;justify-content:space-between">${chainNote(`${empName(byId(S.employees, e.managerId)) || "Manager"} → Finance if $2,000 or more`)}<button class="btn pri">Send travel request</button></div></form>`);
+      <div class="form-row" style="grid-column:1/-1;justify-content:space-between">${chainNote(approvalChain("TRAVEL_REQUEST", empName(byId(S.employees, e.managerId)) || "Your manager"))}<button class="btn pri">Send travel request</button></div></form>`);
   }
   if (type === "credit-card-purchase") {
     const m = REQUEST_TYPES.CREDIT_CARD_PURCHASE;
-    return back + ph(m.label, m.help) + flashHtml() + card("", `<form data-f="cardRequest" class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    return back + ph(m.label, `${m.help} ${approvalSentence(m.workflow)}`) + flashHtml() + card("", `<form data-f="cardRequest" class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
       ${F("cVen", "Buying from", inp("cVen", "vendor", 'required placeholder="e.g. Amazon Business"'))}${F("cAmt", "Amount (incl. tax)", moneyIn("cAmt", "amount"))}
       ${F("cDesc", "What are you buying?", inp("cDesc", "description", 'required placeholder="e.g. 2 × safety headsets for the crew"'), "", true)}
       ${F("cCat", "What is it for?", `<select class="in" id="cCat" name="category">${[["SUPPLIES", "Supplies & materials"], ["SAFETY", "Safety gear"], ["TRAVEL", "Travel"], ["MEALS", "Meals & hosting"], ["SOFTWARE", "Software / subscriptions"], ["OTHER", "Other"]].map(([v, l]) => opt(v, l)).join("")}</select>`)}
@@ -93,28 +93,28 @@ function vNewRequest(q, type) {
       ${F("cPrj", "Project (optional)", `<select class="in" id="cPrj" name="projectCode">${opt("", "— none —")}${projects.map((p) => opt(p.code, `${p.code} — ${p.name}`)).join("")}</select>`)}
       ${F("cJust", "Why is it needed?", `<textarea class="in" id="cJust" name="justification"></textarea>`, "", true)}
       ${fileDrop("cardRequest", "Attachments", "Quote, cart screenshot, invoice — PDF, JPG or PNG")}
-      <div class="form-row" style="grid-column:1/-1;justify-content:space-between">${chainNote(`${empName(byId(S.employees, e.managerId)) || "Manager"} → Finance if $1,000 or more`)}<button class="btn pri">Send purchase request</button></div></form>`);
+      <div class="form-row" style="grid-column:1/-1;justify-content:space-between">${chainNote(approvalChain("CREDIT_CARD_PURCHASE", empName(byId(S.employees, e.managerId)) || "Your manager"))}<button class="btn pri">Send purchase request</button></div></form>`);
   }
   if (type === "purchase") {
-    return back + ph("Purchase / PO request", "Ask to buy goods or services through a purchase order. Your manager approves; Finance from $5,000; the Executive from $25,000. Approved requests become POs in Buying.") + flashHtml() + card("", `<form data-f="poRequest" class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    return back + ph("Purchase / PO request", `Ask to buy goods or services through a purchase order. ${approvalSentence("PURCHASE_REQUEST")} Approved requests become POs in Buying.`) + flashHtml() + card("", `<form data-f="poRequest" class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
       ${F("pDesc", "What do you need?", inp("pDesc", "description", 'required placeholder="e.g. Replacement chainsaw chains × 12"'), "", true)}
       ${F("pAmt", "Estimated cost", moneyIn("pAmt", "amount"))}${F("pBy", "Needed by", inp("pBy", "neededBy", 'type="date"'))}
       ${F("pVen", "Preferred supplier (optional)", inp("pVen", "vendorName", ""), "", true)}
       ${F("pJust", "Why is it needed?", `<textarea class="in" id="pJust" name="justification"></textarea>`, "", true)}
       ${fileDrop("poRequest", "Attachments", "Quotes, spec sheets — PDF, JPG or PNG")}
-      <div class="form-row" style="grid-column:1/-1;justify-content:space-between">${chainNote(`${empName(byId(S.employees, e.managerId)) || "Manager"} → Finance ≥ $5,000 → Executive ≥ $25,000`)}<button class="btn pri">Send purchase request</button></div></form>`);
+      <div class="form-row" style="grid-column:1/-1;justify-content:space-between">${chainNote(approvalChain("PURCHASE_REQUEST", empName(byId(S.employees, e.managerId)) || "Your manager"))}<button class="btn pri">Send purchase request</button></div></form>`);
   }
   if (type === "travel-claim") {
     const m = REQUEST_TYPES.TRAVEL_CLAIM;
     const trips = S.requests.filter((r) => r.employeeId === e.id && r.type === "TRAVEL_REQUEST" && r.status === "APPROVED");
-    return back + ph(m.label, m.help) + flashHtml() + card("", `<form data-f="travelClaim" class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    return back + ph(m.label, `${m.help} ${approvalSentence(m.workflow)}`) + flashHtml() + card("", `<form data-f="travelClaim" class="form-grid" style="grid-template-columns:repeat(2,minmax(0,1fr))">
       ${F("kTrip", "Which trip?", inp("kTrip", "trip", 'required placeholder="e.g. Vancouver — CHN finance meeting"'), "", true)}
       ${F("kRel", "Approved travel request (optional)", `<select class="in" id="kRel" name="relatedRequest">${opt("", "— none / not required —")}${trips.map((t) => opt(t.requestNumber, `${t.requestNumber} · ${t.title}`)).join("")}</select>`, "", true)}
       ${F("kStart", "Left on", inp("kStart", "startDate", 'type="date" required'))}${F("kEnd", "Returned on", inp("kEnd", "endDate", 'type="date"'))}
       <div style="grid-column:1/-1;border:1px solid var(--border);border-radius:10px;padding:12px;background:var(--bg)"><div class="sect-l" style="margin:0 0 8px">What you're claiming</div><div class="form-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${F("kDays", `Per diem days × ${money(TRAVEL_RATES.perDiemCents)}`, `<input class="in num" style="text-align:right" inputmode="numeric" placeholder="0" id="kDays" name="perDiemDays">`)}${F("kKm", `Kilometres × $${(TRAVEL_RATES.mileageCentsPerKm / 100).toFixed(2)}`, `<input class="in num" style="text-align:right" inputmode="decimal" placeholder="0" id="kKm" name="km">`)}${F("kAir", "Airfare / ferry (receipt)", moneyIn("kAir", "airfare"))}${F("kAcc", "Accommodation (receipt)", moneyIn("kAcc", "accommodation"))}${F("kOth", "Other (receipt)", moneyIn("kOth", "other"))}</div></div>
       ${F("kNotes", "Notes (optional)", `<textarea class="in" id="kNotes" name="notes"></textarea>`, "", true)}
       ${fileDrop("travelClaim", "Receipts", "Receipts, boarding passes, hotel folio — PDF, JPG or PNG")}
-      <div class="form-row" style="grid-column:1/-1;justify-content:space-between">${chainNote(`${empName(byId(S.employees, e.managerId)) || "Manager"} → Finance if $500 or more → paid back by Finance`)}<button class="btn pri">Send travel claim</button></div></form>`);
+      <div class="form-row" style="grid-column:1/-1;justify-content:space-between">${chainNote(`${approvalChain("TRAVEL_CLAIM", empName(byId(S.employees, e.managerId)) || "Your manager")} → paid back by Finance`)}<button class="btn pri">Send travel claim</button></div></form>`);
   }
   if (type === "time-off") return vMyTimeOff(q);
   return vNotFound();

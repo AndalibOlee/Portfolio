@@ -133,7 +133,7 @@ function vAPBatch() {
       <td style="text-align:center"><input type="checkbox" data-apb="gst" data-i="${i}" ${r.gst === false ? "" : "checked"} aria-label="GST ${i + 1}"></td>
       <td>${UI.apb.rows.length > 1 ? `<button type="button" class="lnk" style="color:var(--danger);font-size:12px" data-a="apbDel" data-i="${i}">remove</button>` : ""}</td></tr>`; }).join("")}
       <tr class="tot"><td colspan="6"><button type="button" class="lnk" data-a="apbAdd">+ add a row</button></td><td class="r num">${amount(tot)}</td><td colspan="2" class="hint">incl. GST</td></tr></tbody></table></div>
-      <div class="form-row" style="margin-top:12px"><button class="btn" name="submit" value="0">Save batch as drafts</button><button class="btn pri" name="submit" value="1">Create and send all for approval</button><span class="hint">Finance approves each bill; anything $25,000 or more also goes to the Executive.</span></div></form>`);
+      <div class="form-row" style="margin-top:12px"><button class="btn" name="submit" value="0">Save batch as drafts</button><button class="btn pri" name="submit" value="1">Create and send all for approval</button><span class="hint">${esc(approvalSentence("AP_INVOICE"))}</span></div></form>`);
 }
 /* payment batch: pick approved bills, pay them in one EFT run */
 function vPayBatch() {

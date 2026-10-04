@@ -284,7 +284,7 @@ function vRun(q, id) {
   const inst = r.approvalInstanceId ? byId(S.approvals, r.approvalInstanceId) : null;
   const flow = ["DRAFT", "CALCULATED", "PENDING_APPROVAL", "APPROVED", "POSTED"];
   const at = flow.indexOf(r.status);
-  const labels = ["Open", "Calculated", "Finance approval", "Approved", "Posted to ledger"];
+  const labels = ["Open", "Calculated", "Director approval", "Approved", "Posted to ledger"];
   const je = r.journalEntryId ? byId(S.journalEntries, r.journalEntryId) : null;
   let acts = "";
   if (can(A, "payroll.run") && ["DRAFT", "CALCULATED"].includes(r.status)) acts += `<button class="btn ${r.status === "DRAFT" ? "pri" : ""}" data-a="runCalc" data-id="${r.id}">${r.status === "DRAFT" ? "Calculate" : "Recalculate"}</button>`;

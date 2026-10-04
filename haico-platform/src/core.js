@@ -1162,10 +1162,34 @@ freshState = function () { const S = _freshBase(); S.apBatches = []; S.arBatches
    Request centre: travel requests, credit-card purchases, travel claims
    ========================================================================== */
 const REQUEST_TYPES = {
-  TRAVEL_REQUEST: { label: "Travel request", prefix: "TRV", workflow: "TRAVEL_REQUEST", help: "Ask before you go: where, why, dates and the estimated cost. Your manager approves; Finance also approves trips of $2,000 or more." },
-  CREDIT_CARD_PURCHASE: { label: "Credit card purchase request", prefix: "CCP", workflow: "CREDIT_CARD_PURCHASE", help: "Ask to put a purchase on a company card. Your manager approves; Finance also approves $1,000 or more." },
-  TRAVEL_CLAIM: { label: "Travel claim", prefix: "TCL", workflow: "TRAVEL_CLAIM", help: "After the trip: per diems, mileage and receipts. Your manager approves; Finance approves $500 or more and pays you back." },
+  TRAVEL_REQUEST: { label: "Travel request", prefix: "TRV", workflow: "TRAVEL_REQUEST", help: "Ask before you go: where, why, dates and the estimated cost." },
+  CREDIT_CARD_PURCHASE: { label: "Credit card purchase request", prefix: "CCP", workflow: "CREDIT_CARD_PURCHASE", help: "Ask to put a purchase on a company card." },
+  TRAVEL_CLAIM: { label: "Travel claim", prefix: "TCL", workflow: "TRAVEL_CLAIM", help: "After the trip: per diems, mileage and receipts. Finance pays you back once it's approved." },
 };
+/* ---- who approves, in plain words, read from the live approval rules (Administration › Approval rules),
+   so help text always matches what really happens — even after an administrator changes a rule ---- */
+const APPROVER_WORDS = { EXECUTIVE: "the Executive Director", HR_MANAGER: "the HR Manager", PAYROLL_ADMIN: "the Payroll Administrator", FINANCE_MANAGER: "the Finance Manager", COMPANY_ADMIN: "the company administrator", GROUP_ADMIN: "the group administrator" };
+function approvalSteps(code) {
+  const wf = (S.workflows || []).find((w) => w.code === code && w.isActive !== false);
+  return wf ? S.workflowSteps.filter((s) => s.workflowId === wf.id).sort((a, b) => a.sequence - b.sequence) : [];
+}
+const wholeMoney = (c) => money(c).replace(/\.00$/, "");
+const approverWord = (s, managerName) => (s.approverType === "MANAGER" ? (managerName || "your manager") : APPROVER_WORDS[s.roleCode] || `the ${ROLES[s.roleCode]?.name || "approver"}`);
+/** "Your manager approves; the Executive Director also approves $5,000 or more." */
+function approvalSentence(code, managerName) {
+  const steps = approvalSteps(code);
+  if (!steps.length) return "Your manager approves.";
+  const parts = steps.map((s, i) => { const who = approverWord(s, managerName), from = s.thresholdMinCents > 0 ? ` ${wholeMoney(s.thresholdMinCents)} or more` : ""; return i === 0 && !from ? `${who} approves` : `${who} also approves${from || " it"}`; });
+  const t = parts.join("; ") + ".";
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+/** "Tyler Bigstone → the Executive Director if $5,000 or more" */
+function approvalChain(code, managerName) {
+  const steps = approvalSteps(code);
+  if (!steps.length) return managerName || "Your manager";
+  const t = steps.map((s) => `${approverWord(s, managerName)}${s.thresholdMinCents > 0 ? ` if ${wholeMoney(s.thresholdMinCents)} or more` : ""}`).join(" → ");
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
 const TRAVEL_RATES = { perDiemCents: 7500, mileageCentsPerKm: 72 };
 const requestTypeLabel = (t) => REQUEST_TYPES[t]?.label || t;
 

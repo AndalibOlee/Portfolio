@@ -1,7 +1,7 @@
 /* ==========================================================================
    views-rc-core.js — the Request Centre inside the ERP.
-   Requests menu: New Travel Request · New Credit Card Purchase · New Expense
-   Claim · New Purchase Order · New Reimbursement Claim · My requests ·
+   Requests menu: New Travel Request · New Credit Card Purchase · New Travel
+   Claim · New Expense Claim · New Purchase Order · My requests ·
    Waiting on me (= Approvals), and for Finance: Finance queue · All requests ·
    Rates & coding. One engine for routing, approvals, emails, Finance
    processing (with ledger posting) and the one-page purchase order.
@@ -18,9 +18,9 @@
 const RC_KINDS = {
   travel: { label: "Travel request", prefix: "TR", wf: "TRAVEL_REQUEST", href: "/requests/new/travel" },
   card: { label: "Credit card purchase", prefix: "CC", wf: "CREDIT_CARD_PURCHASE", href: "/requests/new/card" },
-  expense: { label: "Expense claim", prefix: "EC", wf: "RC_EXPENSE", href: "/requests/new/expense" },
+  expense: { label: "Travel claim", prefix: "TC", wf: "RC_EXPENSE", href: "/requests/new/travel-claim" },
+  reimb: { label: "Expense claim", prefix: "EC", wf: "TRAVEL_CLAIM", href: "/requests/new/expense" },
   po: { label: "Purchase order", prefix: "PO", wf: "PURCHASE_ORDER", href: "/requests/new/po" },
-  reimb: { label: "Reimbursement claim", prefix: "RB", wf: "TRAVEL_CLAIM", href: "/requests/new/reimbursement" },
 };
 const RC_STATUS = {
   submitted: ["Awaiting approval", "amber"], awaiting_director: ["Awaiting director level", "amber"], approved: ["Approved — with Finance", "teal"],
@@ -45,8 +45,8 @@ const rcCents = (v) => Math.round((Number(v) || 0) * 100);
       S.accounts.push({ id: `acc_rc_${c.id}_${number}`, companyId: c.id, number, name, type: number.startsWith("2") ? "LIABILITY" : "EXPENSE", isActive: true, isPostable: true });
     }
     const addWf = (id, code, name, steps) => { if (S.workflows.some((w) => w.code === code)) return; S.workflows.push({ id, code, name, isActive: true }); steps.forEach((s, i) => S.workflowSteps.push({ id: `${id}_s${i + 1}`, workflowId: id, sequence: i + 1, ...s })); };
-    addWf("wfRcEc", "RC_EXPENSE", "Expense claims (meeting)", [{ name: "Supervisor approval", approverType: "MANAGER", thresholdMinCents: 0 }]);
-    addWf("wfRcEcX", "RC_EXPENSE_EXT", "Expense claims for someone outside the organization", [{ name: "Supervisor approval", approverType: "MANAGER", thresholdMinCents: 0 }, { name: "Director level", approverType: "ROLE", roleCode: "EXECUTIVE", thresholdMinCents: 0 }]);
+    addWf("wfRcEc", "RC_EXPENSE", "Travel claims (meeting: honorarium, mileage, meals)", [{ name: "Supervisor approval", approverType: "MANAGER", thresholdMinCents: 0 }]);
+    addWf("wfRcEcX", "RC_EXPENSE_EXT", "Travel claims for someone outside the organization", [{ name: "Supervisor approval", approverType: "MANAGER", thresholdMinCents: 0 }, { name: "Director level", approverType: "ROLE", roleCode: "EXECUTIVE", thresholdMinCents: 0 }]);
     // purchase orders: director level for amounts OVER the threshold
     const po = S.workflows.find((w) => w.code === "PURCHASE_ORDER");
     if (po) { const ex = S.workflowSteps.find((s) => s.workflowId === po.id && s.roleCode === "EXECUTIVE"); if (ex) Object.assign(ex, { thresholdMinCents: 500001, name: "Director level" }); }
@@ -468,7 +468,7 @@ Object.assign(R, {
     if (!RC_KINDS[kind]) fail("Unknown request type.");
     let forEmp = null, external = null;
     if (p.forWho === "external") {
-      if (kind !== "expense") fail("Only expense claims can be for someone outside the organization.");
+      if (kind !== "expense") fail("Only travel claims can be for someone outside the organization.");
       const name = String(p.external?.name || "").trim(); if (!name) fail("Enter the full name of the person outside the organization.");
       external = { name, role: RC_OUTSIDE_ROLES.includes(p.external.role) ? p.external.role : "Community member", address: String(p.external.address || "").trim(), payBy: p.external.payBy === "Direct deposit" ? "Direct deposit — details held by Finance" : "Cheque" };
       if (!ctx.auth.employee) fail("This sign-in isn't linked to an employee record.");
@@ -566,7 +566,7 @@ Object.assign(R, {
     rcMail(S0, ctx, "processed", rcForAndBy(S0, it), rcVars(S0, it, ctx), { rows: [...rcRows(S0, it), ["Before tax", money(sub)], ["GST", money(gst)], ["PST", money(pst)]] });
     ctx.audit({ module: "requests", action: "POST", companyId: it.companyId, entityType: "RcRequest", entityId: it.id, summary: `${ctx.actor.displayName} processed ${it.ref}: ${money(total)} incl. GST and PST, posted ${je.entryNumber}.` });
   },
-  /* Finance: expense and reimbursement claims — record as paid, post to the ledger */
+  /* Finance: travel and expense claims — record as paid, post to the ledger */
   "rc.pay"(S0, p, ctx) {
     if (!rcIsFinance(ctx.auth)) fail("Only Finance can record payments.");
     const it = rcGet(S0, p.id); ctx.company(it.companyId);

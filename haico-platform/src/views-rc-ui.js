@@ -18,6 +18,8 @@ injectCss(`
 .rc-lines .rc-line{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) 70px minmax(0,1.2fr) minmax(0,1.2fr) auto;gap:8px;align-items:end;margin-bottom:8px}
 .rc-lines .rc-line.rb{grid-template-columns:130px minmax(0,2fr) minmax(0,1.4fr) 110px auto}
 @media (max-width:760px){.rc-lines .rc-line,.rc-lines .rc-line.rb{grid-template-columns:1fr 1fr}}
+.rc-find{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)}
+.rc-find input{flex:1 1 260px;min-width:0}.rc-find select{flex:0 1 210px;min-width:0}
 .rc-hist{list-style:none;margin:0;padding:0}.rc-hist li{border-left:2px solid var(--border);padding:0 0 10px 10px;font-size:13px}
 .rc-paper{background:#fff;color:#16202b;border:1px solid #cfd6de;border-radius:6px;padding:22px 26px;max-width:820px}
 .rc-paper .hd{display:flex;justify-content:space-between;gap:16px;border-bottom:2px solid #a03c28;padding-bottom:10px;margin-bottom:12px}
@@ -32,13 +34,12 @@ const rcCanRaise = () => !!A && (!!A.employee || rcForWhoGroups(S, A).length > 0
   if (sec) {
     sec.label = "Requests";
     sec.tabs = [
+      { href: "/requests", label: "My requests", match: ["/me/requests", "/me/expenses"] },
       { href: "/requests/new/travel", label: "New Travel Request", perm: rcCanRaise },
       { href: "/requests/new/card", label: "New Credit Card Purchase", perm: rcCanRaise },
+      { href: "/requests/new/travel-claim", label: "New Travel Claim", perm: rcCanRaise },
       { href: "/requests/new/expense", label: "New Expense Claim", perm: rcCanRaise },
       { href: "/requests/new/po", label: "New Purchase Order", perm: rcCanRaise },
-      { href: "/requests/new/reimbursement", label: "New Reimbursement Claim", perm: rcCanRaise },
-      { href: "/requests", label: "My requests", match: ["/me/requests", "/me/expenses"] },
-      { href: "/approvals", label: "Waiting on me" },
       { href: "/requests/finance", label: "Finance queue", perm: () => rcIsFinance(A) },
       { href: "/requests/all", label: "All requests", perm: () => rcIsFinance(A) || rcIsExec(A) || A.roleCodes.includes("COMPANY_ADMIN") },
       { href: "/requests/rates", label: "Rates & coding", perm: () => rcIsFinance(A) || rcIsAdmin(A) },
@@ -62,7 +63,6 @@ const rcCanRaise = () => !!A && (!!A.employee || rcForWhoGroups(S, A).length > 0
     return groups.filter((g) => g.items.length);
   };
 }
-setTimeout(() => { if (typeof TS_PAGES !== "undefined") ["/requests", "/requests/all", "/requests/finance"].forEach((p) => TS_PAGES.add(p)); }, 0);
 
 /* ---------------- lists ---------------- */
 function rcMine() {
@@ -73,9 +73,33 @@ function rcRowsTable(list, opts = {}) {
   return table(["Reference", "Type", "What it is", ...(opts.who ? ["For"] : []), ">Amount", "Status"], list.map((it) => {
     const tag = it.preparedByUserId && it.preparedByUserId === A.user.id && it.forEmployeeId !== A.employee?.id ? `<span class="badge tone-grey" style="margin-left:6px">For ${esc(rcForName(it).split(" (")[0])}</span>` : it.preparedByUserId && it.forEmployeeId === A.employee?.id && it.preparedByUserId !== A.user.id ? `<span class="badge tone-grey" style="margin-left:6px">Prepared by ${esc(byId(S.users, it.preparedByUserId)?.displayName || "")}</span>` : "";
     const amt = it.kind === "travel" || it.kind === "card" ? (it.finance ? money(it.finance.totalCents) : `<span class="hint">Set by Finance</span>`) : it.kind === "po" && !rcAmount(it) ? `<span class="hint">No estimate</span>` : money(rcAmount(it));
-    return `<tr class="click" data-go="/requests/${it.id}"><td class="mono" style="white-space:nowrap">${esc(it.ref)}</td><td>${esc(RC_KINDS[it.kind].label)}</td><td>${esc(it.title)}${tag}</td>${opts.who ? `<td>${esc(rcForName(it))}${it.preparedByUserId ? `<div class="hint">via ${esc(byId(S.users, it.preparedByUserId)?.displayName || "")}</div>` : ""}</td>` : ""}${td(amt, 1)}<td>${rcPill(it.status)}</td></tr>`;
+    const q = [it.ref, RC_KINDS[it.kind].label, it.title, rcForName(it), (RC_STATUS[it.status] || [it.status])[0], byId(S.departments, it.departmentId)?.name || ""].join(" ").toLowerCase();
+    return `<tr class="click" data-go="/requests/${it.id}" data-rcq="${esc(q)}" data-rck="${it.kind}" data-rcs="${it.status}"><td class="mono" style="white-space:nowrap">${esc(it.ref)}</td><td>${esc(RC_KINDS[it.kind].label)}</td><td>${esc(it.title)}${tag}</td>${opts.who ? `<td>${esc(rcForName(it))}${it.preparedByUserId ? `<div class="hint">via ${esc(byId(S.users, it.preparedByUserId)?.displayName || "")}</div>` : ""}</td>` : ""}${td(amt, 1)}<td>${rcPill(it.status)}</td></tr>`;
   }), opts.empty || "Nothing here yet.");
 }
+/* search box + type + status over a request list; filters in place so typing never loses focus */
+const RC_STATUS_GROUPS = [["", "Any status"], ["open", "Waiting on someone"], ["returned", "Returned"], ["finance", "Approved — with Finance"], ["done", "Done"], ["stopped", "Declined or withdrawn"]];
+const RC_STATUS_OF = { submitted: "open", awaiting_director: "open", reapproval: "open", returned: "returned", approved: "finance", ready: "finance", processed: "done", closed: "done", declined: "stopped", withdrawn: "stopped" };
+function rcFindBar(id) {
+  const f = (UI.rcFind = UI.rcFind || {})[id] || {};
+  return `<div class="rc-find" data-rcfind="${id}"><input class="in" type="search" id="rcQ-${id}" data-rcf="q" placeholder="Search by reference, what it is, person or department" aria-label="Search requests" value="${esc(f.q || "")}">
+    <select class="in" id="rcK-${id}" data-rcf="k" aria-label="Type of request">${opt("", "All types", !f.k)}${Object.entries(RC_KINDS).map(([k, v]) => opt(k, v.label, f.k === k)).join("")}</select>
+    <select class="in" id="rcS-${id}" data-rcf="s" aria-label="Status">${RC_STATUS_GROUPS.map(([k, l]) => opt(k, l, f.s === k)).join("")}</select><span class="hint" data-rccount></span></div>`;
+}
+function rcApplyFind() {
+  document.querySelectorAll("[data-rcfind]").forEach((bar) => {
+    const id = bar.dataset.rcfind, f = (UI.rcFind = UI.rcFind || {})[id] = { q: bar.querySelector('[data-rcf="q"]').value.trim().toLowerCase(), k: bar.querySelector('[data-rcf="k"]').value, s: bar.querySelector('[data-rcf="s"]').value };
+    const tbl = bar.nextElementSibling?.querySelector?.("tbody") || bar.parentElement.querySelector("tbody"); if (!tbl) return;
+    const rows = [...tbl.querySelectorAll("tr[data-rcq]")]; let shown = 0;
+    for (const tr of rows) { const ok = (!f.q || f.q.split(/\s+/).every((w) => tr.dataset.rcq.includes(w))) && (!f.k || tr.dataset.rck === f.k) && (!f.s || RC_STATUS_OF[tr.dataset.rcs] === f.s); tr.hidden = !ok; if (ok) shown++; }
+    let none = tbl.querySelector("tr.rc-none"); if (!none && rows.length) { none = document.createElement("tr"); none.className = "rc-none"; none.innerHTML = `<td colspan="9" class="hint" style="text-align:center;padding:18px">Nothing matches. Clear the search or pick another type or status.</td>`; tbl.appendChild(none); }
+    if (none) none.hidden = shown > 0;
+    const c = bar.querySelector("[data-rccount]"); if (c) c.textContent = rows.length ? `${shown} of ${rows.length}` : "";
+  });
+}
+document.addEventListener("input", (ev) => { if (ev.target.closest?.("[data-rcfind]")) rcApplyFind(); });
+document.addEventListener("change", (ev) => { if (ev.target.closest?.("[data-rcfind]")) rcApplyFind(); });
+{ const _afterRenderFind = afterRender; afterRender = function () { const r = _afterRenderFind.apply(this, arguments); if (document.querySelector("[data-rcfind]")) rcApplyFind(); return r; }; }
 function vRcMine() {
   const mine = rcMine();
   const open = mine.filter((x) => ["submitted", "awaiting_director", "returned", "reapproval", "approved"].includes(x.status));
@@ -85,15 +109,13 @@ function vRcMine() {
     + (route.away.length ? `<div class="rc-note warn">${esc(rcNames(S, route.away).join(", "))} ${route.away.length > 1 ? "are" : "is"} on time off today, so anything you send also goes to ${esc(rcNames(S, route.ids.filter((x) => !route.away.includes(x))).join(", "))}. Whoever decides first, decides.</div>` : "")
     + `<div class="stats">${stat("Open", String(open.length), "waiting on someone, or with Finance", open.length ? "warn" : "")}${stat("Returned to you", String(mine.filter((x) => x.status === "returned").length), "fix and resubmit")}${stat("Done", String(mine.filter((x) => ["processed", "ready", "closed"].includes(x.status)).length), "processed, paid or PO ready", "good")}${stat("Everything", String(mine.length), "")}</div>`
     + `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:0 0 16px">${Object.entries(RC_KINDS).map(([k, v]) => `<button class="cocard" data-go="${v.href}" style="gap:3px;text-align:left"><b style="font-size:13.5px">New ${esc(v.label.toLowerCase())}</b><small style="font-size:11.5px">${esc({ travel: "Flights, ferries, hotel. Finance books it.", card: "Bought on the company card. No card details here.", expense: "Honorarium, mileage and meals for a meeting.", po: "A commitment to a supplier. Prints on one page.", reimb: "Something you paid for yourself — we pay you back." }[k])}</small></button>`).join("")}</div>`
-    + cardFlush("Your requests", rcRowsTable(mine, { empty: "You haven't raised anything yet. Start with one of the boxes above." }))
+    + cardFlush("Your requests", (mine.length ? rcFindBar("mine") : "") + rcRowsTable(mine, { empty: "You haven't raised anything yet. Start with one of the boxes above." }))
     + (earlier.length ? `<div style="height:14px"></div>` + cardFlush("Earlier requests (before the Request Centre)", statusTable(earlier)) : "");
 }
 function vRcAll() {
-  const f = UI.tabs.rcAll || "";
-  const list = (S.rcRequests || []).filter((it) => rcCanSee(A, it) && (!f || it.kind === f)).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-  const chips = [["", "Everything"], ...Object.entries(RC_KINDS).map(([k, v]) => [k, v.label])].map(([k, l]) => `<button class="hchip ${k === f ? "on" : ""}" data-a="rcAllTab" data-v="${k}">${esc(l)}</button>`).join("");
+  const list = (S.rcRequests || []).filter((it) => rcCanSee(A, it)).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   return ph("All requests", rcIsExec(A) && !rcIsFinance(A) ? "Every request in the group, read only." : A.roleCodes.includes("COMPANY_ADMIN") && !rcIsFinance(A) ? "Every request for your company." : "Every request, whoever raised it.") + flashHtml()
-    + `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px">${chips}</div>` + cardFlush("", rcRowsTable(list, { who: true, empty: "No requests yet." }));
+    + cardFlush("", (list.length ? rcFindBar("all") : "") + rcRowsTable(list, { who: true, empty: "No requests yet." }));
 }
 function vRcFinance() {
   const q = (S.rcRequests || []).filter((it) => it.status === "approved" && canSee(A, it.companyId)).sort((a, b) => (a.createdAt < b.createdAt ? -1 : 1));
@@ -131,7 +153,7 @@ function rcRoutePreview(kind, v) {
 }
 function rcSec(n, title, body) { return `<section class="rc-sec"><h3><span class="n">${n}</span>${esc(title)}</h3>${body}</section>`; }
 function vRcForm(kindParam, editId) {
-  const kind = { travel: "travel", card: "card", expense: "expense", po: "po", reimbursement: "reimb" }[kindParam];
+  const kind = { travel: "travel", card: "card", "travel-claim": "expense", expense: "reimb", reimbursement: "reimb", po: "po" }[kindParam];
   if (!kind) return vNotFound();
   const editing = editId ? byId(S.rcRequests, editId) : null;
   if (editId && (!editing || editing.status !== "returned" || ![editing.requestedByUserId, editing.preparedByUserId].includes(A.user.id))) return ph("Not available") + card("", "<p>Only a returned request can be corrected, by the person who raised it.</p>");
@@ -189,7 +211,7 @@ function vRcForm(kindParam, editId) {
     ["Receipts", files]];
   const sumN = secs.length + 1;
   const body = secs.map(([t, b], i) => rcSec(i + 1, t, b)).join("") + rcSec(sumN, "Check and submit", `${editing ? "" : rcRoutePreview(kind, v)}<div class="form-row"><button class="btn pri">${editing ? "Resubmit" : "Submit request"}</button>${editing ? `<button type="button" class="btn" data-go="/requests/${editing.id}">Cancel</button>` : ""}<span class="hint">Everything is on this one page. Check it once, then submit.</span></div>`);
-  const t = { travel: ["New travel request", "Flights, ferries, accommodation. Supervisor, then Finance books it and records the cost."], card: ["New credit card purchase", "Items to buy on the company card. Each line carries its own department and expense code."], expense: ["New expense claim", "Honorarium, mileage and meals for a meeting you attended. Supervisor, then Finance pays it."], po: ["New purchase order", `Your supervisor approves it, and director level too if it's over ${money(S.rcSettings.poThresholdCents)}. The last approval produces the printed order.`], reimb: ["New reimbursement claim", "Something you bought with your own money for work. Supervisor, then Finance pays you back."] }[kind];
+  const t = { travel: ["New travel request", "Flights, ferries, accommodation. Supervisor, then Finance books it and records the cost."], card: ["New credit card purchase", "Items to buy on the company card. Each line carries its own department and expense code."], expense: ["New travel claim", "Honorarium, mileage and meals for a meeting you attended. Supervisor, then Finance pays it."], po: ["New purchase order", `Your supervisor approves it, and director level too if it's over ${money(S.rcSettings.poThresholdCents)}. The last approval produces the printed order.`], reimb: ["New expense claim", "Something you bought with your own money for work. Supervisor, then Finance pays you back."] }[kind];
   return ph(editing ? `Correct ${editing.ref}` : t[0], editing ? "Fix what was asked, then resubmit. The reference and the history stay the same." : t[1], "", crumb(editing ? `/requests/${editing.id}` : "/requests", editing ? editing.ref : "My requests")) + flashHtml()
     + card("", `<form data-f="rcSubmit" data-kind="${kind}"${editing ? ` data-id="${editing.id}"` : ""}>${body}</form>`);
 }
@@ -313,7 +335,7 @@ function vRcRates() {
   return ph("Rates and coding", "The rates every form uses, how claims are coded, which expense codes the forms offer, and the purchase-order limits. Claims already sent keep the rates they were made with.") + flashHtml()
     + card("", `<form data-f="rcRates"><h3 style="margin:0 0 8px;font-size:15px">Meals and mileage</h3><div class="form-grid"><div class="fld"><label for="rrB">Breakfast</label><input class="in num" id="rrB" name="b" value="${d2(s.meals.b)}"></div><div class="fld"><label for="rrL">Lunch</label><input class="in num" id="rrL" name="l" value="${d2(s.meals.l)}"></div><div class="fld"><label for="rrD">Dinner</label><input class="in num" id="rrD" name="d" value="${d2(s.meals.d)}"></div><div class="fld"><label for="rrM">Mileage per km</label><input class="in num" id="rrM" name="mileage" value="${d2(s.mileageCents)}"></div></div>
       <h3 style="margin:14px 0 8px;font-size:15px">Tax pre-filled when Finance records an amount</h3><div class="form-grid"><div class="fld"><label for="rrG">GST %</label><input class="in num" id="rrG" name="gst" value="${s.gstPct}"></div><div class="fld"><label for="rrP">PST %</label><input class="in num" id="rrP" name="pst" value="${s.pstPct}"></div></div>
-      <h3 style="margin:14px 0 8px;font-size:15px">Expense claim coding</h3><div class="form-grid"><div class="fld"><label for="rrH">Honoraria go to</label><select class="in" id="rrH" name="honorarium">${accts.map((a) => opt(a.number, `${a.number} — ${a.name}`, a.number === s.coding.honorarium)).join("")}</select></div><div class="fld"><label for="rrT">Mileage and meals go to</label><select class="in" id="rrT" name="travel">${accts.map((a) => opt(a.number, `${a.number} — ${a.name}`, a.number === s.coding.travel)).join("")}</select></div></div>
+      <h3 style="margin:14px 0 8px;font-size:15px">Travel claim coding</h3><div class="form-grid"><div class="fld"><label for="rrH">Honoraria go to</label><select class="in" id="rrH" name="honorarium">${accts.map((a) => opt(a.number, `${a.number} — ${a.name}`, a.number === s.coding.honorarium)).join("")}</select></div><div class="fld"><label for="rrT">Mileage and meals go to</label><select class="in" id="rrT" name="travel">${accts.map((a) => opt(a.number, `${a.number} — ${a.name}`, a.number === s.coding.travel)).join("")}</select></div></div>
       <h3 style="margin:14px 0 8px;font-size:15px">Expense codes the forms offer</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:4px 14px">${accts.map((a) => `<label style="display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" name="acct" value="${a.number}"${s.formAccounts.includes(a.number) ? " checked" : ""}> ${esc(a.number)} — ${esc(a.name)}</label>`).join("")}</div>
       <h3 style="margin:14px 0 8px;font-size:15px">Optional questions on the forms</h3><div style="display:grid;gap:4px">${[["travel_training", "Travel — Training or conference?"], ["card_link", "Credit card — Product link"], ["card_ref", "Credit card — Order reference"], ["po_notes", "Purchase order — Notes printed on the order"]].map(([k, l]) => `<label style="display:flex;gap:8px;align-items:center;font-size:13.5px"><input type="checkbox" name="f_${k}"${s.fields[k] !== false ? " checked" : ""}> ${esc(l)}</label>`).join("")}</div>
       <h3 style="margin:14px 0 8px;font-size:15px">Purchase-order approval</h3><div class="form-grid"><div class="fld"><label for="rrTh">Director level for orders over ($)</label><input class="in num" id="rrTh" name="threshold" value="${d2(s.poThresholdCents)}"></div><div class="fld"><label for="rrTo">Reapproval if the invoice moves by more than (%)</label><input class="in num" id="rrTo" name="tolerance" value="${s.tolerancePct}"></div></div>
@@ -347,7 +369,7 @@ function vRcTemplates() {
 /* hr3Route puts each route first, so the catch-all /requests/:id goes in before the named pages */
 hr3Route("/requests/:id", null, vRcDetail);
 hr3Route("/requests/:id/print", null, vRcPrint);
-hr3Route("/requests/:id/edit", null, (q, id) => { const it = byId(S.rcRequests || [], id); return it ? vRcForm(it.kind === "reimb" ? "reimbursement" : it.kind, id) : vNotFound(); });
+hr3Route("/requests/:id/edit", null, (q, id) => { const it = byId(S.rcRequests || [], id); return it ? vRcForm(RC_KINDS[it.kind].href.split("/").pop(), id) : vNotFound(); });
 hr3Route("/requests/new/:kind", null, (q, k) => vRcForm(k));
 hr3Route("/requests", null, vRcMine);
 hr3Route("/requests/all", () => rcIsFinance(A) || rcIsExec(A) || A.roleCodes.includes("COMPANY_ADMIN"), vRcAll);
@@ -356,8 +378,8 @@ hr3Route("/requests/rates", () => rcIsFinance(A) || rcIsAdmin(A), vRcRates);
 hr3Route("/team/request-access", () => rcIsAdmin(A) || (!!A.employee && S.employees.some((e) => e.managerId === A.employee.id)), vRcAccess);
 hr3Route("/admin/email-templates", () => rcIsAdmin(A), vRcTemplates);
 hr3Route("/me/requests", null, () => { UI.route = "/requests"; return vRcMine(); });
-hr3Route("/me/expenses", null, () => { UI.route = "/requests/new/expense"; return vRcForm("expense"); });
-hr3Route("/me/requests/new/:type", null, (q, t) => { if (t === "time-off") { UI.route = "/me/time-off"; return vMyTimeOff(); } const k = { "travel-request": "travel", "credit-card-purchase": "card", purchase: "po", "travel-claim": "reimbursement" }[t]; if (!k) return vNotFound(); UI.route = `/requests/new/${k}`; return vRcForm(k); });
+hr3Route("/me/expenses", null, () => { UI.route = "/requests/new/expense"; return vRcForm("expense"); }); // the old receipt claim → Expense Claim
+hr3Route("/me/requests/new/:type", null, (q, t) => { if (t === "time-off") { UI.route = "/me/time-off"; return vMyTimeOff(); } const k = { "travel-request": "travel", "credit-card-purchase": "card", purchase: "po", "travel-claim": "travel-claim" }[t]; if (!k) return vNotFound(); UI.route = `/requests/new/${k}`; return vRcForm(k); });
 
 /* Purchasing › Requests: the old "Ask to buy something" form is retired — new orders start as a New Purchase Order.
    Requests already raised stay listed, and approved ones can still become purchase orders. */
@@ -445,7 +467,7 @@ window.ACTIONS_EXT.push({
   rcAccDept(el) { act("rc.access", { employeeId: el.dataset.id, ownDept: el.checked }, "Saved."); },
   rcAccAdd(el) { const v = document.getElementById(`rcAccAdd-${el.dataset.id}`)?.value; if (!v) { toast("Pick someone", "Choose a colleague from the list first.", "err"); return; } act("rc.access", { employeeId: el.dataset.id, addExtra: v }, "Saved."); },
   rcAccDel(el) { act("rc.access", { employeeId: el.dataset.id, removeExtra: el.dataset.x }, "Removed."); },
-  rcAccAddOut(el) { const v = (document.getElementById(`rcAccOut-${el.dataset.id}`)?.value || "").trim(); if (!v) { toast("Type a name", "Enter the person's name first.", "err"); return; } act("rc.access", { employeeId: el.dataset.id, addOutside: v }, "Saved for their expense claims."); },
+  rcAccAddOut(el) { const v = (document.getElementById(`rcAccOut-${el.dataset.id}`)?.value || "").trim(); if (!v) { toast("Type a name", "Enter the person's name first.", "err"); return; } act("rc.access", { employeeId: el.dataset.id, addOutside: v }, "Saved for their travel claims."); },
   rcAccDelOut(el) { act("rc.access", { employeeId: el.dataset.id, removeOutside: el.dataset.x }, "Removed."); },
 });
 /* GST / PST fill in from the amount before tax and can be corrected */

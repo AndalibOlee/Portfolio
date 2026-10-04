@@ -79,27 +79,89 @@ function vDirectory() {
     + (edit ? `<p class="hint">Changing the department saves right away and is recorded in the person's history. You can also drag people between departments on the organization chart.</p>` : "");
 }
 
-/* ---------------- Organization chart ---------------- */
+/* ---------------- Organization chart ----------------
+   A top-down chart of the WHOLE organization for everyone (names and job titles only):
+   group → company → department → people, or the reporting lines. HR and administrators
+   (hr.employees.edit) drag a person onto another department of the same company to move them. */
+const orgPeople = () => S.employees.filter((e) => !["TERMINATED", "INACTIVE"].includes(e.status));
 function vOrgChart() {
   const edit = can(A, "hr.employees.edit");
   const view = UI.tabs.org || "departments";
-  const people = peopleInView();
-  const cos = S.companies.filter((c) => people.some((e) => e.companyId === c.id)).sort((a, b) => a.code.localeCompare(b.code));
+  const people = orgPeople();
+  const cos = S.companies.filter((c) => people.some((e) => e.companyId === c.id)).sort((a, b) => (a.id === "HAICO" ? -1 : b.id === "HAICO" ? 1 : a.displayName.localeCompare(b.displayName)));
+  const title = (e) => byId(S.positions, e.positionId)?.title || "—";
   const toggle = `<div class="seg">${[["departments", "By department"], ["reporting", "Reporting lines"]].map(([k, l]) => `<button class="${view === k ? "on" : ""}" data-a="tab" data-k="org" data-v="${k}">${l}</button>`).join("")}</div>`;
-  const personCard = (e) => `<div class="ocard" ${edit ? `draggable="true" data-drag="${e.id}"` : ""}>${avatar(e, 30)}<div style="min-width:0;flex:1"><b>${esc(empName(e))}</b><small>${esc(byId(S.positions, e.positionId)?.title || "—")}${e.managerId ? ` · reports to ${esc(empName(byId(S.employees, e.managerId)))}` : ""}</small></div>${edit ? `<span class="grip" aria-hidden>⋮⋮</span>` : ""}</div>`;
-  let body;
+  const movable = (e) => edit && view === "departments" && scopeIds(S, A).includes(e.companyId);
+  const pcard = (e, lead) => `<div class="oc-p${lead ? " lead" : ""}"${movable(e) ? ` draggable="true" data-drag="${e.id}" title="Drag to another department"` : ""}>${avatar(e, 30)}<b>${esc(empName(e))}</b><small>${esc(title(e))}</small>${lead ? `<span class="oc-tag">Lead</span>` : ""}</div>`;
+  const stack = (cards) => `<div class="oc-stack">${cards.join("")}</div>`;
+  let tree;
   if (view === "reporting") {
+    const kids = (id) => people.filter((e) => e.managerId === id).sort((a, b) => a.lastName.localeCompare(b.lastName));
     const ids = new Set(people.map((e) => e.id));
-    const kids = (id) => people.filter((e) => e.managerId === id);
-    const node = (e, depth) => `<li><div class="onode">${avatar(e, 30)}<div><b>${esc(empName(e))}</b><small>${esc(byId(S.positions, e.positionId)?.title || "—")} · ${esc(byId(S.departments, e.departmentId)?.name || "—")}${kids(e.id).length ? ` · ${kids(e.id).length} direct report${kids(e.id).length === 1 ? "" : "s"}` : ""}</small></div></div>${kids(e.id).length ? `<ul class="otree">${kids(e.id).map((k) => node(k, depth + 1)).join("")}</ul>` : ""}</li>`;
-    body = cos.map((c) => { const roots = people.filter((e) => e.companyId === c.id && !(e.managerId && ids.has(e.managerId))); return roots.length ? `<section class="card" style="padding:16px;margin-bottom:14px"><div class="sect-l" style="margin-top:0">${coTag(c.id)}</div><ul class="otree root">${roots.map((r) => node(r, 0)).join("")}</ul></section>` : ""; }).join("");
+    const node = (e) => {
+      const k = kids(e.id), box = `<div class="oc-p oc-mgr" style="--cc:${esc(co(e.companyId)?.colorTag || "#17566b")}">${avatar(e, 38)}<b>${esc(empName(e))}</b><small>${esc(title(e))}</small><span class="oc-co">${esc(co(e.companyId)?.displayName || "")}</span></div>`;
+      if (!k.length) return `<li>${box}</li>`;
+      if (k.every((x) => !kids(x.id).length)) return `<li>${box}${stack(k.map((x) => pcard(x)))}</li>`;
+      return `<li>${box}<ul>${k.map(node).join("")}</ul></li>`;
+    };
+    const roots = people.filter((e) => !e.managerId || !ids.has(e.managerId));
+    tree = `<ul>${roots.map(node).join("")}</ul>`;
   } else {
-    body = (edit ? `<div class="msg info">Drag someone onto another department to move them. It saves right away and shows in their History.</div>` : "")
-      + cos.map((c) => { const deps = S.departments.filter((d) => d.companyId === c.id); return `<div class="sect-l">${coTag(c.id)}</div><div class="oboard">${deps.map((d) => { const mem = people.filter((e) => e.departmentId === d.id); const head = d.managerId ? byId(S.employees, d.managerId) : null;
-        return `<div class="ocol" data-dropdept="${d.id}" data-co="${d.companyId}"><div class="och"><b>${esc(d.name)}</b><small>${esc(d.code)}${head ? ` · led by ${esc(empName(head))}` : ""} · ${mem.length} ${mem.length === 1 ? "person" : "people"}</small></div>${mem.map(personCard).join("") || `<div class="oempty">${edit ? "Drop someone here" : "Nobody yet"}</div>`}</div>`; }).join("")}</div>`; }).join("");
+    const dept = (d) => {
+      const mem = people.filter((e) => e.departmentId === d.id).sort((a, b) => (a.id === d.managerId ? -1 : b.id === d.managerId ? 1 : a.lastName.localeCompare(b.lastName)));
+      const head = d.managerId ? byId(S.employees, d.managerId) : null;
+      return `<li><div class="oc-col" data-dropdept="${d.id}" data-co="${d.companyId}"><div class="oc-d"><b>${esc(d.name)}</b><small>${esc(d.code)}${head ? ` · led by ${esc(empName(head))}` : ""}</small><span class="oc-n">${mem.length} ${mem.length === 1 ? "person" : "people"}</span></div>${mem.length ? stack(mem.map((e) => pcard(e, e.id === d.managerId))) : `<div class="oc-stack"><div class="oc-empty">${edit ? "Drop someone here" : "Nobody yet"}</div></div>`}</div></li>`;
+    };
+    const company = (c) => {
+      const deps = S.departments.filter((d) => d.companyId === c.id).sort((a, b) => a.code.localeCompare(b.code));
+      const leadDep = deps.find((d) => d.managerId) , lead = leadDep ? byId(S.employees, leadDep.managerId) : null;
+      const n = people.filter((e) => e.companyId === c.id).length;
+      return `<li><div class="oc-c" style="--cc:${esc(c.colorTag)}">${lead ? avatar(lead, 38) : ""}<b>${esc(c.displayName)}</b><small>${lead ? `${esc(empName(lead))} · ${esc(title(lead))}` : ""}</small><span class="oc-n">${n} people · ${deps.length} departments</span></div><ul>${deps.map(dept).join("")}</ul></li>`;
+    };
+    tree = `<ul><li><div class="oc-g"><span class="weave" style="width:70px;height:4px;margin:0 auto 6px"></span><b>HaiCo Group</b><small>${cos.length} companies · ${people.length} people</small></div><ul>${cos.map(company).join("")}</ul></li></ul>`;
   }
-  return pillNav("People", peoplePills(), "/people/org-chart") + `<div class="ph" style="align-items:flex-end"><div>${bigTitle("Organization chart", `How the organization fits together — by department, or by who reports to whom.${edit ? " As HR you can drag people to move them between departments." : ""}`)}</div><div class="acts">${toggle}</div></div>` + flashHtml() + body;
+  const hint = view === "departments"
+    ? (edit ? `<div class="msg info">Drag a person onto another department to move them — within the same company. It saves right away and shows in their History.</div>` : `<p class="hint" style="margin:0 0 10px">The whole organization, every company. Only HR and administrators can move people between departments.</p>`)
+    : `<p class="hint" style="margin:0 0 10px">Who reports to whom, across every company. Change a manager on the person's record (People › Employees).</p>`;
+  return pillNav("People", peoplePills(), "/people/org-chart") + `<div class="ph" style="align-items:flex-end"><div>${bigTitle("Organization chart", "How the whole organization fits together — every company, department and person.")}</div><div class="acts">${toggle}</div></div>` + flashHtml() + hint
+    + `<div class="ocw"><div class="ochart${edit && view === "departments" ? " can-drag" : ""}">${tree}</div></div>`;
 }
+injectCss(`
+.ocw{overflow-x:auto;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 8px 20px}
+.ochart{--ln:color-mix(in srgb,var(--primary) 55%,var(--border));--box:color-mix(in srgb,var(--primary) 13%,var(--card));--box2:color-mix(in srgb,var(--primary) 7%,var(--card));width:max-content;min-width:100%;display:flex;justify-content:center}
+.ochart ul{display:flex;justify-content:center;margin:0;padding:20px 0 0;list-style:none;position:relative}
+.ochart>ul{padding-top:0}
+.ochart li{position:relative;display:flex;flex-direction:column;align-items:center;padding:20px 4px 0}
+.ochart>ul>li{padding-top:0}
+.ochart li::before,.ochart li::after{content:"";position:absolute;top:0;right:50%;width:50%;height:20px;border-top:2px solid var(--ln)}
+.ochart li::after{right:auto;left:50%;border-left:2px solid var(--ln)}
+.ochart li:only-child::before,.ochart li:only-child::after{display:none}.ochart li:only-child{padding-top:0}
+.ochart li:first-child::before,.ochart li:last-child::after{border:0}
+.ochart li:last-child::before{border-right:2px solid var(--ln);border-radius:0 7px 0 0}
+.ochart li:first-child::after{border-radius:7px 0 0 0}
+.ochart ul ul::before{content:"";position:absolute;top:0;left:50%;height:20px;border-left:2px solid var(--ln)}
+.ochart>ul>li:only-child::before{display:none}
+.oc-g,.oc-c,.oc-d,.oc-p{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;border-radius:12px;position:relative}
+.oc-g{background:var(--primary);color:var(--primary-fg);padding:10px 22px;min-width:180px}.oc-g b{font-size:15px}.oc-g small{opacity:.85;font-size:12px}
+.oc-c{background:var(--box);border:1px solid color-mix(in srgb,var(--primary) 28%,var(--border));border-top:4px solid var(--cc);padding:9px 10px 8px;min-width:150px;max-width:224px}
+.oc-c b{font-size:14px}.oc-c small{font-size:11.5px;color:var(--muted-fg)}.oc-c .av{margin-bottom:3px}
+.oc-n{font-size:10.5px;font-weight:700;color:var(--muted-fg);letter-spacing:.03em}
+.oc-col{display:flex;flex-direction:column;align-items:center;border-radius:14px;padding:3px;transition:background .15s,box-shadow .15s}
+.oc-d{background:var(--box);border:1px solid color-mix(in srgb,var(--primary) 28%,var(--border));padding:7px 7px;width:110px}
+.oc-d b{font-size:12.5px;line-height:1.2}.oc-d small{font-size:10.5px;color:var(--muted-fg);line-height:1.25}
+.oc-stack{display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:14px;position:relative}
+.oc-stack::before{content:"";position:absolute;top:0;bottom:24px;left:50%;border-left:2px solid var(--ln)}
+.oc-p{background:var(--box2);border:1px solid var(--border);padding:7px 5px 6px;width:106px;z-index:1}
+.oc-p b{font-size:12px;line-height:1.2;font-weight:600}.oc-p small{font-size:10.5px;color:var(--muted-fg);line-height:1.2}.oc-p .av{margin-bottom:2px}
+.oc-p.lead{border-color:color-mix(in srgb,var(--primary) 40%,var(--border))}
+.oc-tag{position:absolute;top:5px;right:5px;font-size:9px;font-weight:700;background:var(--primary);color:var(--primary-fg);border-radius:99px;padding:0 5px}
+.oc-mgr{background:var(--box);border-color:color-mix(in srgb,var(--primary) 28%,var(--border));border-top:3px solid var(--cc);width:124px}
+.oc-co{font-size:9.5px;color:var(--muted-fg);font-weight:600}
+.oc-empty{border:1px dashed var(--border);border-radius:10px;padding:10px 8px;width:106px;font-size:11px;color:var(--muted-fg);background:var(--card);z-index:1}
+.can-drag .oc-p[draggable=true]{cursor:grab}.can-drag .oc-p[draggable=true]:hover{border-color:var(--primary);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.oc-p.dragging{opacity:.4}
+.oc-col.over{background:var(--info-bg);box-shadow:0 0 0 2px var(--info)}.oc-col.blocked{background:var(--bad-bg);box-shadow:0 0 0 2px var(--bad-line)}
+`);
 
 /* ---------------- My profile ---------------- */
 const PROFILE_PILLS = [["/me/profile", "My profile"], ["/me/profile/benefits", "Benefits"], ["/me/profile/events", "Events"]];

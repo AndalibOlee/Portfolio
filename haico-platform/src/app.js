@@ -292,7 +292,7 @@ boot();
 /* ---------------- drag & drop: attachments and the org chart ---------------- */
 let DRAG_EMP = null;
 document.addEventListener("dragstart", (ev) => { const c = ev.target.closest?.("[data-drag]"); if (!c) return; DRAG_EMP = c.dataset.drag; c.classList.add("dragging"); ev.dataTransfer.effectAllowed = "move"; try { ev.dataTransfer.setData("text/plain", DRAG_EMP); } catch { /* ignore */ } });
-document.addEventListener("dragend", (ev) => { ev.target.closest?.("[data-drag]")?.classList.remove("dragging"); document.querySelectorAll(".ocol.over,.ocol.blocked").forEach((n) => n.classList.remove("over", "blocked")); DRAG_EMP = null; });
+document.addEventListener("dragend", (ev) => { ev.target.closest?.("[data-drag]")?.classList.remove("dragging"); document.querySelectorAll("[data-dropdept].over,[data-dropdept].blocked").forEach((n) => n.classList.remove("over", "blocked")); DRAG_EMP = null; });
 document.addEventListener("dragover", (ev) => {
   const z = ev.target.closest?.("[data-fzone]"); if (z) { ev.preventDefault(); z.classList.add("over"); return; }
   const col = ev.target.closest?.("[data-dropdept]"); if (col && DRAG_EMP) { ev.preventDefault(); const e = byId(S.employees, DRAG_EMP); col.classList.add(e && e.companyId === col.dataset.co ? "over" : "blocked"); }

@@ -521,6 +521,7 @@ function calculateRun(S, ctx, run) {
         stat += e.statHours || 0; vac += e.vacationHours || 0; sick += e.sickHours || 0; pers += e.personalHours || 0; other += e.otherLeaveHours || 0; banked += e.bankedOtHours || 0;
       }
       const ot = classifyOvertime([...daily].map(([date, hours]) => ({ date, hours })), rules);
+      { let bank = sheets.reduce((s, x) => s + (x.otBankedHours || 0), 0); const a = Math.min(bank, ot.ot); ot.ot -= a; bank -= a; ot.dot = Math.max(0, ot.dot - bank); }
       if (ot.ot + ot.dot > 12) warnings.push({ employee: name, code: "HIGH_OT", message: `${name} has unusually high overtime (${(ot.ot + ot.dot).toFixed(1)} h).` });
       const push = (typeCode, description, h, mult, order) => {
         if (h <= 0) return;
@@ -817,10 +818,15 @@ const R = {
     if (!(sub > 0)) fail("Enter the amount before tax.");
     if (!p.invoiceDate) fail("Enter the bill date.");
     const tax = p.gst ? Math.round(sub * 0.05) : 0;
+    if (p.coded) {
+      if (!p.accountNumber) fail("Choose the expense account."); if (!p.departmentId) fail("Choose the department.");
+      const ea = S.accounts.find((a) => a.companyId === v.companyId && a.number === p.accountNumber && a.isActive !== false && a.isPostable !== false); if (!ea) fail("Choose an account from this company's chart.");
+      const dp = byId(S.departments, p.departmentId); if (!dp || dp.companyId !== v.companyId) fail(`Choose a department in ${co(v.companyId).displayName}.`);
+    }
     const acct = p.accountNumber || v.defaultExpenseAccountNumber || "5900";
     const inv = { id: ctx.id("ap"), companyId: v.companyId, vendorId: v.id, invoiceNumber: num, invoiceDate: p.invoiceDate, dueDate: addDays(p.invoiceDate, v.paymentTermsDays || 30), description: (p.description || "").trim() || "Vendor bill", subtotalCents: sub, taxCents: tax, totalCents: sub + tax, paidCents: 0, status: "DRAFT", attachments: p.attachment ? [{ ...p.attachment, by: ctx.actor.displayName, at: ctx.now }] : [], createdAt: ctx.now };
     S.apInvoices.push(inv);
-    S.apLines.push({ id: ctx.id("apl"), apInvoiceId: inv.id, description: inv.description, accountNumber: acct, quantity: 1, unitCents: sub, amountCents: sub, taxCode: p.gst ? "GST" : "NONE", taxCents: tax });
+    S.apLines.push({ id: ctx.id("apl"), apInvoiceId: inv.id, description: inv.description, accountNumber: acct, departmentId: p.departmentId || undefined, quantity: 1, unitCents: sub, amountCents: sub, taxCode: p.gst ? "GST" : "NONE", taxCents: tax });
     ctx.audit({ module: "finance.ap", action: "CREATE", companyId: v.companyId, summary: `${ctx.actor.displayName} entered bill ${num} from ${v.name} (${money(inv.totalCents)})${inv.attachments.length ? " with the vendor's PDF attached" : ""}.` });
     if (p.submit) R["ap.submit"](S, { invoiceId: inv.id }, ctx);
   },
@@ -865,10 +871,17 @@ const R = {
     const tax = p.gst ? Math.round(sub * 0.05) : 0;
     const num = nextNum(S.arInvoices.map((i) => i.invoiceNumber), "INV-2026", 4);
     const memo = (p.memo || "").trim() || "Services";
-    const je = postJournal(S, ctx, { companyId: cu.companyId, date, memo: `Invoice ${num} — ${memo}`, source: "AR", sourceType: "ArInvoice", reference: num, lines: [{ accountNumber: GL.AR, debitCents: sub + tax, description: cu.name }, { accountNumber: GL.REVENUE, creditCents: sub, description: memo }, ...(tax ? [{ accountNumber: GL.GST_PAY, creditCents: tax, description: "GST collected" }] : [])] });
+    if (p.coded) {
+      if (!p.accountNumber) fail("Choose the revenue account."); if (!p.departmentId) fail("Choose the department.");
+      const ra = S.accounts.find((a) => a.companyId === cu.companyId && a.number === p.accountNumber && a.type === "REVENUE" && a.isActive !== false); if (!ra) fail("Choose a revenue account from this company's chart.");
+      const dp = byId(S.departments, p.departmentId); if (!dp || dp.companyId !== cu.companyId) fail(`Choose a department in ${co(cu.companyId).displayName}.`);
+    }
+    const revAcct = p.accountNumber || GL.REVENUE;
+    const je = postJournal(S, ctx, { companyId: cu.companyId, date, memo: `Invoice ${num} — ${memo}`, source: "AR", sourceType: "ArInvoice", reference: num, lines: [{ accountNumber: GL.AR, debitCents: sub + tax, description: cu.name }, { accountNumber: revAcct, creditCents: sub, description: memo, departmentId: p.departmentId || undefined }, ...(tax ? [{ accountNumber: GL.GST_PAY, creditCents: tax, description: "GST collected" }] : [])] });
     const inv = { id: ctx.id("ar"), companyId: cu.companyId, customerId: cu.id, invoiceNumber: num, type: "INVOICE", invoiceDate: date, dueDate: addDays(date, cu.paymentTermsDays || 30), memo, subtotalCents: sub, taxCents: tax, totalCents: sub + tax, paidCents: 0, status: "SENT", journalEntryId: je.id, postedAt: ctx.now, sentAt: ctx.now };
     S.arInvoices.push(inv);
-    S.arLines.push({ id: ctx.id("arl"), arInvoiceId: inv.id, description: memo, accountNumber: GL.REVENUE, quantity: 1, unitCents: sub, amountCents: sub, taxCents: tax });
+    if (p.departmentId) inv.departmentId = p.departmentId;
+    S.arLines.push({ id: ctx.id("arl"), arInvoiceId: inv.id, description: memo, accountNumber: revAcct, departmentId: p.departmentId || undefined, quantity: 1, unitCents: sub, amountCents: sub, taxCents: tax });
     ctx.audit({ module: "finance.ar", action: "CREATE", companyId: cu.companyId, summary: `${ctx.actor.displayName} sent invoice ${num} to ${cu.name} (${money(inv.totalCents)}) — ${je.entryNumber}.` });
   },
   "ar.receive"(S, p, ctx) {

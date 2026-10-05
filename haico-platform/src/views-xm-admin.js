@@ -53,7 +53,7 @@ const XM_NAV_CATALOG = [
   ["Team", [["team", "My Team", "users"]]],
   ["People", [["people", "People", "directory"], ["hr-time", "Time & Attendance", "calendarclock"], ["hr-talent", "Reviews, Benefits & Pension", "star"]]],
   ["Payroll", [["ops-payroll", "Payroll", "banknote"]]],
-  ["Finance", [["fin-accounting", "Accounting", "book"], ["fin-ap", "Accounts Payable", "receipt"], ["fin-ar", "Accounts Receivable", "filetext"], ["fin-banking", "Banking", "piggybank"]]],
+  ["Finance", [["fin-accounting", "Accounting", "book"], ["fin-ap", "Accounts Payable", "receipt"], ["fin-ar", "Accounts Receivable", "filetext"], ["fin-banking", "Banking", "piggybank"], ["fin-po", "PO", "cart"]]],
   ["Operations", [["ops-purchasing", "Purchasing", "cart"], ["ops-sales", "Sales & Stock", "boxes"], ["ops-projects", "Projects", "briefcase"], ["documents", "Documents", "folder"]]],
   ["Reports", [["reports", "Reports", "chart"]]],
   ["Administration", [["admin", "Administration", "shield"]]],

@@ -584,6 +584,7 @@ EXPORTS["po-history"] = () => ({ base: `haico-po-history-${todayStr()}`, title: 
 function vF3ReportsHub() {
   const html = vReportsHub();
   if (!(can(A, "procurement.view") || can(A, "reports.view"))) return html;
+  return html; // "Purchase order history" left Reports: every PO is under Finance › PO
   const cardHtml = `<button class="rcard" data-go="/reports/po-history"><span class="ri" aria-hidden>🧾</span><b>Purchase order history</b><small>Every PO by supplier, status and date — with what was received and billed.</small><em>Open →</em></button>`;
   const k = html.indexOf('data-go="/reports/trial-balance"');
   if (k < 0) return html + `<h2 class="h2" style="margin-top:18px">Purchasing</h2><div class="grid g3">${cardHtml}</div>`;

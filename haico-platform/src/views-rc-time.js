@@ -112,7 +112,7 @@ const daysBetween = (a, b) => Math.round((new Date(b + "T00:00:00Z") - new Date(
     const cards = leaveBalances(e.id).filter((b) => b.lt.isActive !== false && (b.has || b.lt.code === "OTHER" || b.lt.code === "BANKED_OT")).map((b) => {
       const free = b.lt.code === "OTHER", isOpen = open === b.lt.id, today = b.ent - b.used;
       return `<div class="card lvcard" style="padding:14px 16px"><div class="nm"><span class="sq" style="width:10px;height:10px;margin-top:3px;flex:none;background:${esc(b.lt.color || "#17566b")}"></span>${esc(b.lt.name)}</div>
-        <div class="big">${free ? "∞" : hrs(today)}</div><div class="hint">Hours balance today${b.pending ? ` · ${hrs(b.pending)} awaiting approval` : ""}</div>
+        <div class="big">${free ? "∞" : hrs(today)}</div><div class="hint">Hours balance today${b.pending ? ` · ${hrs(b.pending)} awaiting approval` : ""}${b.creditWaiting ? ` · incl. ${hrs(b.creditWaiting)} from your timesheet` : ""}</div>
         <button class="btn sm" style="margin-top:10px" data-a="lvOpen" data-id="${b.lt.id}" aria-expanded="${isOpen}">${isOpen ? "Hide details" : "View details"}</button>
         ${isOpen ? `<div style="margin-top:10px;font-size:12.5px"><p style="margin:0 0 6px;color:var(--muted-fg)">${esc(b.lt.description || "")}</p>${[["Entitlement", free ? "No limit" : hrs(b.ent)], ["Used this year", hrs(b.used)], ["Awaiting approval", hrs(b.pending)], ["Remaining", free ? "—" : hrs(b.avail)]].map(([k, v]) => `<div class="kvl"><span>${k}</span><span class="mono">${v}</span></div>`).join("")}</div>` : ""}</div>`;
     }).join("");

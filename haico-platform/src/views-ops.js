@@ -64,7 +64,7 @@ function wireChart(el) {
 function vDashboard() {
   // greeting, needs attention, quick actions, my open requests, waiting on you, activity + coming up;
   // Executive / Finance / HR add one compact "At a glance" strip (detail lives on each module's pages)
-  return homeTop() + homeGlance();
+  return homeTop() + (homeHrGlanceTop() ? "" : homeGlance());
 }
 
 /* ---------------- Approvals ---------------- */

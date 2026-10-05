@@ -86,6 +86,7 @@ function crItem(x) {
   return `<div class="cr-item" data-cr-hover="${esc(x.target?.path || "")}"><div class="cr-meta"><span class="cr-pill ${esc(x.status)}">${esc(CR_STATUS[x.status] || x.status)}</span><span>${esc((CR_KINDS.find((k) => k[0] === x.kind) || ["", "Change"])[1])}</span><span>· ${x.priority === "nice" ? "Nice to have" : "Must have"}</span>${x.as?.name ? `<span>· seen as ${esc(x.as.name)}</span>` : ""}</div>
     <p>${esc(x.text)}</p>${x.target ? `<div class="cr-meta">Points at: “${esc(x.target.label)}”${x.target.section ? ` in ${esc(x.target.section)}` : ""}</div>` : ""}
     ${x.reply ? `<div class="cr-reply"><b>Claude:</b> ${esc(x.reply)}</div>` : ""}
+    <div class="cr-row"><button class="cr-btn" type="button" data-cr="show" data-id="${x.id}">${x.status === "done" ? "Show me the change" : "Show me the spot"}</button>${x.as?.userId && A && x.as.userId !== A.user.id ? `<span class="cr-meta">written as ${esc(x.as.name)} — sign in as them to see exactly what they saw</span>` : ""}</div>
     ${editable ? `<div class="cr-row"><button class="cr-btn" type="button" data-cr="edit" data-id="${x.id}">Edit</button><button class="cr-btn" type="button" data-cr="del" data-id="${x.id}">Delete</button></div>` : ""}</div>`;
 }
 function crRender() {
@@ -109,7 +110,7 @@ function crRender() {
       ${CR.msg ? `<div class="cr-ctx" role="status">${esc(CR.msg)}</div>` : ""}
       <div class="cr-list">${here.length ? here.map(crItem).join("") : `<p class="cr-ctx" style="margin:0">Nothing written for this page yet. Each note you add shows here with its progress.</p>`}</div>`
     : `<div class="cr-ctx">${CR.list.length} change${CR.list.length === 1 ? "" : "s"} written across ${groups.length} page${groups.length === 1 ? "" : "s"}. Open a page to see and add its notes.</div>
-      <div class="cr-list">${groups.length ? groups.map((g) => `<button type="button" class="cr-group" data-cr="goto" data-route="${esc(g.route)}"><span>${esc(g.title || g.route)}<br><small class="mono">${esc(g.route)}</small></span><small>${crOpenCount(g.items)} open · ${g.items.length - crOpenCount(g.items)} done</small></button>`).join("") : `<p class="cr-ctx" style="margin:0">No changes written yet. Open any page and press Request a change.</p>`}</div>`;
+      <div class="cr-list">${groups.length ? groups.map((g) => `<button type="button" class="cr-group" data-cr="goto" data-route="${esc(g.route)}"><span>${esc(g.title || g.route)}<br><small class="mono">${esc(g.route)}</small></span><small>${crOpenCount(g.items)} open · ${g.items.length - crOpenCount(g.items)} done</small></button>${g.items.slice().sort((x, y) => (x.status === "done") - (y.status === "done")).map(crItem).join("")}`).join("") : `<p class="cr-ctx" style="margin:0">No changes written yet. Open any page and press Request a change.</p>`}</div>`
   const sendNote = CR.canSend === "available" ? "Claude shows you each page’s requests next to the planned change. Nothing is built until you confirm." : CR.canSend === "writers_only" ? "Only the owner of this demo can send the list to Claude." : "Sending from this page isn't available right now. In the chat, say “build my changes” and Claude reads the same list.";
   p.innerHTML = `<div class="cr-head"><h2>Changes to make</h2><button type="button" class="cr-x" data-cr="close" aria-label="Close">✕</button></div>
     <div class="cr-tabs" role="tablist"><button type="button" role="tab" aria-selected="${CR.tab === "page"}" class="${CR.tab === "page" ? "on" : ""}" data-cr="tab" data-v="page">This page (${here.length})</button><button type="button" role="tab" aria-selected="${CR.tab === "all"}" class="${CR.tab === "all" ? "on" : ""}" data-cr="tab" data-v="all">All pages (${crOpenCount(CR.list)} open)</button></div>
@@ -143,6 +144,22 @@ document.addEventListener("click", async (ev) => {
   if (a === "untarget") { d.target = null; return crRender(); }
   if (a === "pick") return crPick();
   if (a === "cancel") { CR.editing = null; CR.draft = { text: "", kind: "change", priority: "must", target: null }; return crRender(); }
+  if (a === "show") {
+    const x = CR.list.find((y) => y.id === b.dataset.id); if (!x) return;
+    if (parseRoute(UI.route || "/").path !== x.route) go(x.route);
+    CR.tab = "page"; crRender();
+    setTimeout(() => {
+      let el = null; try { el = x.target?.path ? document.querySelector(x.target.path) : null; } catch {}
+      el = el || document.querySelector(".content h1");
+      if (!el) return;
+      el.scrollIntoView({ block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      const r0 = el.getBoundingClientRect(), h = Object.assign(document.createElement("div"), { className: "cr-hl" });
+      document.body.appendChild(h);
+      const place = () => { const r = el.getBoundingClientRect(); Object.assign(h.style, { left: `${r.left - 4}px`, top: `${r.top - 4}px`, width: `${r.width + 8}px`, height: `${r.height + 8}px` }); };
+      place(); const t = setInterval(place, 120); setTimeout(() => { clearInterval(t); h.remove(); }, 3200); void r0;
+    }, 350);
+    return;
+  }
   if (a === "goto") { CR.tab = "page"; go(b.dataset.route); return crRender(); }
   if (a === "edit") { const x = CR.list.find((y) => y.id === b.dataset.id); if (!x) return; CR.editing = x.id; CR.draft = { text: x.text, kind: x.kind, priority: x.priority, target: x.target || null }; return crRender(); }
   if (a === "del") {

@@ -229,22 +229,19 @@ function homeTop() {
   const h = new Date().getHours(), hello = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
   const approvals = myActionable(), sheets = myTimesheetsToApprove();
   const isApprover = approvals.length + sheets.length > 0 || myTeam().length > 0;
-  const actions = A.employee ? [["/me/time", "clock", "Enter my hours"], ["/me/time-off", "calendar", "Request time off"], ["/me/expenses", "receipt", "Submit an expense"], ["/me/requests", "plus", "New request"]] : [];
-  const OPEN = ["PENDING_APPROVAL", "SUBMITTED", "OPEN"];
-  const open = A.employee ? statusRows(A.employee.id).filter((r) => OPEN.includes(r.status)) : null;
   const greet = `<div class="hgreet"><h1>${hello}, ${esc(first)}</h1><span>${esc(dLong(todayStr()))}</span></div>`;
-  const qa = actions.length ? `<section class="hcard" aria-labelledby="qa-h"><div class="hcard-h"><h2 id="qa-h">Quick actions</h2></div><div class="qa2">${actions.slice(0, 4).map(([go, ic, t]) => `<button data-go="${go}">${icon(ic)}<span>${esc(t)}</span></button>`).join("")}</div></section>` : "";
-  const mor = open ? `<section class="hcard" aria-labelledby="mor-h"><div class="hcard-h"><h2 id="mor-h">My requests &amp; expenses</h2><button class="lnk" style="font-size:12.5px" data-go="/me/requests">All of them →</button></div>${open.length ? `<ul class="hlist">${open.slice(0, 5).map((r) => `<li><button class="orow" data-go="${esc(r.href || "/me/requests")}"><span class="tx"><b>${esc(r.kind)} · ${esc(r.title)}</b><small>${esc(r.number || "")}${r.waiting ? ` · ${esc(r.waiting)}` : ""}</small></span>${r.amount ? `<span class="num" style="font-size:12px">${money(r.amount)}</span>` : ""}${badge(r.status)}</button></li>`).join("")}</ul>${open.length > 5 ? `<button class="hmore" data-go="/me/requests">+ ${open.length - 5} more open</button>` : ""}` : `<p class="empty-s">Nothing waiting on a decision.</p>`}</section>` : "";
   const ev = upcomingEventsA(60).slice(0, 6);
   const teamRows = myTeam().length ? historyRowsA({ scope: "team" }).rows : [];
   const hist = teamRows.length ? { rows: teamRows, who: "your team" } : { rows: historyRowsA({ scope: "me" }).rows, who: "you" };
-  const eh = `<section class="grid g2" style="align-items:start;margin-bottom:18px">
-    <div class="hcard"><div class="hcard-h"><h2>Recent activity <span class="hint" style="font-weight:400">· ${hist.who}</span></h2><button class="lnk" style="font-size:12.5px" data-go="/history">All history →</button></div>${hist.rows.length ? `<ul class="hlist">${hist.rows.slice(0, 6).map((r) => { const a = areaOfModule(r.module); return `<li class="hrow" style="cursor:default"><b>${esc(r.summary)}</b><small>${esc(dTime(r.at))} · ${esc(r.actorName || "System")}${a ? ` · ${H_AREAS[a][0]}` : ""}</small></li>`; }).join("")}</ul>` : `<p class="empty-s">Nothing yet — what you and your team do shows up here.</p>`}</div>
-    <div class="hcard"><div class="hcard-h"><h2>Coming up</h2>${A.employee ? `<button class="lnk" style="font-size:12.5px" data-go="/me/profile/events">Calendar →</button>` : ""}</div>${ev.length ? `<ul class="hlist">${ev.map((x) => `<li class="erow"><span class="dt">${esc(dShort(x.at))}</span><span class="dot" style="background:${EVENT_K[x.k][1]}" aria-hidden="true"></span><span class="tx"><b>${esc(x.t)}</b><small>${EVENT_K[x.k][0]}${x.d ? ` · ${esc(x.d)}` : ""}</small></span></li>`).join("")}</ul>` : `<p class="empty-s">Nothing in the next few weeks.</p>`}</div></section>`;
-  return greet + flashHtml() + homeTiles()
-    + (isApprover ? waitingOnYou("/dashboard") : "")
-    + `<div class="hgrid"><div class="hcol">${needsAttention(isApprover)}</div><div class="hcol">${qa}${mor}</div></div>` + eh;
+  // Home (review round 1): Quick actions and "My requests & expenses" are gone; Recent activity sits under
+  // Needs your attention at the same width, and the calendar (Coming up) takes the narrow column on the right.
+  const recent = `<div class="hcard"><div class="hcard-h"><h2>Recent activity <span class="hint" style="font-weight:400">· ${hist.who}</span></h2><button class="lnk" style="font-size:12.5px" data-go="/history">All history →</button></div>${hist.rows.length ? `<ul class="hlist">${hist.rows.slice(0, 6).map((r) => { const a = areaOfModule(r.module); return `<li class="hrow" style="cursor:default"><b>${esc(r.summary)}</b><small>${esc(dTime(r.at))} · ${esc(r.actorName || "System")}${a ? ` · ${H_AREAS[a][0]}` : ""}</small></li>`; }).join("")}</ul>` : `<p class="empty-s">Nothing yet — what you and your team do shows up here.</p>`}</div>`, comingUp = `<div class="hcard"><div class="hcard-h"><h2>Coming up</h2>${A.employee ? `<button class="lnk" style="font-size:12.5px" data-go="/me/profile/events">Calendar →</button>` : ""}</div>${ev.length ? `<ul class="hlist">${ev.map((x) => `<li class="erow"><span class="dt">${esc(dShort(x.at))}</span><span class="dot" style="background:${EVENT_K[x.k][1]}" aria-hidden="true"></span><span class="tx"><b>${esc(x.t)}</b><small>${EVENT_K[x.k][0]}${x.d ? ` · ${esc(x.d)}` : ""}</small></span></li>`).join("")}</ul>` : `<p class="empty-s">Nothing in the next few weeks.</p>`}</div>`;
+  const hrTop = homeHrGlanceTop();
+  return greet + flashHtml() + (hrTop ? homeGlance() : homeTiles()) + (isApprover ? waitingOnYou("/dashboard") : "")
+    + `<div class="hgrid"><div class="hcol">${needsAttention(isApprover)}${recent}</div><div class="hcol">${comingUp}</div></div>`;
 }
+/** HR's Home: the "At a glance" strip moves to the top in place of "People at a glance" (review round 1) */
+function homeHrGlanceTop() { const isExec = A.isSuper || A.roleCodes.includes("EXECUTIVE") || A.roleCodes.includes("GROUP_ADMIN"); return !isExec && !can(A, "finance.post") && can(A, "hr.employees.edit"); }
 /** Executive / Finance / HR: one compact strip, at most one donut */
 function homeGlance() {
   const isExec = A.isSuper || A.roleCodes.includes("EXECUTIVE") || A.roleCodes.includes("GROUP_ADMIN");

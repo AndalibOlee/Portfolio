@@ -389,28 +389,52 @@ document.addEventListener("click", (ev) => {
 
 /* ---------------- Finance › PO: every purchase order, by company, view only (Nadia) ---------------- */
 function fbPoTotal(p) { return p.totalCents ?? p.amountCents ?? 0; }
+/* Nadia, round 2: where each PO is — including the ones still being approved in Requests — and its code and department */
+function fbPoRows() {
+  const ids = scopeIds(S, A);
+  const real = S.purchaseOrders.filter((p) => ids.includes(p.companyId));
+  const pending = (S.rcRequests || []).filter((it) => it.kind === "po" && ids.includes(it.companyId) && ["submitted", "awaiting_director", "returned"].includes(it.status) && !it.purchaseOrderId)
+    .map((it) => ({ id: `rc:${it.id}`, rcId: it.id, pending: true, poNumber: it.ref, companyId: it.companyId, vendorName: it.po.vendorName, description: it.po.description, totalCents: it.po.estimateCents || 0, status: "PENDING_APPROVAL", departmentId: it.departmentId, accountNumber: it.accountNumber, requesterName: rcForName(it), createdAt: it.createdAt, notes: it.po.notes }));
+  return [...pending, ...real];
+}
+function fbPoWhere(p) {
+  const rc = p.rcId ? byId(S.rcRequests, p.rcId) : p.sourceRcId ? byId(S.rcRequests || [], p.sourceRcId) : null;
+  if (p.pending && rc) {
+    const inst = byId(S.approvals, rc.currentApprovalId);
+    if (rc.status === "returned") return ["Returned to the requester for a fix", "amber"];
+    if (rc.status === "awaiting_director") return ["Waiting for director level (Executive Director or CEO)", "amber"];
+    return [`Waiting for ${inst?.approverUserIds ? rcOrList(rcNames(S, inst.approverUserIds)) : "the supervisor"}'s approval`, "amber"];
+  }
+  if (rc?.status === "reapproval") return ["Back for reapproval — the invoice is over the tolerance", "amber"];
+  const by = (p.approverNames || []).join(" and ");
+  const inst = p.approvalInstanceId ? byId(S.approvals, p.approvalInstanceId) : null;
+  return ({ DRAFT: ["Draft — not sent for approval", "grey"], PENDING_APPROVAL: [`Waiting for approval${inst ? ` — ${whoIsNext(S, inst)}` : ""}`, "amber"], APPROVED: [`Approved${by ? ` by ${by}` : ""} — not sent to the supplier yet`, "teal"], SENT: [`Approved${by ? ` by ${by}` : ""} — sent to the supplier`, "teal"], PARTIALLY_RECEIVED: ["Approved — partly received", "blue"], RECEIVED: ["Approved — received in full", "green"], CLOSED: ["Closed against the invoice", "green"], CANCELLED: ["Cancelled", "grey"] })[p.status] || [invLabel(p.status), "grey"];
+}
+const fbPoCode = (p) => p.accountNumber || invPoLines(p.id)[0]?.accountNumber || "";
+const fbPoDept = (p) => p.departmentId || invPoLines(p.id).find((l) => l.departmentId)?.departmentId || "";
 function vFbPos() {
   const ids = scopeIds(S, A), cos = S.companies.filter((c) => ids.includes(c.id)), f = UI.tabs.fbPoCo || "";
-  const all = S.purchaseOrders.filter((p) => ids.includes(p.companyId)), list = all.filter((p) => !f || p.companyId === f).sort((a, b) => ((a.orderDate || a.createdAt || "") < (b.orderDate || b.createdAt || "") ? 1 : -1));
-  const billed = (p) => S.apInvoices.filter((i) => i.status !== "CANCELLED" && (i.purchaseOrderId === p.id || i.purchaseOrderIds?.includes(p.id))).reduce((s, i) => s + i.totalCents, 0);
-  const open = list.filter((p) => !["CLOSED", "CANCELLED", "RECEIVED"].includes(p.status));
-  const rows = list.map((p) => { const rc = p.sourceRcId ? byId(S.rcRequests || [], p.sourceRcId) : null; return `<tr class="click" data-a="fbPoOpen" data-id="${p.id}" data-fbq="${esc([p.poNumber, p.vendorName || vendorName(p.vendorId), p.description, co(p.companyId).displayName, invLabel(p.status)].join(" ").toLowerCase())}"><td class="mono"><strong>${esc(p.poNumber)}</strong></td><td>${esc(p.orderDate ? dLong(p.orderDate) : p.createdAt ? dLong(p.createdAt.slice(0, 10)) : "—")}</td><td>${esc(p.vendorName || vendorName(p.vendorId) || "—")}</td><td>${coTag(p.companyId)}</td><td>${esc(p.description || "—")}${rc ? `<div class="hint">From ${esc(rc.ref)}</div>` : ""}</td>${td(money(fbPoTotal(p)), 1)}${td(money(billed(p)), 1)}<td>${badge(p.status)}</td></tr>`; });
-  return ph("Purchase orders", "Every purchase order in the organization, by company. Click one to see its details — view only.") + flashHtml()
-    + `<div class="stats">${stat("Purchase orders", String(list.length), f ? co(f).displayName : "all your companies")}${stat("Still open", String(open.length), money(open.reduce((s, p) => s + fbPoTotal(p), 0)))}${stat("Billed against them", money(list.reduce((s, p) => s + billed(p), 0)), "vendor bills")}</div>`
+  const all = fbPoRows(), list = all.filter((p) => !f || p.companyId === f).sort((a, b) => ((a.orderDate || a.createdAt || "") < (b.orderDate || b.createdAt || "") ? 1 : -1));
+  const billed = (p) => (p.pending ? 0 : S.apInvoices.filter((i) => i.status !== "CANCELLED" && (i.purchaseOrderId === p.id || i.purchaseOrderIds?.includes(p.id))).reduce((s, i) => s + i.totalCents, 0));
+  const waiting = list.filter((p) => fbPoWhere(p)[1] === "amber"), open = list.filter((p) => !p.pending && !["CLOSED", "CANCELLED", "RECEIVED"].includes(p.status));
+  const rows = list.map((p) => { const [w, tone] = fbPoWhere(p), dep = byId(S.departments, fbPoDept(p)), code = fbPoCode(p); return `<tr class="click" data-a="fbPoOpen" data-id="${p.id}" data-fbq="${esc([p.poNumber, p.vendorName || vendorName(p.vendorId), p.description, co(p.companyId).displayName, w, code, dep?.name].join(" ").toLowerCase())}"><td class="mono"><strong>${esc(p.poNumber)}</strong></td><td>${esc(p.orderDate ? dLong(p.orderDate) : p.createdAt ? dLong(p.createdAt.slice(0, 10)) : "—")}</td><td>${esc(p.vendorName || vendorName(p.vendorId) || "—")}</td><td>${coTag(p.companyId)}</td><td>${esc(p.description || "—")}<div class="hint">${esc([dep ? `${dep.code} ${dep.name}` : "", code].filter(Boolean).join(" · ") || "no code yet")}</div></td>${td(p.pending && !fbPoTotal(p) ? "No estimate" : money(fbPoTotal(p)), 1)}${td(p.pending ? "—" : money(billed(p)), 1)}<td><span class="badge tone-${tone}">${esc(w)}</span></td></tr>`; });
+  return ph("Purchase orders", "Every purchase order in the organization, by company — including the ones still being approved. Click one to see its details — view only.") + flashHtml()
+    + `<div class="stats">${stat("Purchase orders", String(list.length), f ? co(f).displayName : "all your companies")}${stat("Waiting for approval", String(waiting.length), waiting.length ? "see “Where it is”" : "nothing waiting", waiting.length ? "warn" : "")}${stat("Approved and open", String(open.length), money(open.reduce((s, p) => s + fbPoTotal(p), 0)))}${stat("Billed against them", money(list.reduce((s, p) => s + billed(p), 0)), "vendor bills")}</div>`
     + `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px"><button class="hchip ${!f ? "on" : ""}" data-a="fbPoCo" data-v="">All companies <span>${all.length}</span></button>${cos.map((c) => `<button class="hchip ${f === c.id ? "on" : ""}" data-a="fbPoCo" data-v="${c.id}">${esc(c.displayName)} <span>${all.filter((p) => p.companyId === c.id).length}</span></button>`).join("")}</div>`
-    + cardFlush("", `<div class="fb-bar"><input class="in" type="search" id="fbPoQ" data-fbfilter="fbPoT" placeholder="Search by PO number, supplier, description or status" aria-label="Search purchase orders"></div>` + table(["PO", "Date", "Supplier", "Company", "What", ">Amount", ">Billed", "Status"], rows, "No purchase orders yet.").replace('<table class="t">', '<table class="t" id="fbPoT">'));
+    + cardFlush("", `<div class="fb-bar"><input class="in" type="search" id="fbPoQ" data-fbfilter="fbPoT" placeholder="Search by PO number, supplier, description, code, department or where it is" aria-label="Search purchase orders"></div>` + table(["PO", "Date", "Supplier", "Company", "What", ">Amount", ">Billed", "Where it is"], rows, "No purchase orders yet.").replace('<table class="t">', '<table class="t" id="fbPoT">'));
 }
 function fbPoModal(p) {
-  const lines = invPoLines(p.id), recs = S.goodsReceipts.filter((g) => g.purchaseOrderId === p.id), bills = S.apInvoices.filter((i) => i.purchaseOrderId === p.id || i.purchaseOrderIds?.includes(p.id));
-  const rc = p.sourceRcId ? byId(S.rcRequests || [], p.sourceRcId) : null, pr = p.purchaseRequestId ? byId(S.purchaseRequests || [], p.purchaseRequestId) : null;
-  const kv = [["Supplier", p.vendorName || vendorName(p.vendorId) || "—"], ["Company", co(p.companyId).displayName], ["Status", invLabel(p.status)], ["Ordered", p.orderDate ? dLong(p.orderDate) : "—"], ["Amount", money(fbPoTotal(p))], ["Requested by", p.requesterName || p.createdByName || "—"], ["Approved by", (p.approverNames || []).join(", ") || "—"], ["Department", p.departmentId ? byId(S.departments, p.departmentId)?.name || "—" : "—"], ["Expense code", p.accountNumber || "—"], ["Notes", p.notes || "—"]];
+  const lines = p.pending ? [] : invPoLines(p.id), recs = p.pending ? [] : S.goodsReceipts.filter((g) => g.purchaseOrderId === p.id), bills = p.pending ? [] : S.apInvoices.filter((i) => i.purchaseOrderId === p.id || i.purchaseOrderIds?.includes(p.id));
+  const rc = p.rcId ? byId(S.rcRequests, p.rcId) : p.sourceRcId ? byId(S.rcRequests || [], p.sourceRcId) : null, pr = p.purchaseRequestId ? byId(S.purchaseRequests || [], p.purchaseRequestId) : null;
+  const dep = byId(S.departments, fbPoDept(p)), code = fbPoCode(p), acct = code ? S.accounts.find((a) => a.companyId === p.companyId && a.number === code) : null, [w, tone] = fbPoWhere(p);
+  const kv = [["Where it is", `<span class="badge tone-${tone}">${esc(w)}</span>`], ["Department", esc(dep ? `${dep.code} — ${dep.name}` : "—")], ["Expense code", esc(acct ? `${acct.number} — ${acct.name}` : code || "—")], ["Supplier", esc(p.vendorName || vendorName(p.vendorId) || "—")], ["Company", esc(co(p.companyId).displayName)], ["Ordered", esc(p.orderDate ? dLong(p.orderDate) : p.pending ? "not yet — still being approved" : "—")], ["Amount", esc(p.pending && !fbPoTotal(p) ? "No estimate" : money(fbPoTotal(p)))], ["Requested by", esc(p.requesterName || p.createdByName || "—")], ["Approved by", esc((p.approverNames || []).join(", ") || (p.pending ? "not yet" : "—"))], ["Notes", esc(p.notes || "—")]];
   return `<h3 style="margin:0 0 4px">${esc(p.poNumber)} <span class="hint" style="font-weight:400">· view only</span></h3><p class="hint" style="margin:0 0 12px">${esc(p.description || "")}</p>
-    <dl class="kv">${kv.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
-    ${lines.length ? `<h4 style="margin:14px 0 6px">Lines</h4>` + table(["Item", ">Qty", ">Received", ">Price"], lines.map((l) => `<tr><td>${esc(l.description)}</td>${td(String(l.quantity), 1)}${td(String(l.receivedQuantity || 0), 1)}${td(money(l.unitCents || l.unitPriceCents || 0), 1)}</tr>`)) : ""}
-    <h4 style="margin:14px 0 6px">Received</h4>${recs.length ? `<ul style="margin:0;padding-left:18px">${recs.map((g) => `<li>${esc(g.receiptNumber || "Receipt")} · ${esc(dLong(g.receivedDate))}${g.receivedByName ? ` · ${esc(g.receivedByName)}` : ""}</li>`).join("")}</ul>` : `<p class="hint" style="margin:0">Nothing received yet.</p>`}
-    <h4 style="margin:14px 0 6px">Vendor bills</h4>${bills.length ? `<ul style="margin:0;padding-left:18px">${bills.map((b) => `<li>${esc(b.invoiceNumber)} · ${money(b.totalCents)} · ${esc(invLabel(b.status))}</li>`).join("")}</ul>` : `<p class="hint" style="margin:0">No bills yet.</p>`}
+    <dl class="kv">${kv.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join("")}</dl>
+    ${lines.length ? `<h4 style="margin:14px 0 6px">Lines</h4>` + table(["Item", "Expense code", ">Qty", ">Received", ">Price"], lines.map((l) => `<tr><td>${esc(l.description)}</td><td>${esc(l.accountNumber || "—")}</td>${td(String(l.quantity), 1)}${td(String(l.receivedQuantity || 0), 1)}${td(money(l.unitCents || l.unitPriceCents || 0), 1)}</tr>`)) : ""}
+    ${p.pending ? "" : `<h4 style="margin:14px 0 6px">Received</h4>${recs.length ? `<ul style="margin:0;padding-left:18px">${recs.map((g) => `<li>${esc(g.receiptNumber || "Receipt")} · ${esc(dLong(g.receivedDate))}${g.receivedByName ? ` · ${esc(g.receivedByName)}` : ""}</li>`).join("")}</ul>` : `<p class="hint" style="margin:0">Nothing received yet.</p>`}
+    <h4 style="margin:14px 0 6px">Vendor bills</h4>${bills.length ? `<ul style="margin:0;padding-left:18px">${bills.map((b) => `<li>${esc(b.invoiceNumber)} · ${money(b.totalCents)} · ${esc(invLabel(b.status))}</li>`).join("")}</ul>` : `<p class="hint" style="margin:0">No bills yet.</p>`}`}
     ${rc || pr ? `<p class="hint" style="margin:12px 0 0">Started as ${rc ? `request ${esc(rc.ref)} (${esc(rcForName(rc))})` : `purchase request ${esc(pr.requestNumber)}`}.</p>` : ""}
-    <div class="form-row" style="justify-content:flex-end;margin-top:14px">${rc ? `<button class="btn" data-a="rcPoPdf" data-id="${rc.id}">⬇ Download the PO (PDF)</button>` : ""}<button class="btn pri" data-a="closeModal">Close</button></div>`;
+    <div class="form-row" style="justify-content:flex-end;margin-top:14px">${rc && !p.pending ? `<button class="btn" data-a="rcPoPdf" data-id="${rc.id}">⬇ Download the PO (PDF)</button>` : ""}<button class="btn pri" data-a="closeModal">Close</button></div>`;
 }
 hr3Route("/finance/pos", () => fbFinance(), vFbPos);
 
@@ -582,7 +606,7 @@ window.ACTIONS_EXT.push({
   },
   fbPoOff(el) { if (act("ap.removePo", { invoiceId: el.dataset.id, poId: el.dataset.po }, "Purchase order taken off the bill.") && can(A, "ap.approve") && fbBillPos(byId(S.apInvoices, el.dataset.id)).length) act("match.run", { billId: el.dataset.id }); },
   fbPoCo(el) { UI.tabs.fbPoCo = el.dataset.v; safeRender(); },
-  fbPoOpen(el) { const p = byId(S.purchaseOrders, el.dataset.id); if (!p) return; UI.modal = fbPoModal(p); UI.modalWide = true; safeRender(); },
+  fbPoOpen(el) { const p = fbPoRows().find((x) => x.id === el.dataset.id); if (!p) return; UI.modal = fbPoModal(p); UI.modalWide = true; safeRender(); },
   fbMailPick(el) { UI.emailOpen = el.dataset.id; safeRender(); },
   fbMailGo(el) { UI.modal = null; go(el.dataset.go2); },
   fbOtChoice(el) { if (UI.ts?.start && act("timesheet.otChoice", { periodStart: UI.ts.start, choice: el.value })) { if (typeof tsTotals === "function") tsTotals(); } },

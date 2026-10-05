@@ -81,10 +81,10 @@ function crPlace() {
 }
 function crToggle(on) { CR.open = on; CR.msg = ""; if (on) crPermCheck(); if (on && CR.comments?.canSendToClaude) CR.comments.canSendToClaude().then((v) => { CR.canSend = v; crRender(); }).catch(() => { CR.canSend = "off"; crRender(); }); crRender(); if (on) setTimeout(() => document.getElementById("crText")?.focus(), 30); else document.getElementById("crFab")?.focus(); }
 
-function crItem(x) {
+function crItem(x, showPage) {
   const mine = x.by && x.by === CR.me, editable = mine && x.status === "new";
   return `<div class="cr-item" data-cr-hover="${esc(x.target?.path || "")}"><div class="cr-meta"><span class="cr-pill ${esc(x.status)}">${esc(CR_STATUS[x.status] || x.status)}</span><span>${esc((CR_KINDS.find((k) => k[0] === x.kind) || ["", "Change"])[1])}</span><span>· ${x.priority === "nice" ? "Nice to have" : "Must have"}</span>${x.as?.name ? `<span>· seen as ${esc(x.as.name)}</span>` : ""}</div>
-    <p>${esc(x.text)}</p>${x.target ? `<div class="cr-meta">Points at: “${esc(x.target.label)}”${x.target.section ? ` in ${esc(x.target.section)}` : ""}</div>` : ""}
+    ${showPage ? `<div class="cr-meta"><b style="color:var(--fg)">${esc(x.pageTitle || x.route)}</b><span class="mono">${esc(x.route)}</span><span>· requested ${esc(new Date(x.createdAt).toLocaleString("en-CA", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }))}</span></div>` : ""}<p>${esc(x.text)}</p>${x.target ? `<div class="cr-meta">Points at: “${esc(x.target.label)}”${x.target.section ? ` in ${esc(x.target.section)}` : ""}</div>` : ""}
     ${x.reply ? `<div class="cr-reply"><b>Claude:</b> ${esc(x.reply)}</div>` : ""}
     <div class="cr-row"><button class="cr-btn" type="button" data-cr="show" data-id="${x.id}">${x.status === "done" ? "Show me the change" : "Show me the spot"}</button>${x.as?.userId && A && x.as.userId !== A.user.id ? `<span class="cr-meta">written as ${esc(x.as.name)} — sign in as them to see exactly what they saw</span>` : ""}</div>
     ${editable ? `<div class="cr-row"><button class="cr-btn" type="button" data-cr="edit" data-id="${x.id}">Edit</button><button class="cr-btn" type="button" data-cr="del" data-id="${x.id}">Delete</button></div>` : ""}</div>`;
@@ -108,9 +108,10 @@ function crRender() {
         ${d.target ? `<div class="cr-tgt"><span>Points at: “${esc(d.target.label)}”</span><button type="button" class="cr-x" data-cr="untarget" aria-label="Remove the pointer">✕</button></div>` : `<button type="button" class="cr-btn" data-cr="pick">Point at something on the page</button>`}
         <div class="cr-row"><button class="cr-btn pri" type="submit">${CR.editing ? "Save" : "Add to the list"}</button>${CR.editing ? `<button type="button" class="cr-btn" data-cr="cancel">Cancel</button>` : ""}</div></form>
       ${CR.msg ? `<div class="cr-ctx" role="status">${esc(CR.msg)}</div>` : ""}
-      <div class="cr-list">${here.length ? here.map(crItem).join("") : `<p class="cr-ctx" style="margin:0">Nothing written for this page yet. Each note you add shows here with its progress.</p>`}</div>`
-    : `<div class="cr-ctx">${CR.list.length} change${CR.list.length === 1 ? "" : "s"} written across ${groups.length} page${groups.length === 1 ? "" : "s"}. Open a page to see and add its notes.</div>
-      <div class="cr-list">${groups.length ? groups.map((g) => `<button type="button" class="cr-group" data-cr="goto" data-route="${esc(g.route)}"><span>${esc(g.title || g.route)}<br><small class="mono">${esc(g.route)}</small></span><small>${crOpenCount(g.items)} open · ${g.items.length - crOpenCount(g.items)} done</small></button>${g.items.slice().sort((x, y) => (x.status === "done") - (y.status === "done")).map(crItem).join("")}`).join("") : `<p class="cr-ctx" style="margin:0">No changes written yet. Open any page and press Request a change.</p>`}</div>`
+      <div class="cr-list">${here.length ? here.map((x) => crItem(x)).join("") : `<p class="cr-ctx" style="margin:0">Nothing written for this page yet. Each note you add shows here with its progress.</p>`}</div>`
+    : `<div class="cr-ctx">${CR.list.length} change${CR.list.length === 1 ? "" : "s"} written across ${groups.length} page${groups.length === 1 ? "" : "s"} · ${crOpenCount(CR.list)} open, ${CR.list.length - crOpenCount(CR.list)} done.</div>
+      <div class="cr-chips" role="group" aria-label="Sort">${[["new", "Newest request first"], ["old", "Oldest request first"], ["page", "By page"]].map(([k, l]) => `<button type="button" class="${(CR.sort || "new") === k ? "on" : ""}" aria-pressed="${(CR.sort || "new") === k}" data-cr="sort" data-v="${k}">${l}</button>`).join("")}</div>
+      <div class="cr-list">${!CR.list.length ? `<p class="cr-ctx" style="margin:0">No changes written yet. Open any page and press Request a change.</p>` : (CR.sort || "new") === "page" ? groups.map((g) => `<button type="button" class="cr-group" data-cr="goto" data-route="${esc(g.route)}"><span>${esc(g.title || g.route)}<br><small class="mono">${esc(g.route)}</small></span><small>${crOpenCount(g.items)} open · ${g.items.length - crOpenCount(g.items)} done</small></button>${g.items.slice().sort((x, y) => String(y.createdAt).localeCompare(String(x.createdAt))).map((x) => crItem(x)).join("")}`).join("") : CR.list.slice().sort((x, y) => (CR.sort === "old" ? 1 : -1) * String(x.createdAt).localeCompare(String(y.createdAt))).map((x) => crItem(x, true)).join("")}</div>`
   const sendNote = CR.canSend === "available" ? "Claude shows you each page’s requests next to the planned change. Nothing is built until you confirm." : CR.canSend === "writers_only" ? "Only the owner of this demo can send the list to Claude." : "Sending from this page isn't available right now. In the chat, say “build my changes” and Claude reads the same list.";
   p.innerHTML = `<div class="cr-head"><h2>Changes to make</h2><button type="button" class="cr-x" data-cr="close" aria-label="Close">✕</button></div>
     <div class="cr-tabs" role="tablist"><button type="button" role="tab" aria-selected="${CR.tab === "page"}" class="${CR.tab === "page" ? "on" : ""}" data-cr="tab" data-v="page">This page (${here.length})</button><button type="button" role="tab" aria-selected="${CR.tab === "all"}" class="${CR.tab === "all" ? "on" : ""}" data-cr="tab" data-v="all">All pages (${crOpenCount(CR.list)} open)</button></div>
@@ -144,6 +145,7 @@ document.addEventListener("click", async (ev) => {
   if (a === "untarget") { d.target = null; return crRender(); }
   if (a === "pick") return crPick();
   if (a === "cancel") { CR.editing = null; CR.draft = { text: "", kind: "change", priority: "must", target: null }; return crRender(); }
+  if (a === "sort") { CR.sort = b.dataset.v; return crRender(); }
   if (a === "show") {
     const x = CR.list.find((y) => y.id === b.dataset.id); if (!x) return;
     if (parseRoute(UI.route || "/").path !== x.route) go(x.route);

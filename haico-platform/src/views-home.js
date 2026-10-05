@@ -240,8 +240,8 @@ function homeTop() {
   return greet + flashHtml() + (hrTop ? homeGlance() : homeTiles()) + (isApprover ? waitingOnYou("/dashboard") : "")
     + `<div class="hgrid"><div class="hcol">${needsAttention(isApprover)}${recent}</div><div class="hcol">${comingUp}</div></div>`;
 }
-/** HR's Home: the "At a glance" strip moves to the top in place of "People at a glance" (review round 1) */
-function homeHrGlanceTop() { const isExec = A.isSuper || A.roleCodes.includes("EXECUTIVE") || A.roleCodes.includes("GROUP_ADMIN"); return !isExec && !can(A, "finance.post") && can(A, "hr.employees.edit"); }
+/** Home: whoever has the "At a glance" strip (HR, Finance, Executives) sees it at the top in place of the summary tiles (review rounds 1–2) */
+function homeHrGlanceTop() { const isExec = A.isSuper || A.roleCodes.includes("EXECUTIVE") || A.roleCodes.includes("GROUP_ADMIN"); return isExec || can(A, "finance.post") || can(A, "hr.employees.edit"); } // review: Finance, Executives and HR get "At a glance" at the top instead of their summary tiles
 /** Executive / Finance / HR: one compact strip, at most one donut */
 function homeGlance() {
   const isExec = A.isSuper || A.roleCodes.includes("EXECUTIVE") || A.roleCodes.includes("GROUP_ADMIN");

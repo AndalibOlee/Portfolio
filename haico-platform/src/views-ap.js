@@ -354,8 +354,8 @@ function vApAttachments() {
 }
 EXPORTS["ap-attachments"] = () => {
   const { F, files, missingShown } = apFinderData();
-  if (F.missing) return { base: `haico-ap-bills-missing-files-${todayStr()}`, title: "Bills with no attachment", rows: [["Bill #", "Vendor", "Company", "Bill date", "Status", "Total"], ...missingShown.map((b) => [b.invoiceNumber, vendorName(b.vendorId), co(b.companyId)?.displayName || "", b.invoiceDate, b.status, (b.totalCents / 100).toFixed(2)])] };
-  return { base: `haico-ap-attachments-${todayStr()}`, title: "AP attachments", rows: [["File", "Kind", "Category", "Vendor", "Bill #", "Company", "Amount", "Bill status", "Uploaded by", "Date", "Size (KB)"], ...files.map(({ f, bill, v, kind }) => [f.fileName, kind, AP_CAT_LABELS[f.category] || "Other", v?.name || "", bill?.invoiceNumber || "", co(f.companyId)?.displayName || "", bill ? (bill.totalCents / 100).toFixed(2) : "", bill?.status || "", f.uploadedByName || "System", String(f.createdAt).slice(0, 10), Math.max(1, Math.ceil((f.sizeBytes || 0) / 1024))])] };
+  if (F.missing) return { base: `demo-ap-bills-missing-files-${todayStr()}`, title: "Bills with no attachment", rows: [["Bill #", "Vendor", "Company", "Bill date", "Status", "Total"], ...missingShown.map((b) => [b.invoiceNumber, vendorName(b.vendorId), co(b.companyId)?.displayName || "", b.invoiceDate, b.status, (b.totalCents / 100).toFixed(2)])] };
+  return { base: `demo-ap-attachments-${todayStr()}`, title: "AP attachments", rows: [["File", "Kind", "Category", "Vendor", "Bill #", "Company", "Amount", "Bill status", "Uploaded by", "Date", "Size (KB)"], ...files.map(({ f, bill, v, kind }) => [f.fileName, kind, AP_CAT_LABELS[f.category] || "Other", v?.name || "", bill?.invoiceNumber || "", co(f.companyId)?.displayName || "", bill ? (bill.totalCents / 100).toFixed(2) : "", bill?.status || "", f.uploadedByName || "System", String(f.createdAt).slice(0, 10), Math.max(1, Math.ceil((f.sizeBytes || 0) / 1024))])] };
 };
 
 /* ---------------- Documents: type chips + search, rows link to their record ---------------- */

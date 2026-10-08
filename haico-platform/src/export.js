@@ -100,7 +100,7 @@ function buildPdf(rows, title, subtitle) {
   const pid = add(`<< /Type /Pages /Kids [${pageIds.map((i) => `${i} 0 R`).join(" ")}] /Count ${pageIds.length} >>`);
   if (pid !== parentId) throw new Error("pdf layout"); void pagesId;
   const cat = add(`<< /Type /Catalog /Pages ${pid} 0 R >>`);
-  const info = add(`<< /Title (${clean(title)}) /Creator (HAICO Group platform) >>`);
+  const info = add(`<< /Title (${clean(title)}) /Creator (DEMO Group platform) >>`);
   let out = "%PDF-1.4\n%\xe2\xe3\xcf\xd3\n"; const offs = [];
   objs.forEach((o, i) => { offs.push(out.length); out += `${i + 1} 0 obj\n${o}\nendobj\n`; });
   const xref = out.length;

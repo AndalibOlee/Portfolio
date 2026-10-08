@@ -7,7 +7,7 @@
    own permission. Configuration changes are ordinary audited events.
    ========================================================================== */
 
-const XM_SCHEMA = 1, XM_ERP_VERSION = "2026.10", XM_ORG = "HAICO Group";
+const XM_SCHEMA = 1, XM_ERP_VERSION = "2026.10", XM_ORG = "DEMO Group";
 const XM_PERM = { manage: "admin.experience.manage", publish: "admin.experience.publish", export: "admin.experience.export", import: "admin.experience.import", restore: "admin.experience.restore" };
 /* ---- permissions: extend the existing catalog, then re-expand the role grants (Super / Group administrators get them through "*") ---- */
 for (const p of Object.values(XM_PERM)) if (!PERMS.includes(p)) PERMS.push(p);

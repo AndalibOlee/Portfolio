@@ -268,8 +268,8 @@ function rcMail(S0, ctx, key, toUserIds, vars, opt = {}) {
   renderEmail = function (toName, n) {
     const r = _renderEmailRc(toName, n);
     if (!n.rcIntro) return r;
-    const bodyText = [`Hi ${toName.split(" ")[0]},`, "", n.rcIntro, "", n.body || "", n.attach?.length ? `Attached: ${n.attach.map((x) => x.name).join(", ")}` : "", "", `Open it here: ${n.linkUrl || "/"}`, "", "— HAICO Group platform (automatic message; replies are not read). No card number ever appears in these emails.", "DEMO: this message was kept in the outbox and not delivered."].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
-    return { subject: `[HAICO Group platform] ${n.title}`, bodyText, attachments: n.attach };
+    const bodyText = [`Hi ${toName.split(" ")[0]},`, "", n.rcIntro, "", n.body || "", n.attach?.length ? `Attached: ${n.attach.map((x) => x.name).join(", ")}` : "", "", `Open it here: ${n.linkUrl || "/"}`, "", "— DEMO Group platform (automatic message; replies are not read). No card number ever appears in these emails.", "DEMO: this message was kept in the outbox and not delivered."].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
+    return { subject: `[DEMO Group platform] ${n.title}`, bodyText, attachments: n.attach };
   };
   const _emailPanelRc = emailPanel;
   emailPanel = function () {

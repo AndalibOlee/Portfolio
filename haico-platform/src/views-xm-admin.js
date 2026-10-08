@@ -279,7 +279,7 @@ function vXmViews() {
   const areas = (o) => [o.nav ? "navigation" : "", o.pages || o.customPages ? "pages" : "", o.labels || o.customTerms ? "terminology" : "", o.typography || o.density ? "typography" : ""].filter(Boolean).join(", ") || "no differences";
   const cardFor = (key, title, sub) => { const on = XM.scope === key; const o = ov[key]; return `<div class="xm-vc ${on ? "on" : ""}"><b>${esc(title)}${on ? ` <span class="badge tone-green">editing</span>` : ""}</b><span class="hint">${esc(sub)}</span><span>${key === "default" ? "Everyone starts from this." : o ? `Differs in: ${areas(o)}` : "Same as the group default"}</span><div class="acts"><button class="btn sm ${on ? "" : "pri"}" data-a="xmScope" data-v="${esc(key)}">${on ? "Editing" : "Edit this view"}</button>${key !== "default" ? `<button class="btn sm" data-a="xmViewAs" data-id="${esc(xmRepresentative(key) || "")}" ${xmRepresentative(key) ? "" : "disabled"}>View as</button>` : ""}${o ? `<button class="btn sm" data-a="xmScopeReset" data-v="${esc(key)}">Reset to default</button>` : ""}</div></div>`; };
   return xmShell("views", `<p class="hint" style="margin:0 0 12px">Configuration priority: platform default → group default → company override → role override. Pick a view to edit; everything you change under Navigation, Pages, Terminology and Typography then applies to that view only. Only create overrides you need.</p>
-    <div class="sect-l">Group</div><div class="xm-cards">${cardFor("default", "Group default", "HAICO Group — all companies, all roles")}</div>
+    <div class="sect-l">Group</div><div class="xm-cards">${cardFor("default", "Group default", "DEMO Group — all companies, all roles")}</div>
     <div class="sect-l">By role</div><div class="xm-cards">${XM_AUDIENCES.filter(([k]) => k !== "everyone").map(([k, l, h]) => cardFor(`role:${k}`, l, `${h} · ${byAud[k]?.people.length || 0} ${byAud[k]?.people.length === 1 ? "person" : "people"}`)).join("")}</div>
     <div class="sect-l">By company</div><div class="xm-cards">${S.companies.map((c) => cardFor(`company:${c.id}`, c.displayName, `${S.employees.filter((e) => e.companyId === c.id && e.status !== "TERMINATED").length} people · ${c.industry || ""}`)).join("")}</div>`);
 }
@@ -335,7 +335,7 @@ function vXmVersion(q, n) {
     ${card("What this version holds", `<dl class="kv"><dt>Custom menus</dt><dd>${(c.nav?.custom || []).length}</dd><dt>Menu changes</dt><dd>${count(c.nav?.items) + count(c.nav?.tabs) + count(c.nav?.groups)}</dd><dt>Pages customised</dt><dd>${count(c.pages)}</dd><dt>Custom pages</dt><dd>${count(c.customPages)}</dd><dt>Terms</dt><dd>${count(c.labels) + (c.customTerms || []).length}</dd><dt>Font</dt><dd>${esc(XM_FONTS.find((f) => f[0] === c.typography?.font)?.[1] || "Look's font")} · ${c.typography?.size === "default" ? "14" : c.typography?.size}px</dd><dt>Density</dt><dd>${esc(c.density || "standard")}</dd><dt>Overrides</dt><dd>${Object.keys(c.overrides || {}).map((k) => esc(k.startsWith("role:") ? `${XM_AUD_LABEL[k.slice(5)]} view` : `${co(k.slice(8))?.displayName} override`)).join(", ") || "none"}</dd></dl>`)}</div>
     <div class="sect-l">Changes in this version (compared with version ${v.n - 1 || "0 — platform defaults"})</div>${card("", xmDiffHtml(v.changes))}`);
 }
-EXPORTS["xm-history"] = () => ({ base: `HAICO_ERP_UI_Config_History_${todayStr()}`, title: "Page & Experience configuration history", rows: [["Version", "Published", "By", "Note", "Changes", "Source", "Summary"], ...S.xmVersions.map((v) => [v.n, v.at.replace("T", " ").slice(0, 16), v.by, v.note || "", v.changes.length, v.restoredFrom ? `Restored from v${v.restoredFrom}` : v.importedFrom ? "Imported" : "Editor", v.changes.slice(0, 12).map((c) => c.text).join(" | ")])] });
+EXPORTS["xm-history"] = () => ({ base: `DEMO_ERP_UI_Config_History_${todayStr()}`, title: "Page & Experience configuration history", rows: [["Version", "Published", "By", "Note", "Changes", "Source", "Summary"], ...S.xmVersions.map((v) => [v.n, v.at.replace("T", " ").slice(0, 16), v.by, v.note || "", v.changes.length, v.restoredFrom ? `Restored from v${v.restoredFrom}` : v.importedFrom ? "Imported" : "Editor", v.changes.slice(0, 12).map((c) => c.text).join(" | ")])] });
 
 /* ---- downloads: JSON / PDF / ZIP through the platform's download capability, every one audited ---- */
 function xmReportRows(cfg, meta) {
@@ -356,18 +356,18 @@ function xmSubset(cfg, kind, page) {
 }
 async function xmDownload(kind, fmt, opts = {}) {
   if (!xmCan("export")) { toast("Not allowed", "Your role can't download configurations.", "err"); return; }
-  const date = todayStr(); let cfg, version = null, meta = { createdBy: A.user.displayName, createdDate: new Date().toISOString() }, base = `HAICO_ERP_UI_Config`;
+  const date = todayStr(); let cfg, version = null, meta = { createdBy: A.user.displayName, createdDate: new Date().toISOString() }, base = `DEMO_ERP_UI_Config`;
   if (kind === "version") { const v = S.xmVersions.find((x) => x.n === +opts.v); if (!v) return; cfg = v.config; version = v.n; meta = { ...meta, version: v.n, createdBy: v.by, createdDate: v.at, publishedDate: v.at, note: v.note }; }
   else if (kind === "current") { if (!S.xmPublished) { toast("Nothing published", "Publish a draft first.", "err"); return; } cfg = S.xmPublished.config; version = S.xmPublished.version; meta = { ...meta, version, publishedDate: S.xmPublished.at, createdBy: S.xmPublished.by, createdDate: S.xmPublished.at }; }
-  else if (kind === "draft") { cfg = xmWork(); meta = { ...meta, version: null, kind: "draft" }; base = `HAICO_ERP_UI_Config_Draft`; }
+  else if (kind === "draft") { cfg = xmWork(); meta = { ...meta, version: null, kind: "draft" }; base = `DEMO_ERP_UI_Config_Draft`; }
   else { cfg = S.xmPublished?.config || xmWork(); version = S.xmPublished?.version ?? null; meta = { ...meta, version, publishedDate: S.xmPublished?.at || null, kind }; }
   let name = `${base}_v${version ?? "draft"}_${date}`;
-  if (kind === "nav") { cfg = xmSubset(cfg, "nav"); name = `HAICO_ERP_Navigation_Config_v${version ?? "draft"}_${date}`; }
-  if (kind === "appearance") { cfg = xmSubset(cfg, "appearance"); name = `HAICO_ERP_Appearance_Config_v${version ?? "draft"}_${date}`; }
-  if (kind === "page") { cfg = xmSubset(cfg, "page", opts.page); name = `HAICO_${xmPageName(opts.page).replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "")}_Config_v${version ?? "draft"}_${date}`; meta.kind = "page"; meta.page = opts.page; }
+  if (kind === "nav") { cfg = xmSubset(cfg, "nav"); name = `DEMO_ERP_Navigation_Config_v${version ?? "draft"}_${date}`; }
+  if (kind === "appearance") { cfg = xmSubset(cfg, "appearance"); name = `DEMO_ERP_Appearance_Config_v${version ?? "draft"}_${date}`; }
+  if (kind === "page") { cfg = xmSubset(cfg, "page", opts.page); name = `DEMO_${xmPageName(opts.page).replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "")}_Config_v${version ?? "draft"}_${date}`; meta.kind = "page"; meta.page = opts.page; }
   const pkg = xmPackage(cfg, { ...meta, kind: meta.kind || "full" });
   const json = JSON.stringify(pkg, null, 2);
-  const title = `HAICO ERP - Page & Experience Configuration${version != null ? ` - Version ${version}` : " - Draft"}${kind === "page" ? ` - ${xmPageName(opts.page)}` : kind === "nav" ? " - Navigation" : kind === "appearance" ? " - Appearance" : ""}`;
+  const title = `DEMO ERP - Page & Experience Configuration${version != null ? ` - Version ${version}` : " - Draft"}${kind === "page" ? ` - ${xmPageName(opts.page)}` : kind === "nav" ? " - Navigation" : kind === "appearance" ? " - Appearance" : ""}`;
   let data, filename;
   if (fmt === "json") { data = json; filename = `${name}.json`; }
   else if (fmt === "pdf") { data = buildPdf(xmReportRows(cfg, pkg), title, `${XM_ORG} · ${kind === "draft" ? "draft" : "published " + (pkg.publishedDate || "").slice(0, 10)}`); filename = `${name}.pdf`; }

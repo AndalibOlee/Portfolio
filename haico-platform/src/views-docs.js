@@ -87,7 +87,7 @@ function docPdf(title) {
       for (const cid of cids) pids.push(add(`<< /Type /Page /Parent ${parent} 0 R /MediaBox [0 0 ${W} ${H}] /Contents ${cid} 0 R /Resources << /Font << /F1 ${fA} 0 R /F2 ${fB} 0 R >> >> >>`));
       const pid = add(`<< /Type /Pages /Kids [${pids.map((i) => `${i} 0 R`).join(" ")}] /Count ${pids.length} >>`);
       const cat = add(`<< /Type /Catalog /Pages ${pid} 0 R >>`);
-      const info = add(`<< /Title (${clean(title)}) /Creator (HAICO Group platform - demo) >>`);
+      const info = add(`<< /Title (${clean(title)}) /Creator (DEMO Group platform - demo) >>`);
       let out = "%PDF-1.4\n%\xe2\xe3\xcf\xd3\n"; const offs = [];
       objs.forEach((o, i) => { offs.push(out.length); out += `${i + 1} 0 obj\n${o}\nendobj\n`; });
       const xref = out.length;
@@ -203,7 +203,7 @@ function t4Pdf(emp, t) {
   });
   P.wrap(`Demo figures worked out from the ${t.year} pay rate using the ${t.year} CPP, EI and BC/federal tax rules - illustrative only, not a filed CRA slip. On the live site this is the slip filed with the CRA by the end of February.`, R - L - 20, 8).forEach((l, i) => P.text(L + 10, 482 + i * 11, 8, l, { color: DOC_MUTED }));
   P.text(L, 540, 9, "Keep this slip with your tax records. Report box 14 on line 10100 of your return.", { color: DOC_MUTED });
-  docPdfFoot(P, "DEMO - produced by HGWEB for the Haico Group platform. Amounts are illustrative and are not certified CRA payroll calculations.");
+  docPdfFoot(P, "DEMO - produced by HGWEB for the Demo Group platform. Amounts are illustrative and are not certified CRA payroll calculations.");
   return P.bytes();
 }
 
@@ -232,7 +232,7 @@ function stmtPdf(p) {
   P.text(P.M + 180, y + 20, 8, "TOTAL TAKEN OFF", { bold: true, color: DOC_MUTED }); P.text(P.M + 180, y + 35, 12, money(p.totalDeductionsCents), { bold: true });
   P.text(P.W - P.M - 12, y + 20, 8, "TAKE-HOME PAY", { bold: true, color: DOC_MUTED, align: "r" }); P.text(P.W - P.M - 12, y + 37, 15, money(p.netCents), { bold: true, color: DOC_OCEAN, align: "r" });
   P.text(P.M, y + 64, 8.5, `Insurable earnings this pay: ${money(p.eiInsurableCents)}  -  Pensionable: ${money(p.cppPensionableCents)}`, { color: DOC_MUTED });
-  docPdfFoot(P, "DEMO - produced by HGWEB for the Haico Group platform. Amounts are illustrative and are not certified CRA payroll calculations.");
+  docPdfFoot(P, "DEMO - produced by HGWEB for the Demo Group platform. Amounts are illustrative and are not certified CRA payroll calculations.");
   return P.bytes();
 }
 const stmtPreviewHtml = (p) => `<div class="docv" style="padding:0;border:0;background:transparent">${vStatement(p.id, "/me/documents").replace(/^<div class="crumb">[\s\S]*?<\/div>/, "")}</div>`;
@@ -240,7 +240,7 @@ const stmtPreviewHtml = (p) => `<div class="docv" style="padding:0;border:0;back
 /* ---------------- company policies (demo text) ---------------- */
 const POLICY_TEXT = {
   "Employee Handbook 2026": [
-    ["Welcome", "This handbook explains how we work across the Haico Group companies — HaiCo Corporate, Taan Forest, Haida Gwaii Tourism and Haida Gwaii Seafoods. It applies to every employee, full-time, part-time and seasonal."],
+    ["Welcome", "This handbook explains how we work across the Demo Group companies — Demo Corporate, Taan Forest, Haida Gwaii Tourism and Haida Gwaii Seafoods. It applies to every employee, full-time, part-time and seasonal."],
     ["Hours and pay", "Pay is every two weeks by direct deposit. Hours are recorded on your timesheet and approved by your manager before payroll closes. Overtime is paid at 1.5× after 8 hours in a day or 40 in a week, and 2× after 12 hours in a day, as BC rules require."],
     ["Time off", "Vacation, sick and personal days are requested in the platform and approved by your manager. Your balances are always shown on Home and under My Requests."],
     ["Safety", "Everyone has the right to refuse unsafe work. Report incidents and near misses to your supervisor the same day. Keep your tickets and certificates current — the platform reminds you 60 days before one expires."],
@@ -265,14 +265,14 @@ function policyHtml(d) {
 }
 function policyPdf(d) {
   const P = docPdf(d.title);
-  let y = docPdfHead(P, "Haico Group · company policy", d.title, `Version ${d.version || 1}`);
+  let y = docPdfHead(P, "Demo Group · company policy", d.title, `Version ${d.version || 1}`);
   for (const [h, t] of policyParas(d)) {
-    if (y > P.H - 120) { docPdfFoot(P, "DEMO TEXT - sample policy for the Haico Group platform demo."); P.page(); y = docPdfHead(P, "Haico Group · company policy", d.title, "continued"); }
+    if (y > P.H - 120) { docPdfFoot(P, "DEMO TEXT - sample policy for the Demo Group platform demo."); P.page(); y = docPdfHead(P, "Demo Group · company policy", d.title, "continued"); }
     P.text(P.M, y, 11, h, { bold: true, color: DOC_OCEAN }); y += 16;
     for (const l of P.wrap(t, P.W - P.M * 2, 10)) { P.text(P.M, y, 10, l); y += 14; }
     y += 10;
   }
-  docPdfFoot(P, "DEMO TEXT - sample policy for the Haico Group platform demo.");
+  docPdfFoot(P, "DEMO TEXT - sample policy for the Demo Group platform demo.");
   return P.bytes();
 }
 

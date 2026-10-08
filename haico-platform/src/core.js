@@ -1,6 +1,6 @@
 "use strict";
 /* ==========================================================================
-   HAICO Group platform — live browser edition
+   DEMO Group platform — live browser edition
    core.js: utilities, permissions, and the event engine.
    Every change anyone makes is an EVENT; state = demo seed + events replayed
    in order. Reducers mirror the platform's server rules (approvals follow
@@ -183,8 +183,8 @@ let freshState = function () {
 
 const EMAIL_INTRO = { APPROVAL_REQUIRED: "A request is waiting for your approval.", APPROVED: "Good news — this has been approved.", REJECTED: "This was not approved. The note from the approver, if any, is below.", PAYROLL: "Your pay has been processed.", TIMESHEET: "A timesheet needs your attention.", SYSTEM: "There is an update for you on the platform." };
 function renderEmail(toName, n) {
-  const subject = `[HAICO Group platform] ${n.title}`;
-  const bodyText = [`Hi ${toName.split(" ")[0]},`, "", EMAIL_INTRO[n.type] || EMAIL_INTRO.SYSTEM, "", n.title, n.body || "", "", `Open it here: ${n.linkUrl || "/"}`, "", "— HAICO Group platform (automatic message; replies are not read)", "DEMO: this message was kept in the outbox and not delivered."].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
+  const subject = `[DEMO Group platform] ${n.title}`;
+  const bodyText = [`Hi ${toName.split(" ")[0]},`, "", EMAIL_INTRO[n.type] || EMAIL_INTRO.SYSTEM, "", n.title, n.body || "", "", `Open it here: ${n.linkUrl || "/"}`, "", "— DEMO Group platform (automatic message; replies are not read)", "DEMO: this message was kept in the outbox and not delivered."].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
   return { subject, bodyText };
 }
 
@@ -939,7 +939,7 @@ const R = {
     const rate = Number(p.rateCents);
     if (!(rate > 0)) fail(p.payType === "HOURLY" ? "Enter the hourly rate." : "Enter the yearly salary.");
     const group = S.payGroups.find((g) => g.companyId === p.companyId && g.code.endsWith(p.payType === "HOURLY" ? "-HR" : "-SAL")) || S.payGroups.find((g) => g.companyId === p.companyId);
-    const e = { id: ctx.id("e"), companyId: p.companyId, employeeNumber, firstName: first, lastName: last, workEmail: `${first}.${last}@haico.demo`.toLowerCase().replace(/\s+/g, ""), departmentId: dep.id, positionId: p.positionId || undefined, managerId: p.managerId || undefined, employmentType: p.employmentType || "FULL_TIME", startDate: p.startDate, status: "ONBOARDING", avatarColor: byId(S.companies, p.companyId).colorTag, province: "BC" };
+    const e = { id: ctx.id("e"), companyId: p.companyId, employeeNumber, firstName: first, lastName: last, workEmail: `${first}.${last}@demo.example`.toLowerCase().replace(/\s+/g, ""), departmentId: dep.id, positionId: p.positionId || undefined, managerId: p.managerId || undefined, employmentType: p.employmentType || "FULL_TIME", startDate: p.startDate, status: "ONBOARDING", avatarColor: byId(S.companies, p.companyId).colorTag, province: "BC" };
     S.employees.push(e);
     S.compensations.push({ id: ctx.id("cmp"), employeeId: e.id, payType: p.payType === "HOURLY" ? "HOURLY" : "SALARY", hourlyRateCents: p.payType === "HOURLY" ? rate : undefined, annualSalaryCents: p.payType === "HOURLY" ? undefined : rate, effectiveDate: p.startDate });
     S.payProfiles.push({ id: ctx.id("pp"), employeeId: e.id, provinceOfEmployment: "BC", payGroupId: group?.id, directDepositActive: false, cppExempt: false, eiExempt: false, additionalTaxCents: 0 });

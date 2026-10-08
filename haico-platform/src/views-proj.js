@@ -501,11 +501,11 @@ window.ACTIONS_EXT.push({
 EXPORTS.projects = () => {
   const f = projFilters(), chip = PROJ_CHIPS.find((c) => c[0] === f.status) || PROJ_CHIPS[0];
   const list = inScope(S.projects).filter((p) => (!f.co || p.companyId === f.co) && (chip[2].length ? chip[2].includes(p.status) : true)).sort((a, b) => a.code.localeCompare(b.code));
-  return { base: `haico-projects-${todayStr()}`, title: "Projects", rows: [["Code", "Project", "Company", "Customer", "Run by", "Billing", "Status", "Budget", "Spent so far", "Left", "Hours logged", "Hours approved", "Budget hours", "Ready to bill", "Billed", "Paid", "% done"],
+  return { base: `demo-projects-${todayStr()}`, title: "Projects", rows: [["Code", "Project", "Company", "Customer", "Run by", "Billing", "Status", "Budget", "Spent so far", "Left", "Hours logged", "Hours approved", "Budget hours", "Ready to bill", "Billed", "Paid", "% done"],
     ...list.map((p) => { const s = projStats(S, p); return [p.code, p.name, co(p.companyId)?.displayName, projCustomer(p.customerId) || "Internal", empName(byId(S.employees, p.managerId)), PROJ_BILLING[p.billingType], PROJ_STATUS_LABEL[p.status]?.[0] || p.status, ((p.budgetCents || 0) / 100).toFixed(2), (s.actualCents / 100).toFixed(2), (((p.budgetCents || 0) - s.actualCents) / 100).toFixed(2), s.hoursLogged.toFixed(2), s.hoursApproved.toFixed(2), (p.budgetHours || 0).toFixed(2), (s.unbilledCents / 100).toFixed(2), (s.billedTotalCents / 100).toFixed(2), (s.paidCents / 100).toFixed(2), s.percentBasis === "none" ? "" : String(s.percentComplete)]; })] };
 };
 EXPORTS["project-time"] = (id) => {
   const p = byId(S.projects, id); if (!p) return null;
-  return { base: `haico-project-time-${p.code}-${todayStr()}`, title: `${p.code} time`, rows: [["Date", "Person", "Department", "Hours", "Timesheet status", "Billable", "Cost rate", "Cost", "Billed on"],
+  return { base: `demo-project-time-${p.code}-${todayStr()}`, title: `${p.code} time`, rows: [["Date", "Person", "Department", "Hours", "Timesheet status", "Billable", "Cost rate", "Cost", "Billed on"],
     ...projEntries(S, p.id).map(({ e, sheet, emp, billable }) => { const rate = projCostRate(S, sheet.employeeId, e.date); return [e.date, empName(emp), byId(S.departments, e.departmentId)?.name || "", e.workedHours.toFixed(2), STATUS[sheet.status]?.[0] || sheet.status, billable ? "Yes" : "No", (rate / 100).toFixed(2), (Math.round(e.workedHours * rate) / 100).toFixed(2), e.billedInvoiceId ? byId(S.arInvoices, e.billedInvoiceId)?.invoiceNumber || "" : ""]; })] };
 };

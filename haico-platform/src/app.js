@@ -305,6 +305,6 @@ document.addEventListener("drop", (ev) => {
 });
 
 /* ---- what each Download ▾ button produces (header row first) ---- */
-EXPORTS.history = () => { const { rows } = historyRowsA(UI.filters.hist || {}); return { base: `haico-history-${todayStr()}`, title: "History", rows: [["When", "Done by", "Area", "What happened"], ...rows.map((r) => [r.at.replace("T", " ").slice(0, 16), r.actorName, H_AREAS[areaOfModule(r.module)]?.[0] || r.module, r.summary])] }; };
-EXPORTS.report = (key) => { const d = reportData(key, UI.filters[`rep_${key}`] || {}); return { base: `haico-${key}-report-${todayStr()}`, title: `${REP[key]?.title || key} report`, rows: [d.cols.map((c) => c[1]), ...d.rows.map((r) => d.cols.map(([k, , kind]) => kind === "money" ? (r[k] / 100).toFixed(2) : kind === "hours" ? Number(r[k]).toFixed(2) : r[k]))] }; };
+EXPORTS.history = () => { const { rows } = historyRowsA(UI.filters.hist || {}); return { base: `demo-history-${todayStr()}`, title: "History", rows: [["When", "Done by", "Area", "What happened"], ...rows.map((r) => [r.at.replace("T", " ").slice(0, 16), r.actorName, H_AREAS[areaOfModule(r.module)]?.[0] || r.module, r.summary])] }; };
+EXPORTS.report = (key) => { const d = reportData(key, UI.filters[`rep_${key}`] || {}); return { base: `demo-${key}-report-${todayStr()}`, title: `${REP[key]?.title || key} report`, rows: [d.cols.map((c) => c[1]), ...d.rows.map((r) => d.cols.map(([k, , kind]) => kind === "money" ? (r[k] / 100).toFixed(2) : kind === "hours" ? Number(r[k]).toFixed(2) : r[k]))] }; };
 EXPORTS["timesheet-period"] = (start) => timesheetReportRows(start);

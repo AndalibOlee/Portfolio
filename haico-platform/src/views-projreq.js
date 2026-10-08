@@ -28,7 +28,7 @@ function projDemoPdf(title, rows) {
   let y = docPdfHead(P, "Project proposal", title, "Attachment");
   y = docPdfTable(P, y, [["Item", P.W - P.M * 2 - 120], ["Amount", 120, "r"]], rows, { totalLast: true });
   P.text(P.M, y + 10, 9.5, "Prepared for Director review. Figures are estimates for the demo.", { color: DOC_MUTED });
-  docPdfFoot(P, "DEMO DOCUMENT - sample attachment for the Haico Group platform demo.");
+  docPdfFoot(P, "DEMO DOCUMENT - sample attachment for the Demo Group platform demo.");
   const b = P.bytes(); let bin = ""; for (let i = 0; i < b.length; i++) bin += String.fromCharCode(b[i]);
   return { data: "data:application/pdf;base64," + btoa(bin), size: b.length };
 }

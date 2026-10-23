@@ -255,7 +255,7 @@ function upcomingEventsA(days = 90) {
   for (const h of S.statHolidays) if (h.date >= today && h.date <= until) ev.push({ at: h.date, t: h.name, d: "Office closed · paid stat day", k: "holiday" });
   const runs = S.payrollRuns.filter((r) => r.payDate >= today && r.payDate <= until && r.status !== "CANCELLED" && (!e || r.companyId === e.companyId));
   for (const r of runs) ev.push({ at: r.payDate, t: "Payday", d: `Pay period ending ${dLong(r.periodEnd)}`, k: "payday" });
-  if (!runs.length) for (let d = "2026-01-16"; d <= until; d = addDays(d, 14)) if (d >= today) ev.push({ at: d, t: "Payday", d: "Biweekly pay", k: "payday" });
+  if (!runs.length) for (let d = "2026-01-23"; d <= until; d = addDays(d, 14)) if (d >= today) ev.push({ at: d, t: "Payday", d: "Biweekly pay", k: "payday" });
   if (e) {
     for (const c of S.employees.filter((x) => x.companyId === e.companyId && ["ACTIVE", "ON_LEAVE", "ONBOARDING"].includes(x.status))) { let at = today.slice(0, 4) + c.startDate.slice(4); if (at < today) at = String(Number(today.slice(0, 4)) + 1) + c.startDate.slice(4); const y = Number(at.slice(0, 4)) - Number(c.startDate.slice(0, 4)); if (y >= 1 && at <= until) ev.push({ at, t: `${empName(c)} — ${y} year${y === 1 ? "" : "s"}`, k: "anniversary" }); }
     for (const l of S.leaveRequests.filter((r) => r.status === "APPROVED" && r.endDate >= today && r.startDate <= until && byId(S.employees, r.employeeId)?.departmentId === e.departmentId)) ev.push({ at: l.startDate < today ? today : l.startDate, t: `${empName(byId(S.employees, l.employeeId))} is away`, d: `${byId(S.leaveTypes, l.leaveTypeId)?.name} until ${dLong(l.endDate)}`, k: "timeoff" });

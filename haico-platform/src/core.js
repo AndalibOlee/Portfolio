@@ -44,7 +44,7 @@ const dowOf = (s) => D(s).getUTCDay();
 const isWeekend = (s) => { const w = dowOf(s); return w === 0 || w === 6; };
 function todayStr() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`; }
 function eachDate(a, b) { const out = []; for (let s = a; s <= b; s = addDays(s, 1)) out.push(s); return out; }
-const PERIOD_ANCHOR = "2026-01-05";
+const PERIOD_ANCHOR = "2026-01-12"; // moved with the demo dates (views-refresh.js)
 function periodStartFor(s, cadence = "BIWEEKLY") {
   const monday = addDays(s, -((dowOf(s) + 6) % 7));
   if (cadence === "WEEKLY") return monday;

@@ -1,0 +1,52 @@
+<!doctype html><html><head><meta charset="utf-8"><title>IT questions</title><link rel="stylesheet" href="../base.css"><style>
+body{font-size:7.35pt;line-height:1.27}
+.hd{display:flex;justify-content:space-between;gap:16px;border-bottom:1.5px solid var(--rule);padding-bottom:6px;margin-bottom:8px}
+.hd h1{font-size:17pt} .hd .lead{font-size:8.4pt;margin:3px 0 0} .hd .meta{text-align:right;color:var(--muted);font-size:7.6pt;min-width:150px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sec{font-size:7.4pt;letter-spacing:.12em;text-transform:uppercase;color:var(--red);font-weight:700;margin:6px 0 4px}
+.q{border-bottom:1px solid var(--line);padding:0 0 4px;margin:0 0 4px}
+.q b{display:block;font-size:7.8pt;margin-bottom:1px}
+.q p{margin:0}
+table.stack{border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:2px 0 6px}
+table.stack td{padding:2px 6px;font-size:7.2pt}
+table.stack td:first-child{color:var(--teal);font-weight:700;width:68px}
+.tail{display:grid;grid-template-columns:1fr 1fr;gap:16px;border-top:1.5px solid var(--rule);padding-top:5px;margin-top:4px;font-size:7.6pt;color:#3a3f45}
+.ms{color:var(--teal);font-weight:700}
+</style></head><body>
+<div class="hd"><div><h1>DEMO Enterprise Platform — IT questions, and how I answer them</h1>
+<p class="lead">Short, plain answers for the questions IT and the managers are likely to ask about the demo. The demo is a working model of the design; the live system is built on the same rules.</p></div>
+<div class="meta">Demo: Netlify site · fictional data<br>One company or a group of companies</div></div>
+<div class="cols"><div>
+<div class="sec">What it is</div>
+<div class="q"><b>What am I looking at — is this the real system?</b><p>A working demo. Every screen, approval step and rule behaves the way the live system will, but it runs in the browser with fictional people and figures so we can test the process first.</p></div>
+<div class="q"><b>Why does it ask "one company or a group" first?</b><p>So it can be shown the way an organization is set up. One company keeps one set of books with eight departments; a group keeps separate books per company with inter-company charges. The people, departments and approvals are the same in both.</p></div>
+<div class="q"><b>Where does the data live right now?</b><p>Only in the browser of the person using the demo. Nothing is sent anywhere. Clearing the browser's site data resets it to the starting data. The live system keeps everything in a database on our side.</p></div>
+<div class="sec">How it's built</div>
+<table class="stack"><tbody>
+<tr><td>Front end</td><td>What people see in the browser. Plain HTML, CSS and JavaScript — the same screens as the demo, so nothing has to be redesigned. Works in Edge and Chrome, on a laptop or a phone.</td></tr>
+<tr><td>Back end</td><td>The server that checks every action and applies the rules. TypeScript on Node.js — the same language as the front end, so one team maintains both. The screens talk to it through a small set of secured web requests (an API).</td></tr>
+<tr><td>Database</td><td>PostgreSQL, a standard free database used by banks and governments. One table per thing — employees, requests, approvals, journal lines — every change kept, never overwritten.</td></tr>
+<tr><td>Sign-in</td><td>Microsoft 365 (Entra ID). No separate passwords; a closed account is a closed door.</td></tr>
+<tr><td>Email &amp; files</td><td>Sent through Microsoft 365. Attachments and PDFs stored in our own storage, not in the database.</td></tr>
+<tr><td>Hosting</td><td>Runs in a container, so it can sit in our Azure tenant or with a Canadian provider — IT's choice, no redesign either way.</td></tr>
+</tbody></table>
+<div class="q"><b>Why these and not something fancier?</b><p>They're the most common tools in the industry: any web developer can pick the work up, there are no licence fees, and they'll still be supported in ten years.</p></div>
+<div class="q"><b>How does the demo become the real thing?</b><p>The demo already has the three layers: the screens, the rules, and a record of every action. Building the live system means moving the rules to the server and the records into the database — the screens stay. That's why the demo is worth testing hard now: every rule we agree here carries straight over.</p></div>
+</div><div>
+<div class="sec">Security and access</div>
+<div class="q"><b>How do people sign in?</b><p>With their work account. The demo has no password — you pick a name — because the people are made up; the live system signs in through <span class="ms">Microsoft 365</span>, so there is no separate password to manage and leavers lose access when their account is closed.</p></div>
+<div class="q"><b>Who can see what?</b><p>Each person has a role — employee, manager, HR, Finance, executive, administrator. The role decides their menus, and the server checks the same rules on every action, so a hidden button is never the only protection.</p></div>
+<div class="q"><b>Are credit card numbers stored?</b><p><span class="ms">No.</span> A credit card purchase records what was bought, who approved it and what Finance was charged. Card numbers, expiry dates and security codes are never entered, never stored and never emailed.</p></div>
+<div class="q"><b>Is there an audit trail?</b><p>Yes. Every action — a request, an approval, a decline, a rate change, a stat holiday added — is written to the audit log with who did it and when. Financial and approval records are never deleted; they can only be cancelled or closed.</p></div>
+<div class="sec">How it works</div>
+<div class="q"><b>How does a request know who approves it?</b><p>From the organization chart. It goes to the person's supervisor. If that supervisor is on approved time off that day, it also goes to the next person up, and the first decision counts. Amounts over the limit add director level. Nobody approves their own request.</p></div>
+<div class="q"><b>What happens if someone changes the rules — rates, limits?</b><p>Finance keeps the rates on one page. The Finance Manager changes them directly; anyone below sends a change for approval first. Every change is logged with the old and new values. Requests already sent keep the rates they were made with.</p></div>
+<div class="q"><b>How does it connect to payroll and the ledger?</b><p>Approved timesheets feed the pay run; banked overtime is credited to time off instead of paid. Processed purchases and paid claims post to the general ledger with their account and department, so reports line up without re-keying.</p></div>
+<div class="sec">Running it</div>
+<div class="q"><b>Where will it be hosted? Who supports it?</b><p>The demo is on Netlify. The live system can run in our Azure tenant or with a Canadian provider — IT's decision; the design doesn't depend on it. Support is like any internal web app: access through IT, process questions through Finance and HR.</p></div>
+<div class="q"><b>Emails and calendar — are they real?</b><p>In the demo, Email (Inbox, Sent, Drafts and the other folders) and Calendar show the platform's own messages and dates plus sample entries, and nothing is sent. In the live system they connect to each person's Microsoft 365 mailbox and Outlook calendar. The wording of system emails is editable by an administrator.</p></div>
+<div class="q" style="border:0"><b>Backups, phones, changes?</b><p>Backups follow IT's normal schedule for the chosen host, and the full change history means any record can be traced back. The screens adjust to a phone. Changes are collected on each page and built in reviewed rounds — how this demo itself was refined.</p></div>
+</div></div>
+<div class="tail"><p><b>If I don't know:</b> "That's an IT setup decision — I'll bring it to you with the options rather than guess." Hosting, backup schedule, and single sign-on setup are the three to hand to IT.</p>
+<p><b>Three things to repeat:</b> no card numbers stored · the server checks every permission · nothing financial is ever deleted.</p></div>
+</body></html>

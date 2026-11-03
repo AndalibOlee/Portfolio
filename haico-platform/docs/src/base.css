@@ -1,0 +1,35 @@
+/* shared look for the DEMO Enterprise Platform handouts (rendered to PDF with render.js) */
+:root{--ink:#1f2328;--muted:#5d6670;--rule:#a33a2a;--line:#e3ddd2;--sand:#f6f1e7;--card:#fffdf8;--green:#3d6b35;--teal:#1d5f73;--red:#a33a2a;--ochre:#8a6417;--navy:#2c3e6b;--slate:#5a6470;--black:#22262a}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--ink);font:10pt/1.45 "Liberation Sans",Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+h1,h2,h3{font-family:"Bitstream Charter","Liberation Serif",Georgia,serif;font-weight:700;margin:0;color:var(--ink);text-wrap:balance}
+h1{font-size:22pt;line-height:1.15}
+h2{font-size:15pt;padding-bottom:5px;border-bottom:1.5px solid var(--rule);margin:0 0 8px}
+h3{font-size:11.5pt;margin:0 0 4px}
+p{margin:0 0 6px}
+.lead{color:var(--muted);font-size:10.5pt;margin:0 0 10px}
+.small{font-size:8.5pt;color:var(--muted)}
+.page{page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.cover{display:flex;flex-direction:column;justify-content:center;min-height:9in}
+.cover .brand{font-size:11pt;letter-spacing:.18em;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
+.cover h1{font-size:32pt}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:22px}
+.facts div{border-top:1.5px solid var(--rule);padding-top:6px}
+.facts small{display:block;font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.facts b{display:block;font-size:13pt;margin:2px 0}
+table{width:100%;border-collapse:collapse;margin:4px 0 10px}
+th{background:var(--sand);text-align:left;font-size:7.5pt;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:6px 7px;font-weight:700}
+td{border-bottom:1px solid var(--line);padding:6px 7px;vertical-align:top}
+td small{display:block;color:var(--muted);font-size:8.5pt}
+.n{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;font-weight:700;font-size:9pt;background:var(--green)}
+.n.c2{background:var(--teal)}.n.c3{background:var(--red)}.n.c4{background:var(--ochre)}.n.c5{background:var(--navy)}.n.c6{background:var(--slate)}.n.c7{background:var(--black)}
+.box{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:10px 12px;margin:0 0 10px;break-inside:avoid}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+ul,ol{margin:0 0 6px;padding-left:16px}
+li{margin:0 0 3px}
+.shot{border:1px solid var(--line);border-radius:6px;max-width:100%;display:block;margin:4px 0 8px}
+.cap{font-size:8.5pt;color:var(--muted);margin:-4px 0 8px}
+.tag{display:inline-block;font-size:7.5pt;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border-radius:3px;padding:1px 6px;background:var(--sand);color:var(--muted)}
+.say{border-left:3px solid var(--rule);padding:2px 0 2px 9px;font-style:italic;color:#3a3f45;margin:4px 0 8px}

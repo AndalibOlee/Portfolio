@@ -7,6 +7,9 @@
    the reporting line, the ledger only accepts balanced entries in open
    periods, payroll uses the editable 2026 tax table).
    ========================================================================== */
+/** demo setup chosen on the first page: "single" (one company) or "group" (several companies); null until chosen */
+let DEMO_SETUP = (() => { try { const v = localStorage.getItem("demo-erp-setup"); return v === "single" || v === "group" ? v : null; } catch { return null; } })();
+const orgName = () => (DEMO_SETUP === "single" ? "Alderbrook Holdings" : "Alderbrook Group");
 
 const SEED = JSON.parse(document.getElementById("seed").textContent);
 
@@ -147,7 +150,7 @@ function authFor(S, userId, activeCompanyId = null) {
   return {
     user, employee, isSuper: !!user.isSuperAdmin, roleCodes: roles.map((r) => r.roleCode),
     roleNames: [...new Set(roles.map((r) => ROLES[r.roleCode]?.name || r.roleCode))], perms, companyIds, activeCompanyId: active,
-    multiCompany: all || new Set(roles.map((r) => r.companyId).filter(Boolean)).size > 1,
+    multiCompany: S.companies.length > 1 && (all || new Set(roles.map((r) => r.companyId).filter(Boolean)).size > 1),
   };
 }
 const can = (a, p) => !!a && (a.isSuper || a.perms.has(p));

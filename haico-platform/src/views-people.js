@@ -118,7 +118,7 @@ function vOrgChart() {
       const n = people.filter((e) => e.companyId === c.id).length;
       return `<li><div class="oc-c" style="--cc:${esc(c.colorTag)}">${lead ? avatar(lead, 38) : ""}<b>${esc(c.displayName)}</b><small>${lead ? `${esc(empName(lead))} · ${esc(title(lead))}` : ""}</small><span class="oc-n">${n} people · ${deps.length} departments</span></div><ul>${deps.map(dept).join("")}</ul></li>`;
     };
-    tree = `<ul><li><div class="oc-g"><span class="weave" style="width:70px;height:4px;margin:0 auto 6px"></span><b>Alderbrook Group</b><small>${cos.length} companies · ${people.length} people</small></div><ul>${cos.map(company).join("")}</ul></li></ul>`;
+    tree = `<ul><li><div class="oc-g"><span class="weave" style="width:70px;height:4px;margin:0 auto 6px"></span><b>${esc(orgName())}</b><small>${cos.length} ${cos.length === 1 ? "company" : "companies"} · ${people.length} people</small></div><ul>${cos.map(company).join("")}</ul></li></ul>`;
   }
   const hint = view === "departments"
     ? (edit ? `<div class="msg info">Drag a person onto another department to move them — within the same company. It saves right away and shows in their History.</div>` : `<p class="hint" style="margin:0 0 10px">The whole organization, every company. Only HR and administrators can move people between departments.</p>`)

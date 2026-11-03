@@ -118,7 +118,7 @@ function buildCsv(rows) {
 async function saveTable(base, rows, title, fmt) {
   const dl = await DOWNLOADS();
   if (!dl) { toast("Can't download here", "Saving files isn't available in this view — the live site downloads the same file.", "err"); return; }
-  const subtitle = A?.activeCompanyId ? co(A.activeCompanyId).displayName : "All companies";
+  const subtitle = A?.activeCompanyId ? co(A.activeCompanyId).displayName : S.companies.length === 1 ? S.companies[0].displayName : "All companies";
   const file = fmt === "xlsx" ? { filename: `${base}.xlsx`, data: buildXlsx(rows, title) } : fmt === "pdf" ? { filename: `${base}.pdf`, data: buildPdf(rows, title, subtitle) } : { filename: `${base}.csv`, data: buildCsv(rows) };
   try { await dl.save(file); toast("Downloaded", file.filename, "ok"); } catch (e) { if (e?.code !== "declined") toast("Not saved", e?.message || "The file couldn't be saved.", "err"); }
 }

@@ -2,7 +2,9 @@
    app.js — live sync (shared event log), actions, and event wiring
    ========================================================================== */
 const SYNC = { mode: "connecting", why: "", db: null, events: [], resetAt: null, unsub: null, seenIds: new Set(), booted: false };
-const LOCAL_EVENTS_KEY = "demo-erp-events-v1"; // v2: fresh start with the refreshed demo dates
+/** each setup (one company / group of companies) keeps its own saved activity */
+const localEventsKey = () => (DEMO_SETUP === "single" ? "demo-erp-events-single-v1" : "demo-erp-events-v1");
+const eventsCollection = () => (DEMO_SETUP === "single" ? "events-single" : "events");
 
 function eventKey(e) { return `${e.ts}|${e.id}`; }
 function rebuild() {
@@ -24,7 +26,14 @@ async function boot() {
   SYNC.db = db;
   try {
     db.doc("control/state").onSnapshot((snap) => { const d = snap.data(); SYNC.resetAt = d?.resetAt || null; if (SYNC.booted) { rebuild(); if (d?.resetAt && d.resetAt > (SYNC.lastResetSeen || "")) { SYNC.lastResetSeen = d.resetAt; toast("Demo reset", "The company is back to its original demo data.", "live"); } UI.flash = null; safeRender(); } }, () => {});
-    SYNC.unsub = db.collection("events").onSnapshot((snap) => {
+    subscribeEvents();
+  } catch (e) { console.warn(e); startLocal("Couldn't reach the shared data — changes stay in this browser."); }
+  setTimeout(() => { if (!SYNC.booted) startLocal("Shared data is taking too long — changes stay in this browser for now."); }, 12000);
+}
+function subscribeEvents() {
+  const db = SYNC.db;
+  try {
+    SYNC.unsub = db.collection(eventsCollection()).onSnapshot((snap) => {
       let fresh = 0, mine = 0;
       const names = [];
       for (const ch of snap.docChanges()) {
@@ -54,20 +63,20 @@ async function boot() {
 function startLocal(why) {
   if (SYNC.mode === "local") return;
   SYNC.mode = "local"; SYNC.why = why; SYNC.booted = true;
-  try { SYNC.events = JSON.parse(localStorage.getItem(LOCAL_EVENTS_KEY) || "[]"); } catch { SYNC.events = []; }
+  try { SYNC.events = JSON.parse(localStorage.getItem(localEventsKey()) || "[]"); } catch { SYNC.events = []; }
   rebuild(); safeRender();
 }
 const CLIENT_ID = newId();
 async function persist(ev) {
   if (SYNC.mode === "live" && SYNC.db) {
-    try { await SYNC.db.collection("events").doc(ev.id).set(ev); return true; }
+    try { await SYNC.db.collection(eventsCollection()).doc(ev.id).set(ev); return true; }
     catch (err) {
       console.warn("write refused", err);
       if (err?.code === "quota_exceeded") toast("Storage is full", "The shared demo can't record more actions until an administrator resets it.", "err");
       else { SYNC.mode = "local"; SYNC.why = "You can view the live data but your changes stay in this browser (view-only access)."; toast("Saved in this browser only", "Your role on this link is view-only, so your changes aren't shared.", "err"); }
     }
   }
-  if (SYNC.mode === "local") { try { const list = JSON.parse(localStorage.getItem(LOCAL_EVENTS_KEY) || "[]"); list.push(ev); localStorage.setItem(LOCAL_EVENTS_KEY, JSON.stringify(list)); } catch { /* no storage */ } }
+  if (SYNC.mode === "local") { try { const list = JSON.parse(localStorage.getItem(localEventsKey()) || "[]"); list.push(ev); localStorage.setItem(localEventsKey(), JSON.stringify(list)); } catch { /* no storage */ } }
   return false;
 }
 

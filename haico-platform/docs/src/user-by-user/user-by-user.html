@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Demo, user by user</title>
+<link rel="stylesheet" href="../base.css">
+<style>
+  .page{height:7.28in;position:relative;overflow:hidden}
+  .p1{--pc:var(--teal)}.p2{--pc:var(--green)}.p3{--pc:var(--ochre)}.p4{--pc:var(--red)}.p5{--pc:var(--slate)}.p6{--pc:var(--navy)}.p7{--pc:var(--black)}
+  .av{display:inline-grid;place-items:center;border-radius:50%;color:#fff;font-weight:700;background:var(--pc)}
+  /* cover */
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px}
+  .top .brand{font-size:8.5pt;letter-spacing:.18em;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+  .top h1{font-size:23pt}
+  .top h1 em{font-style:normal;color:var(--red)}
+  .top .lead{margin:4px 0 3px;max-width:6.2in;font-size:10pt}
+  .first{font-size:9pt;margin:0;max-width:6.4in}
+  .how{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:8px 12px;font-size:8.6pt;line-height:1.55;width:3.1in;flex:none}
+  .rule{border-top:2px solid var(--rule);margin:6px 0 8px}
+  .people{display:grid;grid-template-columns:repeat(7,1fr);gap:16px;margin-bottom:6px}
+  .pc{position:relative;border:1px solid var(--line);border-top:3px solid var(--pc);border-radius:7px;background:var(--card);padding:5px 8px 4px}
+  .pc:not(:last-child)::after{content:"→";position:absolute;right:-13px;top:28px;color:var(--muted);font-size:9pt}
+  .pc .av{width:22px;height:22px;font-size:7pt;margin-bottom:2px}
+  .pc b{display:block;font-size:8.6pt;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:clip}
+  .pc small{display:block;font-size:7.3pt;color:var(--muted);line-height:1.25}
+  .pc .m{font-size:7.3pt;color:var(--muted);margin-top:2px}
+  .pc .m strong{color:var(--pc);font-size:9pt}
+  h3.cov{font-family:"Liberation Sans",Arial,sans-serif;font-size:10pt;color:var(--teal);margin:2px 0 4px}
+  h3.cov span{font-weight:400;color:var(--muted);font-size:8.5pt}
+  table.cov{font-size:8pt;margin:0 0 6px;border:1px solid var(--line);border-radius:7px;overflow:hidden;border-collapse:separate;border-spacing:0;background:var(--card)}
+  table.cov th{padding:2px 6px;text-align:center;font-size:7pt;letter-spacing:.04em}
+  table.cov th:first-child{text-align:left;width:2.2in}
+  table.cov th .av{width:17px;height:17px;font-size:6pt;display:grid;margin:0 auto 1px}
+  table.cov td{padding:0 6px;height:18px;line-height:1.15;vertical-align:middle;text-align:center;font-weight:600}
+  table.cov td:first-child{text-align:left;font-weight:600}
+  table.cov td .av{width:15px;height:15px;font-size:6.8pt;margin:0 auto;display:grid}
+  .notes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .notes .box{font-size:8.3pt;margin:0;padding:7px 10px;background:var(--sand)}
+  /* person pages */
+  .ph{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border-bottom:1.5px solid var(--pc);padding-bottom:6px;margin-bottom:8px}
+  .ph .av{width:38px;height:38px;font-size:11pt}
+  .ph h2{border:0;padding:0;margin:0;font-size:16pt}
+  .ph h2 span{color:var(--pc);font-family:"Liberation Sans",Arial,sans-serif;font-size:11.5pt;font-weight:700}
+  .ph .sub{font-size:8.6pt;color:var(--muted);margin:1px 0 0}
+  .ph .stats{font-size:8pt;color:var(--muted);white-space:nowrap}
+  .ph .stats b{font-size:15pt;color:var(--ink);margin:0 2px 0 8px}
+  .cols{display:grid;grid-template-columns:1.06fr 1fr;gap:14px}
+  ol.steps{list-style:none;margin:0;padding:0;display:grid;gap:4px;align-content:start}
+  ol.steps li{display:grid;grid-template-columns:24px 1fr;gap:8px;margin:0;align-items:start}
+  ol.steps .n{background:var(--pc);width:21px;height:21px;font-size:8.5pt;margin-top:5px}
+  .st{border:1px solid var(--line);border-radius:7px;background:var(--card);padding:4px 9px 4px}
+  .st h4{margin:0;font-size:8.2pt;color:var(--pc);letter-spacing:.01em}
+  .st p{margin:0;font-size:8.6pt;line-height:1.38}
+  .st p.po{font-style:italic;color:var(--muted);font-size:8pt}
+  .roomy ol.steps{gap:9px} .roomy .st{padding:7px 10px 7px} .roomy .st p{font-size:9.2pt} .roomy .st p.po{font-size:8.5pt}
+  .side figure{margin:0}
+  .side .shot{margin:0 0 2px;width:100%}
+  .side .cap{margin:0 0 6px;text-align:center;font-size:7.8pt}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .pages{border:1px dashed var(--line);border-radius:7px;background:var(--sand);padding:6px 8px;font-size:7pt;line-height:1.25}
+  .pages .tag{background:none;padding:0;margin-bottom:3px}
+  .pages code{display:inline-block;font:7.3pt "Liberation Mono",monospace;background:var(--card);border:1px solid var(--line);border-radius:3px;padding:1px 4px;margin:0 2px 3px 0;color:#3a3f45}
+  .dense .pages{padding:4px 6px} .dense .pages code{font-size:6.7pt;padding:0 3px;margin:0 1px 2px 0;line-height:1.35}
+  .nextl{position:absolute;bottom:0;left:0;right:0;font-size:7.5pt;color:var(--muted);border-top:1px solid var(--line);padding-top:3px}
+</style>
+</head>
+<body>
+
+<!-- ============ cover ============ -->
+<section class="page">
+  <div class="top">
+    <div>
+      <div class="brand">DEMO Enterprise Platform · Alderbrook Group</div>
+      <h1>Demo — <em>user by user</em></h1>
+      <p class="lead">Seven sign-ins, in the order of the sign-in list. Together they open <b>79 pages</b> and touch every department. About 35 minutes.</p>
+      <p class="first">On the first page choose <b>Group of companies</b> (or <b>One company</b>; the same people and steps work there too, without company switching).</p>
+    </div>
+    <div class="how">
+      <b>Sign in:</b> pick the name in “Who are you?” → <b>OK</b> (no password). People who work across companies then pick <b>The whole group</b>.<br>
+      <b>Change person:</b> Switch role, top right.<br>
+      <b>Search anywhere:</b> press <b>/</b>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="people">
+    <div class="pc p1"><span class="av">MC</span><b>Maya Collins</b><small>Employee</small><div class="m"><strong>6</strong> min · <strong>19</strong> pages · p. 2</div></div>
+    <div class="pc p2"><span class="av">LF</span><b>Liam Foster</b><small>Manager</small><div class="m"><strong>6</strong> min · <strong>9</strong> pages · p. 3</div></div>
+    <div class="pc p3"><span class="av">DO</span><b>Daniel Okafor</b><small>Finance Manager</small><div class="m"><strong>6</strong> min · <strong>26</strong> pages · p. 4</div></div>
+    <div class="pc p4"><span class="av">PR</span><b>Priya Raman</b><small>HR Manager</small><div class="m"><strong>6</strong> min · <strong>12</strong> pages · p. 5</div></div>
+    <div class="pc p5"><span class="av">RD</span><b>Rachel Dubois</b><small>Payroll Administrator</small><div class="m"><strong>3</strong> min · <strong>8</strong> pages · p. 6</div></div>
+    <div class="pc p6"><span class="av">GH</span><b>Grace Holloway</b><small>Executive Director</small><div class="m"><strong>5</strong> min · <strong>8</strong> pages · p. 7</div></div>
+    <div class="pc p7"><span class="av">SA</span><b style="font-size:7.6pt;letter-spacing:-.01em">System Administrator</b><small>Administrator</small><div class="m"><strong>3</strong> min · <strong>9</strong> pages · p. 8</div></div>
+  </div>
+
+  <h3 class="cov">Who covers which department <span>— number = pages that person opens there</span></h3>
+  <table class="cov">
+    <thead><tr><th></th>
+      <th class="p1"><span class="av">MC</span>Maya</th><th class="p2"><span class="av">LF</span>Liam</th><th class="p3"><span class="av">DO</span>Daniel</th><th class="p4"><span class="av">PR</span>Priya</th>
+      <th class="p5"><span class="av">RD</span>Rachel</th><th class="p6"><span class="av">GH</span>Grace</th><th class="p7"><span class="av">SA</span>Admin</th></tr></thead>
+    <tbody>
+      <tr><td>Self-service, calendar &amp; directory</td><td class="p1"><span class="av">15</span></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Requests</td><td class="p1"><span class="av">4</span></td><td></td><td class="p3"><span class="av">1</span></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Approvals</td><td></td><td class="p2"><span class="av">1</span></td><td class="p3"><span class="av">1</span></td><td></td><td></td><td class="p6"><span class="av">1</span></td><td></td></tr>
+      <tr><td>My Team</td><td></td><td class="p2"><span class="av">2</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>People &amp; HR</td><td></td><td></td><td></td><td class="p4"><span class="av">6</span></td><td></td><td></td><td></td></tr>
+      <tr><td>Time &amp; Attendance</td><td></td><td class="p2"><span class="av">2</span></td><td></td><td class="p4"><span class="av">3</span></td><td class="p5"><span class="av">1</span></td><td></td><td></td></tr>
+      <tr><td>Reviews, Benefits &amp; Pension</td><td></td><td class="p2"><span class="av">1</span></td><td class="p3"><span class="av">1</span></td><td class="p4"><span class="av">3</span></td><td class="p5"><span class="av">1</span></td><td></td><td></td></tr>
+      <tr><td>Payroll</td><td></td><td></td><td></td><td></td><td class="p5"><span class="av">6</span></td><td></td><td></td></tr>
+      <tr><td>Accounts Payable</td><td></td><td></td><td class="p3"><span class="av">6</span></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Receivable &amp; Banking</td><td></td><td></td><td class="p3"><span class="av">2</span></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Accounting</td><td></td><td></td><td class="p3"><span class="av">8</span></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>Purchasing</td><td></td><td></td><td class="p3"><span class="av">1</span></td><td></td><td></td><td class="p6"><span class="av">2</span></td><td></td></tr>
+      <tr><td>Sales, Stock &amp; Projects</td><td></td><td class="p2"><span class="av">2</span></td><td class="p3"><span class="av">4</span></td><td></td><td></td><td class="p6"><span class="av">1</span></td><td></td></tr>
+      <tr><td>Documents &amp; Contracts</td><td></td><td class="p2"><span class="av">1</span></td><td class="p3"><span class="av">1</span></td><td></td><td></td><td class="p6"><span class="av">1</span></td><td></td></tr>
+      <tr><td>Reports &amp; History</td><td></td><td></td><td class="p3"><span class="av">1</span></td><td></td><td></td><td class="p6"><span class="av">2</span></td><td></td></tr>
+      <tr><td>Administration</td><td></td><td></td><td></td><td></td><td></td><td></td><td class="p7"><span class="av">9</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="notes">
+    <div class="box"><b>Close the loop</b> is on Grace's page: Rachel posts the payroll, Grace's approval makes Maya's purchase order PO-2026-0012 ready to print, Ethan Clarke (General Manager, Ridgeline Timber) receives the goods, and Maya sees it all approved — so the Purchasing count there covers more than one person.</div>
+    <div class="box"><b>Before you start:</b> open the demo fresh (a new private window), so every request, approval and pay run starts from the same place. Each page below lists the exact pages that person opens.</div>
+  </div>
+</section>
+
+<!-- ============ 1. Maya ============ -->
+<section class="page p1">
+  <header class="ph"><span class="av">MC</span>
+    <div><h2>1. Maya Collins <span>· Employee</span></h2><p class="sub">Ridgeline Timber · Equipment Operator — Everything an employee does for themselves — time, time off, requests, profile, documents.</p></div>
+    <div class="stats"><b>6</b>min <b>9</b>steps <b>19</b>pages</div></header>
+  <div class="cols">
+    <ol class="steps">
+      <li><span class="n">1</span><div class="st"><h4>Home</h4><p>Read “My summary”: hours this period, vacation left, latest pay, open requests.</p><p class="po">Point out: Every role lands on a home page built for them.</p></div></li>
+      <li><span class="n">2</span><div class="st"><h4>My Time</h4><p>Type 8 h Mon–Fri. On one day type 6 regular + <b>3 Banked OT</b> → red error. Change to 2 → <b>Send for approval</b>.</p><p class="po">Point out: “10.00 h left” beside Banked OT; regular + banked never over 8.</p></div></li>
+      <li><span class="n">3</span><div class="st"><h4>My Time Off · Calendar</h4><p>See the Banked OT card. Request 2 days vacation (the hours fill in: 14 h). Open the Calendar tab, then <b>Calendar</b> in the menu (Month · Week · Day).</p><p class="po">Point out: Banked hours are used on the timesheet, not requested.</p></div></li>
+      <li><span class="n">4</span><div class="st"><h4>Requests</h4><p>New Purchase Order <b>$28,500</b> grapple · New Expense Claim <b>$640</b> boots with the receipt · New Travel Request.</p><p class="po">Point out: Each one says who it is with now — she never picks the approver.</p></div></li>
+      <li><span class="n">5</span><div class="st"><h4>My Tasks</h4><p>Move a task along: press 75% on the safety walk.</p><p class="po">Point out: Managers see the change on their board.</p></div></li>
+      <li><span class="n">6</span><div class="st"><h4>My Profile — 5 tabs</h4><p>Overview · Employment · <b>Pension &amp; Benefits</b> (own pension) · Reviews · Certificates (<b>add one</b> with a PDF).</p><p class="po">Point out: Time off lives in My Time Off; documents in My Documents.</p></div></li>
+      <li><span class="n">7</span><div class="st"><h4>My Pay · My Documents</h4><p>Open the <b>T4 2025</b> → Preview → <b>Download PDF</b>. Same for a pay statement and the Employee Handbook.</p><p class="po">Point out: Every document previews on screen and downloads as a PDF.</p></div></li>
+      <li><span class="n">8</span><div class="st"><h4>People › Directory · Org chart</h4><p>Find Liam; press <b>/</b> anywhere to search.</p><p class="po">Point out: Search only shows what this role may open.</p></div></li>
+      <li><span class="n">9</span><div class="st"><h4>Palette button · Feedback</h4><p>Choose a look → Coastal → Dark → Done. Leave a Feedback note.</p><p class="po">Point out: The look is saved on this device only.</p></div></li>
+    </ol>
+    <div class="side">
+      <figure><img class="shot" src="1a-maya-t4.jpg" alt=""><figcaption class="cap">My Documents — T4 2025 preview, then Download PDF</figcaption></figure>
+      <div class="two">
+        <figure><img class="shot" src="1b-maya-time.jpg" alt=""><figcaption class="cap">My Time — the 8-hour banked rule</figcaption></figure>
+        <figure><img class="shot" src="1c-maya-profile.jpg" alt=""><figcaption class="cap">My Profile — five tabs</figcaption></figure>
+      </div>
+      <div class="pages"><div class="tag">Pages opened (19)</div>
+        <code>/dashboard</code><code>/me/time</code><code>/me/time-off</code><code>/me/profile/events</code><code>/calendar/month</code><code>/requests</code><code>/requests/new/po</code><code>/requests/new/expense</code><code>/requests/new/travel</code><code>/me/tasks</code><code>/me/profile</code><code>/me/profile/employment</code><code>/me/profile/benefits</code><code>/me/reviews</code><code>/me/certifications</code><code>/me/pay</code><code>/me/documents</code><code>/people/directory</code><code>/people/org-chart</code></div>
+    </div>
+  </div>
+  <div class="nextl">1. Maya Collins · Employee · next: Liam Foster</div>
+</section>
+
+<!-- ============ 2. Liam ============ -->
+<section class="page p2 roomy">
+  <header class="ph"><span class="av">LF</span>
+    <div><h2>2. Liam Foster <span>· Manager</span></h2><p class="sub">Ridgeline Timber · Field Supervisor · Maya's manager — A manager approves the team's work, asks HR for hires and proposes projects.</p></div>
+    <div class="stats"><b>6</b>min <b>8</b>steps <b>9</b>pages</div></header>
+  <div class="cols">
+    <ol class="steps">
+      <li><span class="n">1</span><div class="st"><h4>Home → Approvals</h4><p>Open “Waiting on you” → Approvals with category chips.</p><p class="po">Point out: Only his team's items appear.</p></div></li>
+      <li><span class="n">2</span><div class="st"><h4>Approvals › Maya's timesheet</h4><p>View full timesheet (banked hours shown) → <b>Approve</b>.</p><p class="po">Point out: Approved hours flow to payroll.</p></div></li>
+      <li><span class="n">3</span><div class="st"><h4>Approvals</h4><p>Approve the time off, the $640 expense claim, the $28,500 purchase order and the travel request.</p><p class="po">Point out: Over $5,000 goes on to the Director automatically.</p></div></li>
+      <li><span class="n">4</span><div class="st"><h4>My Team › Team · Time off</h4><p>New task for Maya on the board; check the team's time off.</p></div></li>
+      <li><span class="n">5</span><div class="st"><h4>My Team › Create New Hiring</h4><p>Log Truck Driver × 2, $33–37/h, Prince George → <b>Send to HR Manager</b>.</p><p class="po">Point out: Same fields as HR's form; the list shows only his departments' requests and their status.</p></div></li>
+      <li><span class="n">6</span><div class="st"><h4>Projects › + New project</h4><p>Skid Road Upgrade · Harvest Operations · $64,000 · Nov 16 – Dec 18 · description · attach the quote PDF → <b>Send for Director approval</b>.</p><p class="po">Point out: Starts as <b>Pending Director Approval</b> — not open for time or costs yet.</p></div></li>
+      <li><span class="n">7</span><div class="st"><h4>Performance Reviews</h4><p>Finish Maya's manager review with a rating → Complete review.</p></div></li>
+      <li><span class="n">8</span><div class="st"><h4>Documents › Contracts</h4><p>Upload a grapple service contract → open it.</p><p class="po">Point out: Who uploaded what, and when, is kept.</p></div></li>
+    </ol>
+    <div class="side">
+      <figure><img class="shot" src="2a-liam-hiring.jpg" alt=""><figcaption class="cap">My Team › Create New Hiring — sent to the HR Manager</figcaption></figure>
+      <div class="two">
+        <figure><img class="shot" src="2b-liam-project.jpg" alt=""><figcaption class="cap">New project with the contractor's quote</figcaption></figure>
+        <figure><img class="shot" src="2c-liam-approvals.jpg" alt=""><figcaption class="cap">Approvals — grouped by kind</figcaption></figure>
+      </div>
+      <div class="pages"><div class="tag">Pages opened (9)</div>
+        <code>/approvals</code><code>/hr/timesheets</code><code>/team</code><code>/hr/leave</code><code>/team/hiring</code><code>/projects</code><code>/projects/new</code><code>/hr/reviews</code><code>/documents/contracts</code></div>
+    </div>
+  </div>
+  <div class="nextl">2. Liam Foster · Manager · next: Daniel Okafor</div>
+</section>
+
+<!-- ============ 3. Daniel ============ -->
+<section class="page p3 dense">
+  <header class="ph"><span class="av">DO</span>
+    <div><h2>3. Daniel Okafor <span>· Finance Manager</span></h2><p class="sub">Alderbrook Holdings · approves only the finance team — Finance pays, collects, reconciles and closes the books.</p></div>
+    <div class="stats"><b>6</b>min <b>9</b>steps <b>26</b>pages</div></header>
+  <div class="cols">
+    <ol class="steps">
+      <li><span class="n">1</span><div class="st"><h4>Approvals</h4><p>Only his finance team's items are here; open bill <b>INV-10245</b> → Approve.</p><p class="po">Point out: Maya's requests are not routed to Finance.</p></div></li>
+      <li><span class="n">2</span><div class="st"><h4>Requests › Finance queue · AP › Employee claims</h4><p>Open Maya's $640 claim EC-2026-0020 → <b>Record as paid</b>.</p><p class="po">Point out: A claim goes from approved to paid in one step.</p></div></li>
+      <li><span class="n">3</span><div class="st"><h4>AP › Bills › New bill</h4><p>Bill 20441 · $6,400 · drop the invoice PDF + delivery photo → Send for approval. Open the PDF on the bill → Download.</p><p class="po">Point out: One or more PDFs or images per bill.</p></div></li>
+      <li><span class="n">4</span><div class="st"><h4>AP › Batch entry · Payment batch</h4><p>Two bills, each with its own files → Save. Pay approved bills in one EFT run.</p><p class="po">Point out: Each bill keeps its own files.</p></div></li>
+      <li><span class="n">5</span><div class="st"><h4>Purchasing › Matching</h4><p>Run the 3-way match (PO · receipt · bill).</p><p class="po">Point out: Differences are flagged before anything is paid.</p></div></li>
+      <li><span class="n">6</span><div class="st"><h4>AR › Invoices · Banking</h4><p>New invoice → deposit batch. Load sample statement → Auto-match.</p><p class="po">Point out: Matched lines clear themselves.</p></div></li>
+      <li><span class="n">7</span><div class="st"><h4>Accounting — 8 tabs</h4><p>Overview · Journal entries · Recurring · Month-end · Fixed assets · Budgets · Chart of accounts · Inter-company.</p><p class="po">Point out: A closed month can't be back-dated into.</p></div></li>
+      <li><span class="n">8</span><div class="st"><h4>Sales &amp; Stock · Projects</h4><p>Sales orders · Shipments · Stock · Items; projects budget vs spent.</p></div></li>
+      <li><span class="n">9</span><div class="st"><h4>Documents · Benefits &amp; Pension · Reports</h4><p>All files; benefits &amp; pension view + Download only; Trial balance.</p></div></li>
+    </ol>
+    <div class="side">
+      <figure><img class="shot" src="3a-daniel-newbill.jpg" alt=""><figcaption class="cap">New bill — invoice PDF + delivery photo attached</figcaption></figure>
+      <div class="two">
+        <figure><img class="shot" src="3b-daniel-batch.jpg" alt=""><figcaption class="cap">Batch entry — files on each bill</figcaption></figure>
+        <figure><img class="shot" src="3c-daniel-pdf.jpg" alt=""><figcaption class="cap">Open the attachment in the page</figcaption></figure>
+      </div>
+      <div class="pages"><div class="tag">Pages opened (26)</div>
+        <code>/approvals</code><code>/requests/finance</code><code>/finance/expenses</code><code>/finance</code><code>/finance/ap</code><code>/finance/ap/vendors</code><code>/finance/ap/attachments</code><code>/finance/ap/batch</code><code>/finance/ap/pay</code><code>/procurement/match</code><code>/finance/ar</code><code>/finance/banking</code><code>/finance/journals</code><code>/finance/recurring</code><code>/finance/periods</code><code>/finance/assets</code><code>/finance/budgets</code><code>/finance/accounts</code><code>/finance/interco</code><code>/sales/orders</code><code>/sales/shipments</code><code>/inventory/stock</code><code>/inventory/items</code><code>/documents</code><code>/hr/benefits</code><code>/reports</code></div>
+    </div>
+  </div>
+  <div class="nextl">3. Daniel Okafor · Finance Manager · next: Priya Raman</div>
+</section>
+
+<!-- ============ 4. Priya ============ -->
+<section class="page p4 roomy">
+  <header class="ph"><span class="av">PR</span>
+    <div><h2>4. Priya Raman <span>· HR Manager</span></h2><p class="sub">Alderbrook Holdings · all companies — HR keeps people records up to date and decides every hiring request.</p></div>
+    <div class="stats"><b>6</b>min <b>7</b>steps <b>12</b>pages</div></header>
+  <div class="cols">
+    <ol class="steps">
+      <li><span class="n">1</span><div class="st"><h4>People › Employees</h4><p>Search → open Maya's record and its tabs.</p><p class="po">Point out: Every change to a record is kept in its history.</p></div></li>
+      <li><span class="n">2</span><div class="st"><h4>People › Hiring requests</h4><p>Approve Liam's Log Truck Driver · Reject the AP Clerk with a note · Post job for the Tree Planters.</p><p class="po">Point out: Pending · Approved · Rejected · Posted; a posted job opens under Hiring.</p></div></li>
+      <li><span class="n">3</span><div class="st"><h4>People › Onboarding · Hiring · Departments</h4><p>Add an employee → tick the checklist. New opening with Grace as hiring manager → it goes to her for approval.</p></div></li>
+      <li><span class="n">4</span><div class="st"><h4>People › Certificates</h4><p>Send a renewal reminder for an expired or expiring ticket.</p><p class="po">Point out: The reminder is written into the history.</p></div></li>
+      <li><span class="n">5</span><div class="st"><h4>Time &amp; Attendance › Timesheets · By pay period · Time off</h4><p>Check who hasn't sent; see balances incl. banked overtime.</p></div></li>
+      <li><span class="n">6</span><div class="st"><h4>Reviews, Benefits &amp; Pension</h4><p>Start a review cycle · enrol someone in Dental · Pension: enrol Owen Murphy, Download.</p><p class="po">Point out: HR edits; Finance and Payroll only view.</p></div></li>
+      <li><span class="n">7</span><div class="st"><h4>Employee record › End employment</h4><p>End Emma Lawson's seasonal employment → a draft Record of Employment goes to payroll.</p><p class="po">Point out: Payroll gets it straight away.</p></div></li>
+    </ol>
+    <div class="side">
+      <figure><img class="shot" src="4a-priya-hiring.jpg" alt=""><figcaption class="cap">People › Hiring requests — every department</figcaption></figure>
+      <div class="two">
+        <figure><img class="shot" src="4b-priya-reject.jpg" alt=""><figcaption class="cap">Reject with a note the manager sees</figcaption></figure>
+        <figure><img class="shot" src="4c-priya-pension.jpg" alt=""><figcaption class="cap">Pension — members and remittances</figcaption></figure>
+      </div>
+      <div class="pages"><div class="tag">Pages opened (12)</div>
+        <code>/hr/employees</code><code>/hr/hiring-requests</code><code>/hr/hiring</code><code>/hr/onboarding</code><code>/hr/departments</code><code>/hr/certifications</code><code>/hr/timesheets</code><code>/payroll/timesheet-status</code><code>/hr/leave</code><code>/hr/reviews</code><code>/hr/benefits</code><code>/hr/pension</code></div>
+    </div>
+  </div>
+  <div class="nextl">4. Priya Raman · HR Manager · next: Rachel Dubois</div>
+</section>
+
+<!-- ============ 5. Rachel ============ -->
+<section class="page p5 roomy">
+  <header class="ph"><span class="av">RD</span>
+    <div><h2>5. Rachel Dubois <span>· Payroll Administrator</span></h2><p class="sub">Alderbrook Holdings — Payroll has a run ready to go — calculate, send, file.</p></div>
+    <div class="stats"><b>3</b>min <b>5</b>steps <b>8</b>pages</div></header>
+  <div class="cols">
+    <ol class="steps">
+      <li><span class="n">1</span><div class="st"><h4>Payroll › Pay runs</h4><p>Open <b>PR-2026-0019</b> Alderbrook Holdings (Oct 5–18).</p><p class="po">Point out: Everything is ready — no setup on stage.</p></div></li>
+      <li><span class="n">2</span><div class="st"><h4>Pay run</h4><p><b>Calculate</b> → 6 people, no warnings → <b>Send for approval</b>.</p><p class="po">Point out: It now waits on the Executive Director.</p></div></li>
+      <li><span class="n">3</span><div class="st"><h4>Payroll › Records of Employment · CRA remittances</h4><p>Issue the ROE Priya started; mark the PD7A remittance paid.</p><p class="po">Point out: Each is tracked to its due date and who filed it.</p></div></li>
+      <li><span class="n">4</span><div class="st"><h4>Payroll › Statements · Year-end · Settings</h4><p>Pay statements, T4 boxes, tax tables.</p><p class="po">Point out: T4 boxes add up from the posted runs.</p></div></li>
+      <li><span class="n">5</span><div class="st"><h4>Time &amp; Attendance › By pay period</h4><p>Who is approved for the next run.</p><p class="po">Point out: Benefits and pension are view + download for payroll.</p></div></li>
+    </ol>
+    <div class="side">
+      <figure><img class="shot" src="5a-rachel-draft.jpg" alt=""><figcaption class="cap">PR-2026-0019 ready to go</figcaption></figure>
+      <div class="two">
+        <figure><img class="shot" src="5b-rachel-calc.jpg" alt=""><figcaption class="cap">Calculated — 6 people, no warnings</figcaption></figure>
+        <figure><img class="shot" src="5c-rachel-roe.jpg" alt=""><figcaption class="cap">Issue the ROE</figcaption></figure>
+      </div>
+      <div class="pages"><div class="tag">Pages opened (8)</div>
+        <code>/payroll/runs</code><code>/payroll/roe</code><code>/payroll/remittances</code><code>/payroll/statements</code><code>/payroll/yearend</code><code>/payroll/settings</code><code>/payroll/timesheet-status</code><code>/hr/pension</code></div>
+    </div>
+  </div>
+  <div class="nextl">5. Rachel Dubois · Payroll Administrator · next: Grace Holloway</div>
+</section>
+
+<!-- ============ 6. Grace ============ -->
+<section class="page p6 roomy">
+  <header class="ph"><span class="av">GH</span>
+    <div><h2>6. Grace Holloway <span>· Executive Director</span></h2><p class="sub">Alderbrook Holdings · Executive Director — The Director approves new projects and the big items, and sees the whole group.</p></div>
+    <div class="stats"><b>5</b>min <b>6</b>steps <b>8</b>pages</div></header>
+  <div class="cols">
+    <ol class="steps">
+      <li><span class="n">1</span><div class="st"><h4>Projects</h4><p>Banner: projects pending Director approval — waiting for you. Open <b>Skid Road Upgrade</b>.</p><p class="po">Point out: Block 14 Replanting is also waiting; Lodge Dock Extension shows a rejection with its comment.</p></div></li>
+      <li><span class="n">2</span><div class="st"><h4>Project › Director decision</h4><p>Read name, department, budget, dates, description; open the quote PDF. Comment → <b>Approve project</b>.</p><p class="po">Point out: Only approved projects become Active and take hours and costs. Reject needs a comment.</p></div></li>
+      <li><span class="n">3</span><div class="st"><h4>Home → Approvals</h4><p>Approve the payroll, the $28,500 purchase order and the job opening Priya sent.</p><p class="po">Point out: Nothing sits in an inbox — approve with a note, right there.</p></div></li>
+      <li><span class="n">4</span><div class="st"><h4>Documents › Contracts</h4><p>Every team's contracts, values and end dates.</p></div></li>
+      <li><span class="n">5</span><div class="st"><h4>Reports · History</h4><p>Profit &amp; Loss · Balance Sheet · Headcount; History of today.</p><p class="po">Point out: Each company side by side, plus the whole group.</p></div></li>
+      <li><span class="n">6</span><div class="st"><h4>Close the loop — switch quickly</h4><p>Rachel posts the payroll · Ethan Clarke: Purchasing › Purchase orders → Receiving for PO-2026-0012 · Maya: all approved.</p><p class="po">Point out: Request → approval → PO → goods, all linked; the last approval makes the order ready to print. Olivia Bennett (CEO) can do everything on this page too.</p></div></li>
+    </ol>
+    <div class="side">
+      <figure><img class="shot" src="6a-grace-project.jpg" alt=""><figcaption class="cap">New project — full details, attachments, decision</figcaption></figure>
+      <div class="two">
+        <figure><img class="shot" src="6b-grace-quote.jpg" alt=""><figcaption class="cap">The contractor's quote, opened in the page</figcaption></figure>
+        <figure><img class="shot" src="6c-grace-approvals.jpg" alt=""><figcaption class="cap">Approvals — payroll, purchase order, job opening</figcaption></figure>
+      </div>
+      <div class="pages"><div class="tag">Pages opened (8)</div>
+        <code>/projects</code><code>/dashboard</code><code>/approvals</code><code>/documents/contracts</code><code>/reports</code><code>/history</code><code>/procurement/pos</code><code>/procurement/receiving</code></div>
+    </div>
+  </div>
+  <div class="nextl">6. Grace Holloway · Executive Director · next: System Administrator</div>
+</section>
+
+<!-- ============ 7. Admin ============ -->
+<section class="page p7 roomy">
+  <header class="ph"><span class="av">SA</span>
+    <div><h2>7. System Administrator <span>· Administrator</span></h2><p class="sub">All companies · super administrator — The administrator sets the rules and can prove every step.</p></div>
+    <div class="stats"><b>3</b>min <b>4</b>steps <b>9</b>pages</div></header>
+  <div class="cols">
+    <ol class="steps">
+      <li><span class="n">1</span><div class="st"><h4>Administration › Users &amp; access · Companies</h4><p>Show Grace's Executive Director role and Rachel's Payroll Administrator role; the four companies.</p><p class="po">Point out: Roles decide every menu a person sees.</p></div></li>
+      <li><span class="n">2</span><div class="st"><h4>Administration › Approval rules</h4><p>Change a threshold (e.g. purchase orders $5,000 → $10,000). See New projects → Director approval.</p><p class="po">Point out: Manager first; Director above the threshold.</p></div></li>
+      <li><span class="n">3</span><div class="st"><h4>Administration › Audit log · Feedback</h4><p>Every click of the demo — hiring decisions, project approval, files — who and when; resolve Maya's note.</p><p class="po">Point out: Nothing happens without a record of it.</p></div></li>
+      <li><span class="n">4</span><div class="st"><h4>Page &amp; Experience · Email templates · Settings · How-to</h4><p>Menus, pages, terminology, versions; the wording of every email; demo settings; how-to guides.</p><p class="po">Point out: Menus and wording change without code.</p></div></li>
+    </ol>
+    <div class="side">
+      <figure><img class="shot" src="7a-admin-rules.jpg" alt=""><figcaption class="cap">Approval rules — incl. New projects</figcaption></figure>
+      <div class="two">
+        <figure><img class="shot" src="7b-admin-audit.jpg" alt=""><figcaption class="cap">Audit log — the whole demo</figcaption></figure>
+        <figure><img class="shot" src="7c-admin-experience.jpg" alt=""><figcaption class="cap">Page &amp; Experience Manager</figcaption></figure>
+      </div>
+      <div class="pages"><div class="tag">Pages opened (9)</div>
+        <code>/admin/users</code><code>/admin/companies</code><code>/admin/workflows</code><code>/admin/audit</code><code>/admin/feedback</code><code>/admin/experience</code><code>/admin/email-templates</code><code>/admin/settings</code><code>/help</code></div>
+    </div>
+  </div>
+  <div class="nextl">7. System Administrator · Administrator · demo complete</div>
+</section>
+
+</body>
+</html>

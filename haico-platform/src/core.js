@@ -1,6 +1,6 @@
 "use strict";
 /* ==========================================================================
-   DEMO Group platform — live browser edition
+   DEMO platform — live browser edition
    core.js: utilities, permissions, and the event engine.
    Every change anyone makes is an EVENT; state = demo seed + events replayed
    in order. Reducers mirror the platform's server rules (approvals follow
@@ -183,8 +183,8 @@ let freshState = function () {
 
 const EMAIL_INTRO = { APPROVAL_REQUIRED: "A request is waiting for your approval.", APPROVED: "Good news — this has been approved.", REJECTED: "This was not approved. The note from the approver, if any, is below.", PAYROLL: "Your pay has been processed.", TIMESHEET: "A timesheet needs your attention.", SYSTEM: "There is an update for you on the platform." };
 function renderEmail(toName, n) {
-  const subject = `[DEMO Group platform] ${n.title}`;
-  const bodyText = [`Hi ${toName.split(" ")[0]},`, "", EMAIL_INTRO[n.type] || EMAIL_INTRO.SYSTEM, "", n.title, n.body || "", "", `Open it here: ${n.linkUrl || "/"}`, "", "— DEMO Group platform (automatic message; replies are not read)", "DEMO: this message was kept in the outbox and not delivered."].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
+  const subject = `[DEMO platform] ${n.title}`;
+  const bodyText = [`Hi ${toName.split(" ")[0]},`, "", EMAIL_INTRO[n.type] || EMAIL_INTRO.SYSTEM, "", n.title, n.body || "", "", `Open it here: ${n.linkUrl || "/"}`, "", "— DEMO platform (automatic message; replies are not read)", "DEMO: this message was kept in the outbox and not delivered."].filter((l, i, a) => !(l === "" && a[i - 1] === "")).join("\n");
   return { subject, bodyText };
 }
 
@@ -932,7 +932,7 @@ const R = {
     if (!p.startDate) fail("Enter a start date.");
     const dep = byId(S.departments, p.departmentId);
     if (!dep || dep.companyId !== p.companyId) fail("Choose a department in that company.");
-    const prefix = { HAICO: "EMP-3", TAAN: "EMP-2", TOUR: "EMP-1", SEAF: "EMP-4" }[p.companyId] || "EMP-9";
+    const prefix = { ALD: "EMP-3", RDG: "EMP-2", SLL: "EMP-1", NBS: "EMP-4" }[p.companyId] || "EMP-9";
     let max = 0;
     for (const e of S.employees) if (e.employeeNumber.startsWith(prefix)) max = Math.max(max, parseInt(e.employeeNumber.slice(4), 10) || 0);
     const employeeNumber = `EMP-${max || Number(prefix.slice(4) + "000")}${max ? "" : ""}`.replace(/\d+$/, (n) => String(Number(n) + 1));
@@ -1196,7 +1196,7 @@ function approvalSentence(code, managerName) {
   const t = parts.join("; ") + ".";
   return t.charAt(0).toUpperCase() + t.slice(1);
 }
-/** "Tyler Bigstone → the Executive Director if $5,000 or more" */
+/** "Liam Foster → the Executive Director if $5,000 or more" */
 function approvalChain(code, managerName) {
   const steps = approvalSteps(code);
   if (!steps.length) return managerName || "Your manager";

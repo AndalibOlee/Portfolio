@@ -1,5 +1,5 @@
 /* ==========================================================================
-   views-shell.js — the look switcher (five looks — Haida Gwaii, Coastal, Cedar Bark, Spruce, Slate — x light/dark, chosen in a popup), approval
+   views-shell.js — the look switcher (five looks — Sandstone, Coastal, Cedar Bark, Spruce, Slate — x light/dark, chosen in a popup), approval
    categories shared by Home and Approvals, and the read-only timesheet view
    (/hr/timesheets/:id) with Approve / Send back for whoever may decide it.
    ========================================================================== */
@@ -7,7 +7,7 @@
 /* ---------------- looks (A's five looks and tokens; chooser screen laid out like B's) ---------------- */
 /** swatches are the light-mode background · sidebar accent · action colours, shown in the menu only */
 const LOOKS = [
-  ["cedar", "Haida Gwaii", "Sand and cedar — the original look.", ["#f5efe3", "#a03c28", "#17566b"]],
+  ["cedar", "Sandstone", "Sand and cedar — the original look.", ["#f5efe3", "#a03c28", "#17566b"]],
   ["harbour", "Coastal", "Cool sea-mist greys with ocean blue.", ["#f4f6f7", "#17566b", "#4f95ab"]],
   ["navy", "Cedar Bark", "The original, with a dark cedar-bark sidebar.", ["#f5efe3", "#2e1e13", "#a03c28"]],
   ["moss", "Spruce", "Soft forest greens, calm and bright.", ["#f2f1ec", "#3f6b35", "#9bb87d"]],

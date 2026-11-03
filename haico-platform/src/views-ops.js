@@ -200,7 +200,7 @@ function vNewEmployee() {
   const cos = S.companies.filter((c) => canSee(A, c.id));
   const cid = UI.filters.newEmpCo || (A.activeCompanyId || cos[0].id);
   const deps = S.departments.filter((d) => d.companyId === cid), pos = S.positions.filter((p) => p.companyId === cid);
-  const mgrs = S.employees.filter((e) => e.companyId === cid || e.companyId === "HAICO");
+  const mgrs = S.employees.filter((e) => e.companyId === cid || e.companyId === "ALD");
   return `<div class="crumb">${crumb("/hr/employees", "Employees")}</div>` + ph("Add an employee", "They start as Onboarding with four standard tasks, their 2026 leave balances and a pay profile.") + flashHtml()
     + card("", `<form data-f="newEmp" class="form-grid">
       <div class="fld"><label for="neCo">Company</label><select class="in" id="neCo" name="companyId" data-a="newEmpCo">${cos.map((c) => opt(c.id, c.displayName, c.id === cid)).join("")}</select></div>
@@ -267,7 +267,7 @@ function vRuns() {
   const cur = periodStartFor(todayStr());
   const opts = [-6, -5, -4, -3, -2, -1, 0].map((k) => addDays(cur, 14 * k));
   const sug = suggestedPeriod(groups);
-  const defGroup = groups.find((g) => g.code === "TAAN-HR") || groups[0];
+  const defGroup = groups.find((g) => g.code === "RDG-HR") || groups[0];
   const form = can(A, "payroll.run") ? card("Start a pay run", `<form data-f="newRun" class="form-grid">
       <div class="fld"><label for="rGroup">Pay group</label><select class="in" id="rGroup" name="payGroupId">${groups.map((g) => opt(g.id, `${co(g.companyId).displayName} — ${g.name}`, g.id === defGroup?.id)).join("")}</select></div>
       <div class="fld"><label for="rPer">Pay period</label><select class="in" id="rPer" name="periodStart">${opts.map((s) => opt(s, periodLabel(s, periodEndFor(s)), s === sug)).join("")}</select></div>

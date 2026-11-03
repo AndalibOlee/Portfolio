@@ -122,7 +122,7 @@ Object.assign(R, {
     if (e.status === "TERMINATED") fail(`${empName(e)}'s employment has already ended.`);
     const u = S.users.find((x) => x.employeeId === e.id);
     if (u?.id === ctx.actor.id) fail("You can't end your own employment here.");
-    if (u?.isDemoUser) fail("This person is one of the demo sign-ins on the login page, so they stay on staff. Try one of the Taan Forest crew such as Kaylee Bear or Tanner Moosomin — their pay is posted, so the ROE fills in.");
+    if (u?.isDemoUser) fail("This person is one of the demo sign-ins on the login page, so they stay on staff. Try one of the Ridgeline Timber crew such as Chloe Nguyen or Samuel Fischer — their pay is posted, so the ROE fills in.");
     if (!p.lastDay) fail("Enter the last day worked and paid.");
     if (p.lastDay < e.startDate) fail("The last day is before they started.");
     if (!ROE_REASONS[p.reasonCode]) fail("Choose the reason for the Record of Employment.");
@@ -545,7 +545,7 @@ function vHr3NewOpening() {
   const deps = S.departments.filter((d) => d.companyId === cid);
   const depSel = deps.some((d) => d.id === UI.filters.hr3newDep) ? UI.filters.hr3newDep : deps[0]?.id;
   const dep = byId(S.departments, depSel);
-  const mgrs = S.employees.filter((x) => (x.companyId === cid || x.companyId === "HAICO") && hr2Active(x) && x.id !== A.employee?.id).sort((a, b) => a.lastName.localeCompare(b.lastName));
+  const mgrs = S.employees.filter((x) => (x.companyId === cid || x.companyId === "ALD") && hr2Active(x) && x.id !== A.employee?.id).sort((a, b) => a.lastName.localeCompare(b.lastName));
   const defMgr = dep?.managerId && dep.managerId !== A.employee?.id ? dep.managerId : "";
   return ph("New opening", "Fill in the opening and send it to the hiring manager — the department's manager — for approval. It appears in their Approvals; once approved the posting goes live and takes applicants.", "", crumb("/hr/hiring", "Hiring")) + flashHtml()
     + card("", `<form data-f="hr3Opening" class="form-grid"><div class="fld"><label for="jpCo">Company</label><select class="in" id="jpCo" name="companyId" data-a="hr2NewCo">${cos.map((c) => opt(c.id, c.displayName, c.id === cid)).join("")}</select></div><div class="fld"><label for="jpD">Department</label><select class="in" id="jpD" name="departmentId" required data-a="hr3NewDep">${deps.map((d) => opt(d.id, `${d.code} — ${d.name}`, d.id === depSel)).join("")}</select></div>
@@ -553,7 +553,7 @@ function vHr3NewOpening() {
     <div class="fld"><label for="jpM">Hiring manager (approves the opening)</label><select class="in" id="jpM" name="hiringManagerId">${mgrs.map((x) => opt(x.id, `${empName(x)} · ${byId(S.positions, x.positionId)?.title || ""}`, x.id === defMgr)).join("")}</select></div><div class="fld"><label for="jpO">Headcount</label><input class="in num" type="number" min="1" id="jpO" name="openings" value="1"></div>
     <div class="fld"><label for="jpE">Employment</label><select class="in" id="jpE" name="employmentType">${Object.entries(EMPLOYMENT).map(([k, l]) => opt(k, l)).join("")}</select></div><div class="fld"><label for="jpStart">Target start date</label><input class="in" type="date" id="jpStart" name="startDate" value="${addDays(todayStr(), 45)}"></div>
     <div class="fld"><label for="jpS1">Salary range from ($)</label><input class="in num" id="jpS1" name="salaryMin" inputmode="decimal" placeholder="hourly or yearly"></div><div class="fld"><label for="jpS2">Salary range to ($)</label><input class="in num" id="jpS2" name="salaryMax" inputmode="decimal"></div>
-    <div class="fld"><label for="jpWhy">Reason for hire</label><select class="in" id="jpWhy" name="reason">${["New position", "Replacement", "Seasonal", "Backfill for leave", "Growth"].map((r) => opt(r, r)).join("")}</select></div><div class="fld"><label for="jpL">Location</label><input class="in" id="jpL" name="locationText" placeholder="e.g. Masset"></div>
+    <div class="fld"><label for="jpWhy">Reason for hire</label><select class="in" id="jpWhy" name="reason">${["New position", "Replacement", "Seasonal", "Backfill for leave", "Growth"].map((r) => opt(r, r)).join("")}</select></div><div class="fld"><label for="jpL">Location</label><input class="in" id="jpL" name="locationText" placeholder="e.g. Nanaimo"></div>
     <div class="fld" style="grid-column:1/-1"><label for="jpDesc">Description</label><textarea class="in" id="jpDesc" name="description" rows="3" placeholder="What the job is and what you're looking for"></textarea></div>
     <div class="form-row" style="grid-column:1/-1;justify-content:space-between"><span class="hint">${dep?.managerId ? `${esc(empName(byId(S.employees, dep.managerId)))} manages ${esc(dep.name)}.` : ""}</span><span class="form-row"><button class="btn" data-x="DRAFT">Save as draft</button><button class="btn pri" data-x="SUBMIT">Send for approval</button></span></div></form>`);
 }
@@ -586,7 +586,7 @@ function hr3CertRenewForm(c) {
 function hr3CertRemindForm(c) {
   const e = byId(S.employees, c.employeeId), st = hr2CertStatus(c.expiryDate);
   const last = (c.history || []).filter((h) => h.kind === "REMINDED").slice(-1)[0];
-  return `<h3 style="margin:0 0 4px">Remind ${esc(empName(e))}</h3><p class="hint" style="margin:0 0 12px">Sends an email and a notification asking them to renew <strong>${esc(c.name)}</strong> (${c.expiryDate ? `${st === "EXPIRED" ? "expired" : "expires"} ${esc(dLong(c.expiryDate))}` : "no expiry on file"}) and attach the new certificate.${last ? ` Last reminded by ${esc(last.by)} on ${esc(dLong(last.at.slice(0, 10)))}.` : ""}</p><form data-f="hr3CertRemind" data-id="${c.id}" class="form-grid"><div class="fld" style="grid-column:1/-1"><label for="crmNote">Add a line <span class="hint" style="font-weight:400">— optional</span></label><input class="in" id="crmNote" name="note" placeholder="e.g. The renewal course runs 14 October in Masset."></div><div class="form-row" style="grid-column:1/-1;justify-content:flex-end"><button type="button" class="btn" data-a="closeModal">Cancel</button><button class="btn pri">Send reminder</button></div></form>`;
+  return `<h3 style="margin:0 0 4px">Remind ${esc(empName(e))}</h3><p class="hint" style="margin:0 0 12px">Sends an email and a notification asking them to renew <strong>${esc(c.name)}</strong> (${c.expiryDate ? `${st === "EXPIRED" ? "expired" : "expires"} ${esc(dLong(c.expiryDate))}` : "no expiry on file"}) and attach the new certificate.${last ? ` Last reminded by ${esc(last.by)} on ${esc(dLong(last.at.slice(0, 10)))}.` : ""}</p><form data-f="hr3CertRemind" data-id="${c.id}" class="form-grid"><div class="fld" style="grid-column:1/-1"><label for="crmNote">Add a line <span class="hint" style="font-weight:400">— optional</span></label><input class="in" id="crmNote" name="note" placeholder="e.g. The renewal course runs 14 October in Nanaimo."></div><div class="form-row" style="grid-column:1/-1;justify-content:flex-end"><button type="button" class="btn" data-a="closeModal">Cancel</button><button class="btn pri">Send reminder</button></div></form>`;
 }
 function vHr3Certs() {
   const manage = can(A, "hr.employees.edit");

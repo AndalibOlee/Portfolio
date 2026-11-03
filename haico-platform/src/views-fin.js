@@ -61,7 +61,7 @@ function jeTotals() {
 function vAccounts() {
   const ids = scopeIds(S, A);
   const bal = balances(ids);
-  const cid = ids.length === 1 ? ids[0] : "TAAN";
+  const cid = ids.length === 1 ? ids[0] : "RDG";
   const accts = S.accounts.filter((a) => a.companyId === cid).sort((a, b) => a.number.localeCompare(b.number));
   const types = ["ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"];
   return ph("Chart of Accounts", "One uniform chart across every company, so reports line up side by side.")
@@ -245,7 +245,7 @@ function vAssets() {
 }
 function vBudgets() {
   const b = inScope(S.budgets)[0];
-  if (!b) return ph("Budgets") + card("", empty("No budget in scope", "Taan Forest has the 2026 operating budget."));
+  if (!b) return ph("Budgets") + card("", empty("No budget in scope", "Ridgeline Timber has the 2026 operating budget."));
   const { acct } = ledgerIdx();
   const lines = S.budgetLines.filter((l) => l.budgetId === b.id);
   const byAcct = new Map();
@@ -262,7 +262,7 @@ function vPeriods() {
 }
 function vInterco() {
   const list = S.interco.filter((t) => canSee(A, t.fromCompanyId) || canSee(A, t.toCompanyId));
-  return ph("Inter-company", "Charges between Demo companies post a mirrored entry in each company's books.")
+  return ph("Inter-company", "Charges between Alderbrook companies post a mirrored entry in each company's books.")
     + cardFlush("", table(["Number", "From", "To", "Type", "Date", ">Amount", "Status"], list.map((t) => `<tr><td class="mono">${esc(t.transactionNumber)}</td><td>${coTag(t.fromCompanyId)}</td><td>${coTag(t.toCompanyId)}</td><td>${esc(t.type.replace(/_/g, " ").toLowerCase())}</td><td>${dLong(t.date)}</td>${td(money(t.amountCents), 1)}<td>${badge(t.status)}</td></tr>`)));
 }
 

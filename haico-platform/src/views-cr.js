@@ -5,6 +5,8 @@
    brings Claude in. Demo-only: it lights up only inside the claude.ai viewer
    (db capability); everywhere else nothing is shown.
    ========================================================================== */
+/** notes from the earlier review rounds (written under the old demo names) stay stored but are no longer listed */
+const CR_ARCHIVED_BEFORE = "2026-11-03T21:40:00Z";
 injectCss(`
 .cr-fab{position:fixed;right:0;top:50%;transform:translateY(-50%);z-index:85;display:inline-flex;align-items:center;gap:8px;writing-mode:vertical-rl;padding:14px 9px;border-radius:10px 0 0 10px;border:1px solid var(--primary);border-right:0;background:var(--primary);color:var(--primary-fg);font:600 13px/1 var(--font, inherit);box-shadow:var(--shadow);cursor:pointer}
 .cr-fab:focus-visible,.cr-panel button:focus-visible,.cr-panel textarea:focus-visible{outline:2px solid var(--ring);outline-offset:2px}
@@ -64,7 +66,7 @@ const crOpenCount = (l) => l.filter((x) => !["done", "wontdo"].includes(x.status
   fab.className = "cr-fab"; fab.type = "button"; fab.id = "crFab"; fab.setAttribute("aria-haspopup", "dialog");
   fab.addEventListener("click", () => crToggle(true));
   document.body.appendChild(fab);
-  db.collection("changes").onSnapshot((snap) => { CR.list = snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))); crRender(); }, () => {});
+  db.collection("changes").onSnapshot((snap) => { CR.list = snap.docs.map((d) => ({ id: d.id, ...d.data() })).filter((n) => String(n.createdAt || "") >= CR_ARCHIVED_BEFORE).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))); crRender(); }, () => {});
   crRender();
 })();
 /* keep the button beside the sidebar and the panel on the page being shown */

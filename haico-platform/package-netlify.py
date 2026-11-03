@@ -1,6 +1,6 @@
 """Build the platform and package it for Netlify (drag-and-drop or CLI deploy).
 
-    python3 package-netlify.py            -> netlify-site/ (index.html, _redirects, netlify.toml) + haico-platform-netlify.zip
+    python3 package-netlify.py            -> netlify-site/ (index.html, _redirects, netlify.toml) + demo-erp-netlify.zip
 
 Deploy either by dropping netlify-site/ onto https://app.netlify.com/drop, or with
     netlify deploy --prod --dir netlify-site
@@ -19,7 +19,7 @@ open(os.path.join(out, "netlify.toml"), "w").write(
     '[[headers]]\n  for = "/*"\n  [headers.values]\n'
     '    X-Frame-Options = "SAMEORIGIN"\n    X-Content-Type-Options = "nosniff"\n    Referrer-Policy = "strict-origin-when-cross-origin"\n'
     '    Cache-Control = "public, max-age=0, must-revalidate"\n')
-zip_name = "haico-platform-netlify.zip"
+zip_name = "demo-erp-netlify.zip"
 with zipfile.ZipFile(zip_name, "w", zipfile.ZIP_DEFLATED) as z:
     for fn in os.listdir(out):
         z.write(os.path.join(out, fn), fn)

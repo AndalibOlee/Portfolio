@@ -7,7 +7,7 @@
    own permission. Configuration changes are ordinary audited events.
    ========================================================================== */
 
-const XM_SCHEMA = 1, XM_ERP_VERSION = "2026.10", XM_ORG = "DEMO Group";
+const XM_SCHEMA = 1, XM_ERP_VERSION = "2026.10", XM_ORG = "Alderbrook Group";
 const XM_PERM = { manage: "admin.experience.manage", publish: "admin.experience.publish", export: "admin.experience.export", import: "admin.experience.import", restore: "admin.experience.restore" };
 /* ---- permissions: extend the existing catalog, then re-expand the role grants (Super / Group administrators get them through "*") ---- */
 for (const p of Object.values(XM_PERM)) if (!PERMS.includes(p)) PERMS.push(p);
@@ -394,7 +394,7 @@ const XM_ICONS = ["home", "check", "clock", "calendar", "inbox", "tasks", "user"
 
 /* ---- live state of the manager on this device ---- */
 const XM = { eff: null, previewOn: false, preview: null, edit: false, work: null, scope: "default", realAuth: null, curPattern: null, hooked: false };
-const XM_WORK_KEY = "haico-xm-work-v1";
+const XM_WORK_KEY = "demo-erp-xm-work-v1";
 function xmWork() {
   if (XM.work) return XM.work;
   let local = null; try { local = JSON.parse(localStorage.getItem(XM_WORK_KEY) || "null"); } catch { local = null; }
@@ -424,7 +424,7 @@ function xmStyleCss(eff) {
   let css = "";
   if (f && f[2]) { const stack = `${f[2]},system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif`; css += `:root,:root[data-look="harbour"],:root[data-look="navy"],:root[data-look="moss"],:root[data-look="graphite"]{--font-ui:${stack};--font-head:${stack}}`; }
   const zoom = { 12: 0.88, 13: 0.94, 14: 1, 15: 1.07, 16: 1.14 }[T.size];
-  if (zoom && zoom !== 1) css += `.content .wrap{zoom:${zoom}}`;
+  if (zoom) css += `.content .wrap{zoom:${zoom}}`; // an explicit size choice replaces the default
   if (T.headingWeight && T.headingWeight !== "default") css += `h1,h2,h3,.ph h1,.big-h,.card-h,.hcard-h h2,.hcard-h h3,.h2{font-weight:${T.headingWeight}}`;
   if (T.bodyWeight && T.bodyWeight !== "default") css += `body,.content{font-weight:${T.bodyWeight}}`;
   if (T.buttonWeight && T.buttonWeight !== "default") css += `.btn,.qa2 button,.side .item,.stabs button{font-weight:${T.buttonWeight}}`;

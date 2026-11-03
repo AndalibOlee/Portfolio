@@ -1,6 +1,6 @@
 /* ==========================================================================
    views-fb1.js — review round 1: the changes written on the demo's pages
-   with "Request a change" (Kiona, Tyler, Nadia, Shawna). Each block names
+   with "Request a change" (Maya, Liam, Sofia, Priya). Each block names
    the page and the note it answers. Additive: new fields and collections
    only; nothing existing is dropped.
    ========================================================================== */
@@ -39,16 +39,16 @@ th .fb-sort:focus-visible{outline:2px solid var(--ring);outline-offset:1px}
 /* ---------------- menus: tab order, removed tabs, new tabs and the Finance › PO item ---------------- */
 {
   const sec = (k) => SECTIONS.find((s) => s.key === k);
-  // Shawna, Onboarding: "after Onboarding: Certificates, then Hiring, then Hiring requests"
+  // Priya, Onboarding: "after Onboarding: Certificates, then Hiring, then Hiring requests"
   const ppl = sec("people");
   if (ppl) { const order = ["/hr/employees", "/people/directory", "/people/org-chart", "/hr/departments", "/hr/onboarding", "/hr/certifications", "/hr/hiring", "/hr/hiring-requests"]; ppl.tabs.sort((a, b) => (order.indexOf(a.href) < 0 ? 99 : order.indexOf(a.href)) - (order.indexOf(b.href) < 0 ? 99 : order.indexOf(b.href))); }
-  // Nadia, Requests & Expenses: remove the "Employee requests" tab (the old requests stay on record)
+  // Sofia, Requests & Expenses: remove the "Employee requests" tab (the old requests stay on record)
   const ap = sec("fin-ap"); if (ap) ap.tabs = ap.tabs.filter((t) => t.href !== "/hr/requests");
-  // Nadia, Accounts Receivable: a Customers tab
+  // Sofia, Accounts Receivable: a Customers tab
   const ar = sec("fin-ar"); if (ar) ar.tabs.push({ href: "/finance/ar/customers", label: "Customers", perm: "ar.view" });
-  // Kiona, My Timesheet: stat holidays set by HR and payroll, under Payroll
+  // Maya, My Timesheet: stat holidays set by HR and payroll, under Payroll
   const pay = sec("ops-payroll"); if (pay) pay.tabs.push({ href: "/payroll/holidays", label: "Stat holidays", perm: () => fbRole(A, "HR_MANAGER", "PAYROLL_ADMIN", "GROUP_ADMIN", "SUPER_ADMIN") || can(A, "payroll.view") });
-  // Nadia, sidebar: Finance › PO — every purchase order, view only, for Finance
+  // Sofia, sidebar: Finance › PO — every purchase order, view only, for Finance
   const po = { key: "fin-po", label: "PO", tabs: [{ href: "/finance/pos", label: "Purchase orders", perm: () => fbFinance() }] };
   SECTIONS.push(po); SECTION_BY_KEY[po.key] = po;
   const _buildNavFb = buildNav;
@@ -63,7 +63,7 @@ th .fb-sort:focus-visible{outline:2px solid var(--ring);outline-offset:1px}
   };
 }
 
-/* ---------------- Stat holidays (Kiona, My Timesheet) ---------------- */
+/* ---------------- Stat holidays (Maya, My Timesheet) ---------------- */
 const fbHolidayEditor = (a = A) => fbRole(a, "HR_MANAGER", "PAYROLL_ADMIN", "GROUP_ADMIN", "SUPER_ADMIN");
 Object.assign(R, {
   "stat.save"(S0, p, ctx) {
@@ -96,14 +96,14 @@ function vFbHolidays() {
   const days = (d) => Math.round((new Date(d + "T00:00:00Z") - new Date(t + "T00:00:00Z")) / 86400000);
   const rows = list.map((h) => `<tr><td style="white-space:nowrap">${esc(dLong(h.date))}</td><td>${esc(DOW[dowOf(h.date)])}${isWeekend(h.date) ? ` <span class="badge tone-grey">weekend</span>` : ""}</td><td><strong>${esc(h.name)}</strong>${h.addedByName ? `<div class="hint">added by ${esc(h.addedByName)}</div>` : h.updatedByName ? `<div class="hint">changed by ${esc(h.updatedByName)}</div>` : ""}</td><td class="r">${days(h.date) < 0 ? `<span class="hint">past</span>` : days(h.date) === 0 ? "today" : `in ${days(h.date)} days`}</td>
     <td class="r" style="white-space:nowrap">${edit ? `<button class="btn sm" data-a="fbHolEdit" data-id="${h.id}">Edit</button> <button class="btn sm" data-a="fbHolDel" data-id="${h.id}">Remove</button>` : ""}</td></tr>`);
-  const form = edit ? card(cur ? `Change ${esc(cur.name)}` : "Add a stat holiday", `<form data-f="fbHol" class="form-grid"${cur ? ` data-id="${cur.id}"` : ""}><div class="fld"><label for="fbHolD">Date</label><input class="in" type="date" id="fbHolD" name="date" required value="${esc(cur?.date || "")}"></div><div class="fld"><label for="fbHolN">Name</label><input class="in" id="fbHolN" name="name" required maxlength="80" placeholder="e.g. National Day for Truth and Reconciliation" value="${esc(cur?.name || "")}"></div><div class="form-row" style="grid-column:1/-1"><button class="btn pri">${cur ? "Save" : "Add holiday"}</button>${cur ? `<button type="button" class="btn" data-a="fbHolCancel">Cancel</button>` : ""}</div></form><p class="hint" style="margin:10px 0 0">Timesheets fill a stat holiday in for everyone (${settingsFor(S, A.employee?.companyId || "HAICO").standardHoursPerDay ?? 7} hours), and time off never counts it. Every change is in the audit log.</p>`) : "";
+  const form = edit ? card(cur ? `Change ${esc(cur.name)}` : "Add a stat holiday", `<form data-f="fbHol" class="form-grid"${cur ? ` data-id="${cur.id}"` : ""}><div class="fld"><label for="fbHolD">Date</label><input class="in" type="date" id="fbHolD" name="date" required value="${esc(cur?.date || "")}"></div><div class="fld"><label for="fbHolN">Name</label><input class="in" id="fbHolN" name="name" required maxlength="80" placeholder="e.g. National Day for Truth and Reconciliation" value="${esc(cur?.name || "")}"></div><div class="form-row" style="grid-column:1/-1"><button class="btn pri">${cur ? "Save" : "Add holiday"}</button>${cur ? `<button type="button" class="btn" data-a="fbHolCancel">Cancel</button>` : ""}</div></form><p class="hint" style="margin:10px 0 0">Timesheets fill a stat holiday in for everyone (${settingsFor(S, A.employee?.companyId || "ALD").standardHoursPerDay ?? 7} hours), and time off never counts it. Every change is in the audit log.</p>`) : "";
   return ph("Stat holidays", edit ? "The paid holidays every timesheet and time-off request works from. HR and the payroll administrator keep this list." : "The paid holidays every timesheet and time-off request works from. HR and the payroll administrator keep this list; you can view it.") + flashHtml()
     + `<div style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px">${years.map((y) => `<button class="hchip ${y === year ? "on" : ""}" data-a="fbHolYear" data-v="${y}">${y} <span>${S.statHolidays.filter((h) => h.date.startsWith(String(y))).length}</span></button>`).join("")}${edit ? `<button class="hchip" data-a="fbHolYear" data-v="${years[years.length - 1] + 1}">+ ${years[years.length - 1] + 1}</button>` : ""}</div>`
     + `<div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,360px);align-items:start" id="fbHolGrid">${cardFlush(`${year} — ${list.length} holiday${list.length === 1 ? "" : "s"}`, table(["Date", "Day", "Holiday", ">When", ""], rows, `No stat holidays for ${year} yet.`))}${form}</div><style>@media (max-width:900px){#fbHolGrid{grid-template-columns:minmax(0,1fr)!important}}</style>`;
 }
 hr3Route("/payroll/holidays", () => fbHolidayEditor() || can(A, "payroll.view"), vFbHolidays);
 
-/* ---------------- Customers (Nadia, Accounts Receivable) ---------------- */
+/* ---------------- Customers (Sofia, Accounts Receivable) ---------------- */
 Object.assign(R, {
   "customer.save"(S0, p, ctx) {
     ctx.need("ar.create");
@@ -151,7 +151,7 @@ document.addEventListener("input", (ev) => {
   document.querySelectorAll(`#${id} tbody tr[data-fbq]`).forEach((tr) => { tr.hidden = !words.every((w) => tr.dataset.fbq.includes(w)); });
 });
 
-/* ---------------- Invoices and bills: department and account are required (Nadia, AR and AP) ---------------- */
+/* ---------------- Invoices and bills: department and account are required (Sofia, AR and AP) ---------------- */
 function fbDeptSelect(id, companies) {
   return `<select class="in" id="${id}" name="departmentId" required>${opt("", "— choose a department —", true)}${companies.map((c) => `<optgroup label="${esc(c.displayName)}" data-co="${c.id}">${S.departments.filter((d) => d.companyId === c.id && d.isActive !== false).map((d) => opt(d.id, `${d.code} — ${d.name}`)).join("")}</optgroup>`).join("")}</select>`;
 }
@@ -190,7 +190,7 @@ function fbCoFilter(form) {
 document.addEventListener("change", (ev) => { const f = ev.target.closest?.("form[data-fbco]"); if (f && ev.target.id === f.dataset.fbco.split(":")[0]) fbCoFilter(f); });
 { const _afterRenderCo = afterRender; afterRender = function () { const r = _afterRenderCo.apply(this, arguments); document.querySelectorAll("form[data-fbco]").forEach(fbCoFilter); return r; }; }
 
-/* ---------------- Matching: one list, several POs per bill (Nadia, 3-way match) ---------------- */
+/* ---------------- Matching: one list, several POs per bill (Sofia, 3-way match) ---------------- */
 const fbBillPos = (b) => (b.purchaseOrderIds?.length ? b.purchaseOrderIds : b.purchaseOrderId ? [b.purchaseOrderId] : []).map((id) => byId(S.purchaseOrders, id)).filter(Boolean);
 function fbCombinedPo(pos, St = S) {
   if (pos.length === 1) return { po: pos[0], lines: invPoLines(pos[0].id, St) };
@@ -261,7 +261,7 @@ function vFbMatch() {
 }
 hr3Route("/procurement/match", () => can(A, "procurement.view") || can(A, "ap.view"), vFbMatch);
 
-/* ---------------- Documents: policies live in My Documents (Nadia, Documents) ---------------- */
+/* ---------------- Documents: policies live in My Documents (Sofia, Documents) ---------------- */
 {
   const _apDocRowsFb = apDocRows, _vDocumentsFb = vDocuments;
   let noPolicies = false;
@@ -273,7 +273,7 @@ hr3Route("/procurement/match", () => can(A, "procurement.view") || can(A, "ap.vi
   };
 }
 
-/* ---------------- Home: hiring requests in Needs your attention (Shawna) ---------------- */
+/* ---------------- Home: hiring requests in Needs your attention (Priya) ---------------- */
 {
   const _naiFb = needsAttentionItems;
   needsAttentionItems = function () {
@@ -289,7 +289,7 @@ hr3Route("/procurement/match", () => can(A, "procurement.view") || can(A, "ap.vi
   };
 }
 
-/* ---------------- Email: an Outlook-style reading pane (Tyler, Home) ---------------- */
+/* ---------------- Email: an Outlook-style reading pane (Liam, Home) ---------------- */
 emailPanel = function () {
   const inbox = UI.emailInbox || "me";
   const users = [...S.users].sort((a, b) => a.displayName.localeCompare(b.displayName));
@@ -312,7 +312,7 @@ emailPanel = function () {
     <p class="hint" style="margin:10px 0 0">Demo: messages are kept here instead of being sent. In production they go out through Microsoft 365, with the same attachments.</p></div>`;
 };
 
-/* ---------------- My Tasks as a dashboard (Kiona) — same tasks, same rules ---------------- */
+/* ---------------- My Tasks as a dashboard (Maya) — same tasks, same rules ---------------- */
 function vFbMyTasks() {
   const html = vMyTasks(), e = A.employee;
   if (!e) return html;
@@ -330,7 +330,7 @@ function vFbMyTasks() {
 }
 hr3Route("/me/tasks", null, vFbMyTasks);
 
-/* ---------------- Downloads take only what the search shows (Nadia, Benefits — everywhere) ---------------- */
+/* ---------------- Downloads take only what the search shows (Sofia, Benefits — everywhere) ---------------- */
 function fbActiveSearch() {
   const box = document.querySelector(".content"); if (!box) return null;
   const qs = [...box.querySelectorAll('input[type="search"]')].filter((i) => !i.closest("#crPanel")).map((i) => i.value.trim()).filter(Boolean);
@@ -352,7 +352,7 @@ function fbActiveSearch() {
   };
 }
 
-/* ---------------- Sortable columns: small ▲▼ on the headers (Kiona, Time off; Nadia, Invoice Files and PO) ---------------- */
+/* ---------------- Sortable columns: small ▲▼ on the headers (Maya, Time off; Sofia, Invoice Files and PO) ---------------- */
 const FB_SORT_PAGES = new Set(["/me/time-off", "/finance/ap/attachments", "/finance/pos", "/requests", "/requests/all", "/requests/finance", "/finance/ar/customers", "/payroll/holidays", "/procurement/match"]);
 function fbCellKey(td) {
   const t = (td?.innerText || "").trim(), first = t.split("\n")[0];
@@ -387,9 +387,9 @@ document.addEventListener("click", (ev) => {
 }, true);
 { const _afterRenderSort = afterRender; afterRender = function () { const r = _afterRenderSort.apply(this, arguments); try { fbSortWire(); } catch {} return r; }; }
 
-/* ---------------- Finance › PO: every purchase order, by company, view only (Nadia) ---------------- */
+/* ---------------- Finance › PO: every purchase order, by company, view only (Sofia) ---------------- */
 function fbPoTotal(p) { return p.totalCents ?? p.amountCents ?? 0; }
-/* Nadia, round 2: where each PO is — including the ones still being approved in Requests — and its code and department */
+/* Sofia, round 2: where each PO is — including the ones still being approved in Requests — and its code and department */
 function fbPoRows() {
   const ids = scopeIds(S, A);
   const real = S.purchaseOrders.filter((p) => ids.includes(p.companyId));
@@ -438,7 +438,7 @@ function fbPoModal(p) {
 }
 hr3Route("/finance/pos", () => fbFinance(), vFbPos);
 
-/* ---------------- Rates & coding: a change history, and approval for changes below Finance Manager (Nadia) ---------------- */
+/* ---------------- Rates & coding: a change history, and approval for changes below Finance Manager (Sofia) ---------------- */
 const fbRatesDirect = (a) => fbRole(a, "FINANCE_MANAGER", "EXECUTIVE", "GROUP_ADMIN", "SUPER_ADMIN");
 {
   const _fresh = freshState;
@@ -506,8 +506,8 @@ function fbRateDiff(a, b) { const x = fbRateView(a), y = fbRateView(b); return x
   });
 }
 
-/* ---------------- Timesheet: overtime goes to the banked balance at 1.5×, live (Kiona, My Timesheet) ---------------- */
-/* overtime banked at 1.5× counts in Banked OT as soon as the timesheet is submitted (Kiona); it comes off again if the sheet is sent back */
+/* ---------------- Timesheet: overtime goes to the banked balance at 1.5×, live (Maya, My Timesheet) ---------------- */
+/* overtime banked at 1.5× counts in Banked OT as soon as the timesheet is submitted (Maya); it comes off again if the sheet is sent back */
 const fbOtCredit = (S0, empId, year = 2026, statuses = ["SUBMITTED", "APPROVED", "LOCKED"]) => S0.timesheets.filter((t) => t.employeeId === empId && statuses.includes(t.status) && String(t.periodStart).startsWith(String(year))).reduce((s, t) => s + (t.otBankCreditHours || 0), 0);
 function fbBankSheet(S0, ctx, sheet) {
   const o = sheetOvertime(S0, sheet), h = Math.round(((o.ot || 0) + (o.dot || 0)) * 100) / 100;

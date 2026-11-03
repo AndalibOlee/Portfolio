@@ -64,11 +64,11 @@ const ctTerm = (c) => `${c.startDate ? dLong(c.startDate) : "—"}${c.endDate ? 
     const S = _fsCt();
     S.contracts = [];
     const seed = [
-      ["ct1", "CT-2026-0001", "Log hauling services — 2026 season", "North Island Trucking Ltd.", "SERVICE", "TAAN", "dep3", 18400000, "2026-04-01", "2026-11-30", "NIT-2026-14", "Rates per load, fuel surcharge capped at 6%.", "u2", "2026-03-20T16:10:00Z", ["NIT hauling agreement 2026 (signed).pdf", "Rate schedule A.pdf"]],
-      ["ct2", "CT-2026-0002", "Port Clements yard lease", "Village of Port Clements", "LEASE", "TAAN", "dep4", 3600000, "2025-01-01", "2026-11-15", "VPC-L-0031", "Two-year lease of the log yard; renewal notice due 60 days before the end.", "u8", "2025-12-04T18:30:00Z", ["Yard lease 2025-2026.pdf"]],
-      ["ct3", "CT-2026-0003", "Lodge linen & laundry service", "Skeena Linen Co.", "SERVICE", "TOUR", "dep6", null, "2026-05-01", "2027-04-30", "", "Priced per room-night; no fixed contract value.", "u12", "2026-04-22T21:05:00Z", ["Skeena Linen service agreement.pdf"]],
-      ["ct4", "CT-2026-0004", "Seasonal processing crew agreement", "Hecate Strait Labour Co-op", "EMPLOYMENT", "SEAF", "dep7", 9250000, "2026-03-01", "2026-09-30", "HSL-26-02", "Season ended Sep 30; keep for the year-end file.", "u10", "2026-02-18T17:45:00Z", ["Crew agreement 2026.pdf"]],
-      ["ct5", "CT-2026-0005", "External audit engagement 2026", "Sterling & Pike LLP", "SERVICE", "HAICO", "dep2", 4800000, "2026-06-01", "2027-05-31", "SP-ENG-2026", "Group audit of the four companies; interim visit in January.", "u4", "2026-05-27T15:20:00Z", ["Engagement letter 2026.pdf"]],
+      ["ct1", "CT-2026-0001", "Log hauling services — 2026 season", "North Island Trucking Ltd.", "SERVICE", "RDG", "dep3", 18400000, "2026-04-01", "2026-11-30", "NIT-2026-14", "Rates per load, fuel surcharge capped at 6%.", "u2", "2026-03-20T16:10:00Z", ["NIT hauling agreement 2026 (signed).pdf", "Rate schedule A.pdf"]],
+      ["ct2", "CT-2026-0002", "Prince George yard lease", "City of Prince George", "LEASE", "RDG", "dep4", 3600000, "2025-01-01", "2026-11-15", "VPC-L-0031", "Two-year lease of the log yard; renewal notice due 60 days before the end.", "u8", "2025-12-04T18:30:00Z", ["Yard lease 2025-2026.pdf"]],
+      ["ct3", "CT-2026-0003", "Lodge linen & laundry service", "Skeena Linen Co.", "SERVICE", "SLL", "dep6", null, "2026-05-01", "2027-04-30", "", "Priced per room-night; no fixed contract value.", "u12", "2026-04-22T21:05:00Z", ["Skeena Linen service agreement.pdf"]],
+      ["ct4", "CT-2026-0004", "Seasonal processing crew agreement", "Coastal Labour Co-op", "EMPLOYMENT", "NBS", "dep7", 9250000, "2026-03-01", "2026-09-30", "HSL-26-02", "Season ended Sep 30; keep for the year-end file.", "u10", "2026-02-18T17:45:00Z", ["Crew agreement 2026.pdf"]],
+      ["ct5", "CT-2026-0005", "External audit engagement 2026", "Sterling & Pike LLP", "SERVICE", "ALD", "dep2", 4800000, "2026-06-01", "2027-05-31", "SP-ENG-2026", "Group audit of the four companies; interim visit in January.", "u4", "2026-05-27T15:20:00Z", ["Engagement letter 2026.pdf"]],
     ];
     for (const [id, number, title, counterparty, type, companyId, departmentId, amountCents, startDate, endDate, reference, notes, userId, at, files] of seed) {
       const u = byId(S.users, userId);

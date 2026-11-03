@@ -88,7 +88,7 @@ function vOrgChart() {
   const edit = can(A, "hr.employees.edit");
   const view = UI.tabs.org || "departments";
   const people = orgPeople();
-  const cos = S.companies.filter((c) => people.some((e) => e.companyId === c.id)).sort((a, b) => (a.id === "HAICO" ? -1 : b.id === "HAICO" ? 1 : a.displayName.localeCompare(b.displayName)));
+  const cos = S.companies.filter((c) => people.some((e) => e.companyId === c.id)).sort((a, b) => (a.id === "ALD" ? -1 : b.id === "ALD" ? 1 : a.displayName.localeCompare(b.displayName)));
   const title = (e) => byId(S.positions, e.positionId)?.title || "—";
   const toggle = `<div class="seg">${[["departments", "By department"], ["reporting", "Reporting lines"]].map(([k, l]) => `<button class="${view === k ? "on" : ""}" data-a="tab" data-k="org" data-v="${k}">${l}</button>`).join("")}</div>`;
   const movable = (e) => edit && view === "departments" && scopeIds(S, A).includes(e.companyId);
@@ -118,7 +118,7 @@ function vOrgChart() {
       const n = people.filter((e) => e.companyId === c.id).length;
       return `<li><div class="oc-c" style="--cc:${esc(c.colorTag)}">${lead ? avatar(lead, 38) : ""}<b>${esc(c.displayName)}</b><small>${lead ? `${esc(empName(lead))} · ${esc(title(lead))}` : ""}</small><span class="oc-n">${n} people · ${deps.length} departments</span></div><ul>${deps.map(dept).join("")}</ul></li>`;
     };
-    tree = `<ul><li><div class="oc-g"><span class="weave" style="width:70px;height:4px;margin:0 auto 6px"></span><b>Demo Group</b><small>${cos.length} companies · ${people.length} people</small></div><ul>${cos.map(company).join("")}</ul></li></ul>`;
+    tree = `<ul><li><div class="oc-g"><span class="weave" style="width:70px;height:4px;margin:0 auto 6px"></span><b>Alderbrook Group</b><small>${cos.length} companies · ${people.length} people</small></div><ul>${cos.map(company).join("")}</ul></li></ul>`;
   }
   const hint = view === "departments"
     ? (edit ? `<div class="msg info">Drag a person onto another department to move them — within the same company. It saves right away and shows in their History.</div>` : `<p class="hint" style="margin:0 0 10px">The whole organization, every company. Only HR and administrators can move people between departments.</p>`)

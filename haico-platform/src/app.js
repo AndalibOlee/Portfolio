@@ -2,7 +2,7 @@
    app.js — live sync (shared event log), actions, and event wiring
    ========================================================================== */
 const SYNC = { mode: "connecting", why: "", db: null, events: [], resetAt: null, unsub: null, seenIds: new Set(), booted: false };
-const LOCAL_EVENTS_KEY = "haico-live-events-v2"; // v2: fresh start with the refreshed demo dates
+const LOCAL_EVENTS_KEY = "demo-erp-events-v1"; // v2: fresh start with the refreshed demo dates
 
 function eventKey(e) { return `${e.ts}|${e.id}`; }
 function rebuild() {

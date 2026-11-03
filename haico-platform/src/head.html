@@ -1,7 +1,7 @@
-<title>DEMO Group Platform</title>
+<title>DEMO Enterprise Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: cedar-bark sidebar + sand workspace (the platform's own "Haida Gwaii" theme); one-screen app shell */
+/* Layout: cedar-bark sidebar + sand workspace (the platform's own "Sandstone" theme); one-screen app shell */
 /* TOKENS:BEGIN — generated from the app's globals.css (5 looks x light/dark). No attribute = Cedar Classic. */
 :root{--bg:#f5efe3; --fg:#26201a; --card:#fffdf8; --pop:#fffdf8; --muted:#efe8d6; --muted-fg:#6e6254; --accent:#e9e0cb; --accent-fg:#3e3428; --primary:#17566b; --primary-fg:#f4f6f0; --border:#e2d8c3; --input:#d8cfbc; --ring:#17566b; --danger:#9e2b2b; --side:#fbf8f2; --side-fg:#463c30; --side-dim:#8a7f70; --side-hi:#26201a; --side-acc:#f1e6d6; --side-on:#8f2f1f; --side-pri:#a03c28; --side-pri-fg:#ffffff; --side-border:#e8e1d2; --cedar:#a03c28; --ocean:#17566b; --moss:#3f6b35; --ochre:#c99a2e; --action:#3e6b34; --action-hover:#33582b; --action-fg:#ffffff; --thead:#faf5ea; --ok:#3e6b34; --ok-bg:#e7efdf; --ok-line:#cbdcbf; --warn:#8a5a10; --warn-bg:#f8efd9; --warn-line:#e6d3a8; --bad:#9e2b2b; --bad-bg:#f7e6e2; --bad-line:#e2c3bc; --info:#17566b; --info-bg:#e2edef; --info-line:#c4dae0; --t-green-bg:#e7efdf; --t-green:#3e6b34; --t-amber-bg:#f8efd9; --t-amber:#8a5a10; --t-red-bg:#f7e6e2; --t-red:#9e2b2b; --t-blue-bg:#e4ebf4; --t-blue:#3e4c8a; --t-teal-bg:#e2edef; --t-teal:#17566b; --t-grey-bg:#efe8d6; --t-grey:#6e6254; --t-ink-bg:#26201a; --t-ink:#f5efe3; --banner-bg:#fff1d6; --banner-fg:#7a5410; --banner-border:#ebdcb2; --leave:#f1e7cf; --leave-fg:#7a5410; --stat-border:#c9a85c; --stat-bg:#fffbf0; --row-head:#faf5ea; --row-total:#f5e9da; --row-sect:#f3edde; --chart-in:#12759a; --chart-out:#b07d12; --grid:#e8dfcc; --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a; --c4:#eda100; --c5:#e87ba4; --c6:#4a3aa7; --shadow:0 12px 32px -12px rgba(30,25,20,.22); --card-shadow:none; --r:10px; --cell-py:8px; --thead-h:36px; --font-ui:"Source Sans 3",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; --font-head:"Source Sans 3",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; --font:var(--font-ui); --mono:var(--font-ui); --font-code:"IBM Plex Mono",ui-monospace,monospace; color-scheme:light;}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1712; --fg:#ede5d6; --card:#251e17; --pop:#251e17; --muted:#322920; --muted-fg:#a2947e; --accent:#3a2f24; --accent-fg:#ede5d6; --primary:#4f95ab; --primary-fg:#10222a; --border:#3a2f24; --input:#453729; --ring:#4f95ab; --danger:#e08a7a; --side:#16100b; --side-fg:#cabfa9; --side-dim:#8c7b62; --side-hi:#fff8ec; --side-acc:#3a2415; --side-on:#ffe9dc; --side-pri:#d98572; --side-pri-fg:#1c1712; --side-border:#2c2115; --cedar:#c96a5a; --ocean:#4f95ab; --moss:#6f9b62; --ochre:#d9b45a; --action:#4c7d41; --action-hover:#426f38; --action-fg:#ffffff; --thead:#2a221a; --ok:#9cc48e; --ok-bg:#24301f; --ok-line:#34492e; --warn:#e2bc6a; --warn-bg:#3a2d14; --warn-line:#54431f; --bad:#eb9c8c; --bad-bg:#3c211c; --bad-line:#5a322a; --info:#8cc7d8; --info-bg:#18323a; --info-line:#2c4a52; --t-green-bg:#24301f; --t-green:#9cc48e; --t-amber-bg:#3a2d14; --t-amber:#e2bc6a; --t-red-bg:#3c211c; --t-red:#eb9c8c; --t-blue-bg:#232a40; --t-blue:#a9b5ea; --t-teal-bg:#18323a; --t-teal:#8cc7d8; --t-grey-bg:#322920; --t-grey:#b5a78f; --t-ink-bg:#ede5d6; --t-ink:#1c1712; --banner-bg:#33260f; --banner-fg:#f0d9a2; --banner-border:#4a3a16; --leave:#3b2f19; --leave-fg:#e7c67e; --stat-border:#a88a45; --stat-bg:#2b2416; --row-head:#2a221a; --row-total:#33291f; --row-sect:#2d251d; --chart-in:#3a98bf; --chart-out:#b8862a; --grid:#3a2f24; --c1:#3987e5; --c2:#d95926; --c3:#199e70; --c4:#c98500; --c5:#d55181; --c6:#9085e9; --shadow:0 12px 32px -12px rgba(0,0,0,.6); --card-shadow:none; --r:10px; --cell-py:8px; --thead-h:36px; --font-ui:"Source Sans 3",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; --font-head:"Source Sans 3",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; --font:var(--font-ui); --mono:var(--font-ui); --font-code:"IBM Plex Mono",ui-monospace,monospace; color-scheme:dark;}}
@@ -93,7 +93,8 @@ a{color:var(--primary)}
 .foot img{height:30px;width:auto;flex:none}
 .foot strong{color:var(--fg)}
 @media (max-width:860px){.foot{padding-left:16px;padding-right:16px;font-size:12px}}
-.wrap{max-width:1240px;margin:0 auto}
+.wrap{max-width:1680px;margin:0 auto}
+@media (min-width:900px){.content .wrap{zoom:1.06}} /* wider page and slightly larger text on desktop */
 .stale{display:inline-flex;align-items:center;gap:8px;font-size:12px;background:var(--t-teal-bg);color:var(--t-teal);border:0;border-radius:99px;padding:5px 12px;font-weight:600;cursor:pointer}
 
 /* dropdown panel */
@@ -244,6 +245,9 @@ table.tsg tr.stat td{background:var(--stat-bg)}
 .btn.pri:disabled{opacity:.5;cursor:not-allowed}
 .login .brandp.light .brand-inner{padding:48px 48px 0;display:flex;flex-direction:column;align-items:center;gap:26px}
 .login .brandp.light .logo{width:170px;height:auto}
+.login .wordmark{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--fg)}
+.login .wordmark b{font-size:40px;letter-spacing:.14em;font-weight:800;line-height:1}
+.login .wordmark small{font-size:11.5px;letter-spacing:.22em;color:var(--muted-fg);font-weight:600}
 .login .brandp.light .cos{width:100%}
 .login .brandp.light .coi{background:var(--bg);border-color:var(--border)}
 .login .brandp.light .coi b{color:var(--fg)}.login .brandp.light .coi small{color:var(--muted-fg)}

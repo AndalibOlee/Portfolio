@@ -8,7 +8,7 @@ function userLabel(u) {
   const e = u.employeeId ? byId(S.employees, u.employeeId) : null;
   return `${u.displayName} — ${roles}${e ? " · " + co(e.companyId).displayName : ""}`;
 }
-const WAVE = `<svg class="wave" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65 L1000 120 L0 120 Z" fill="var(--wave-fill)"/><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65" fill="none" stroke="#e8352a" stroke-width="9" stroke-linecap="round"/></svg>`;
+const WAVE = `<svg class="wave" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65 L1000 120 L0 120 Z" fill="var(--wave-fill)"/><path d="M0 50 C 180 110, 330 110, 500 60 S 820 0, 1000 65" fill="none" stroke="var(--primary)" stroke-opacity=".55" stroke-width="6" stroke-linecap="round"/></svg>`;
 function vLogin() {
   const LOGIN_FIRST = ["u1", "u11", "u2", "u4", "u3", "u20", "u8", "u5", "u7", "u6"]; // the review-route order (docs/Demo_Review_Route.pdf): Employee, Accountant, Manager, Finance Manager, HR Manager, Payroll, Company Admin, Director, CEO, System Administrator — then everyone else A–Z
   const STEP = { u1: 1, u11: 2, u2: 3, u4: 4, u3: 5, u20: 6, u8: 7, u5: 8, u7: 8, u6: 9 };
@@ -16,7 +16,7 @@ function vLogin() {
   const demo = S.users.filter((u) => u.isDemoUser).sort((a, b) => a.demoLabel.localeCompare(b.demoLabel));
   const cos = [...S.companies].sort((a, b) => a.code.localeCompare(b.code));
   return `<div class="login light"><div class="brandp light">
-      <div class="brand-inner"><img src="${HAICO_LOGO}" alt="Demo — Demo Enterprise Corporation" class="logo">
+      <div class="brand-inner"><div class="wordmark" role="img" aria-label="DEMO Enterprise Platform"><b>DEMO</b><small>ENTERPRISE PLATFORM</small></div>
       <div class="cos">${cos.map((c) => `<div class="coi"><span class="sq" style="width:10px;height:10px;background:${esc(c.colorTag)}"></span><div><b>${esc(c.displayName)}</b><small>${esc(c.industry)}</small></div></div>`).join("")}</div></div>
       <div class="foot"><span class="tag">DEMO</span><span>All names, figures and identifiers are fictional.</span></div>${WAVE}
     </div>
@@ -243,12 +243,12 @@ function vStatement(entryId, back) {
   const sect = (k) => lines.filter((l) => l.kind === k);
   const small = (k, title, total) => `<div style="min-width:0"><div class="sect-l" style="margin-top:14px">${title}</div><div class="tw"><table class="t"><thead><tr><th>Description</th><th class="r">This pay</th><th class="r">This year</th></tr></thead><tbody>${sect(k).map((l) => `<tr><td>${esc(l.description)}</td>${td(money(l.amountCents), 1)}${td(money(ytd(k, l.typeCode)), 1)}</tr>`).join("")}<tr class="tot"><td>Total</td>${td(money(total), 1)}${td(money(ytdT(k)), 1)}</tr></tbody></table></div></div>`;
   return `<div class="crumb">${crumb(back, back === "/me/pay" ? "My Pay" : "Pay statements")}</div>` + `<div class="stmt">
-    <div class="hd"><div><div style="font-weight:700;letter-spacing:.06em">${esc(c.legalName.toUpperCase())}</div><div class="hint">A Demo Group company · ${esc(c.city)}, BC</div></div><div style="text-align:right"><div style="font-weight:700;letter-spacing:.1em">PAY STATEMENT</div><div class="mono hint">${esc(run.runNumber)} · ${esc(emp.employeeNumber)}</div><span class="badge tone-amber" style="margin-top:4px">DEMO DOCUMENT</span></div></div>
+    <div class="hd"><div><div style="font-weight:700;letter-spacing:.06em">${esc(c.legalName.toUpperCase())}</div><div class="hint">An Alderbrook Group company · ${esc(c.city)}, BC</div></div><div style="text-align:right"><div style="font-weight:700;letter-spacing:.1em">PAY STATEMENT</div><div class="mono hint">${esc(run.runNumber)} · ${esc(emp.employeeNumber)}</div><span class="badge tone-amber" style="margin-top:4px">DEMO DOCUMENT</span></div></div>
     <div class="meta"><div><span class="k">Employee</span>${esc(empName(emp))}</div><div><span class="k">Department</span>${esc(dep?.name || "—")}</div><div><span class="k">Payment</span>${prof?.directDepositActive ? `Direct deposit · <span class="mono">${esc(prof.bankAccountMasked)}</span>` : "Cheque"}</div><div><span class="k">Pay period</span><span class="mono">${run.periodStart} → ${run.periodEnd}</span></div><div><span class="k">Pay day</span><span class="mono">${run.payDate}</span></div><div><span class="k">Status</span>${badge(run.status)}</div></div>
     <div class="sect-l" style="margin-top:14px">Earnings</div><div class="tw"><table class="t"><thead><tr><th>Description</th><th class="r">Hours</th><th class="r">Rate</th><th class="r">This pay</th><th class="r">This year</th></tr></thead><tbody>${sect("EARNING").map((l) => `<tr><td>${esc(l.description)}</td>${td(l.hours ? hrs(l.hours) : "—", 1)}${td(l.rateCents ? money(l.rateCents) : "—", 1)}${td(money(l.amountCents), 1)}${td(money(ytd("EARNING", l.typeCode)), 1)}</tr>`).join("")}<tr class="tot"><td>Total earnings</td>${td(hrs(p.insurableHours), 1)}<td></td>${td(money(p.grossCents), 1)}${td(money(ytdT("EARNING")), 1)}</tr></tbody></table></div>
     <div class="grid g2">${small("DEDUCTION", "Taken off your pay", p.totalDeductionsCents)}${small("EMPLOYER_COST", "Paid by the company for you", p.employerCostsCents)}</div>
     <div class="net"><div><span class="k">Gross pay</span><b>${money(p.grossCents)}</b></div><div><span class="k">Total taken off</span><b>−${money(p.totalDeductionsCents)}</b></div><div class="take"><span class="k">Take-home pay</span><b>${money(p.netCents)}</b></div></div>
-    <p class="hint" style="margin-top:14px">Insurable earnings this pay: <span class="mono">${money(p.eiInsurableCents)}</span> · Pensionable: <span class="mono">${money(p.cppPensionableCents)}</span>${run.status !== "POSTED" ? " · Preview — not yet posted" : ""}<br>DEMO — produced by HGWEB for the Demo Group platform. Amounts are illustrative and are not certified CRA payroll calculations. © 2026 HGWEB.</p></div>`;
+    <p class="hint" style="margin-top:14px">Insurable earnings this pay: <span class="mono">${money(p.eiInsurableCents)}</span> · Pensionable: <span class="mono">${money(p.cppPensionableCents)}</span>${run.status !== "POSTED" ? " · Preview — not yet posted" : ""}<br>DEMO — produced by the DEMO platform. Amounts are illustrative and are not certified CRA payroll calculations.</p></div>`;
 }
 
 /* ---------------- My Expenses ---------------- */

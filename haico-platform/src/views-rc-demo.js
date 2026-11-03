@@ -7,11 +7,11 @@
    are left out so inboxes start clean.
    ========================================================================== */
 const RC_DEMO = {
-  places: ["Prince Rupert, BC", "Vancouver, BC", "Victoria, BC", "Sandspit, BC", "Masset, BC", "Skidegate, BC", "Terrace, BC", "Nanaimo, BC"],
+  places: ["Kelowna, BC", "Vancouver, BC", "Victoria, BC", "Vernon, BC", "Nanaimo, BC", "Kamloops, BC", "Terrace, BC", "Nanaimo, BC"],
   why: ["Fisheries technical committee", "Forestry stewardship workshop", "First aid instructor course", "Tourism partners meeting", "Board orientation", "Seafood buyers meeting", "Records management training", "Annual audit planning"],
-  suppliers: [["Example Office Supply Co.", "Printer toner and paper"], ["North Coast Safety Ltd.", "High-visibility rain gear"], ["Island Hardware Co-op", "Chainsaw chains and files"], ["Harbour Marine Supply", "Life vests"], ["Coastal Tech Store", "USB headsets for meetings"], ["Haida Gwaii Books & Print", "Printed visitor maps"]],
+  suppliers: [["Example Office Supply Co.", "Printer toner and paper"], ["North Coast Safety Ltd.", "High-visibility rain gear"], ["Island Hardware Co-op", "Chainsaw chains and files"], ["Harbour Marine Supply", "Life vests"], ["Coastal Tech Store", "USB headsets for meetings"], ["Valley Books & Print", "Printed visitor maps"]],
   bought: [["Coffee and snacks for the open house", 4250], ["Taxi from the airport", 3800], ["Parking at the hospital", 1600], ["Batteries for the field radios", 2799], ["Printer ink for the home office", 6499], ["Postage for the board package", 2210]],
-  vendors: [["Island Safety Equipment", "Six inflatable life jackets"], ["North Coast Fuel", "Diesel delivery to the yard"], ["Coastal Lumber Ltd.", "Treated lumber for the dock repair"], ["Haida Gwaii Signs", "Trail signs for the visitor centre"]],
+  vendors: [["Island Safety Equipment", "Six inflatable life jackets"], ["North Coast Fuel", "Diesel delivery to the yard"], ["Coastal Lumber Ltd.", "Treated lumber for the dock repair"], ["Valley Signs", "Trail signs for the visitor centre"]],
 };
 {
   const _freshStateDemo = freshState;
@@ -35,7 +35,7 @@ const RC_DEMO = {
       try {
         // 1. a trip: approved and booked by Finance; every fourth one needs director level
         const big = i % 4 === 0;
-        run(u.id, "rc.submit", { kind: "travel", forWho: "", from: "Masset, BC", to: P("places"), reason: P("why"), out: `2026-10-${String(13 + (i % 14)).padStart(2, "0")}`, back: `2026-10-${String(14 + (i % 14)).padStart(2, "0")}`, transport: i % 2 ? "Flight" : "Ferry and vehicle", accommodation: "Hotel, booked by Finance", training: i % 3 === 0 ? "Yes" : "No", estimate: big ? "6200" : String(900 + i * 85), departmentId: dep, accountNumber: "5300", files: [] }, ts(day, 0));
+        run(u.id, "rc.submit", { kind: "travel", forWho: "", from: "Nanaimo, BC", to: P("places"), reason: P("why"), out: `2026-10-${String(13 + (i % 14)).padStart(2, "0")}`, back: `2026-10-${String(14 + (i % 14)).padStart(2, "0")}`, transport: i % 2 ? "Flight" : "Ferry and vehicle", accommodation: "Hotel, booked by Finance", training: i % 3 === 0 ? "Yes" : "No", estimate: big ? "6200" : String(900 + i * 85), departmentId: dep, accountNumber: "5300", files: [] }, ts(day, 0));
         const tr = last(); if (big && i % 8 === 4) decide(first(tr), tr, "APPROVED", "", ts(day + 1, 0)); else approveAll(tr, ts(day + 1, 0)); // one trip left waiting on director level
         if (i % 3 !== 2 && tr.status === "approved") run(finance(tr), "rc.process", { id: tr.id, subtotals: [String(big ? 5480 : 780 + i * 70)], gst: big ? "274.00" : ((780 + i * 70) * 0.05).toFixed(2), pst: big ? "383.60" : ((780 + i * 70) * 0.07).toFixed(2), link: "https://outlook.office.com/mail/demo-confirmation", note: "Booked on the company card" }, ts(day + 2, 0));
         // 2. a card purchase: waiting, with Finance, or returned for a fix
@@ -53,7 +53,7 @@ const RC_DEMO = {
         // 4. a travel claim for a meeting — every other person; some for an Elder who attended
         if (i % 2 === 0) {
           const ext = i % 4 === 0;
-          run(u.id, "rc.submit", { kind: "expense", forWho: ext ? "external" : "", external: ext ? { name: ["Elder Mary Example", "Elder John Sample", "Guest speaker Dana Placeholder"][i % 3], role: "Elder", address: "Box 100, Masset BC", payBy: "Cheque" } : undefined, event: P("why"), location: P("places"), from: `2026-09-${String(8 + (i % 20)).padStart(2, "0")}`, to: `2026-09-${String(8 + (i % 20)).padStart(2, "0")}`, honorarium: ext ? "250" : "", km: String(30 + i * 4), breakfasts: "0", lunches: "1", dinners: i % 3 ? "0" : "1", honorariumAccount: "5320", travelAccount: "5300", departmentId: dep, files: [] }, ts(day + 4, 3));
+          run(u.id, "rc.submit", { kind: "expense", forWho: ext ? "external" : "", external: ext ? { name: ["Elder Mary Example", "Elder John Sample", "Guest speaker Dana Placeholder"][i % 3], role: "Elder", address: "Box 100, Nanaimo BC", payBy: "Cheque" } : undefined, event: P("why"), location: P("places"), from: `2026-09-${String(8 + (i % 20)).padStart(2, "0")}`, to: `2026-09-${String(8 + (i % 20)).padStart(2, "0")}`, honorarium: ext ? "250" : "", km: String(30 + i * 4), breakfasts: "0", lunches: "1", dinners: i % 3 ? "0" : "1", honorariumAccount: "5320", travelAccount: "5300", departmentId: dep, files: [] }, ts(day + 4, 3));
           const tc = last();
           if (i % 6 === 0) approveAll(tc, ts(day + 5, 3));
         }

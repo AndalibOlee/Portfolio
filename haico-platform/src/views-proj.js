@@ -139,7 +139,7 @@ const PROJ_MAX_LINES = 4;
 function projReadHeader(S, p, companyId) {
   const str = (k) => String(p[k] ?? "").trim();
   const code = str("code").toUpperCase(), name = str("name");
-  if (!code) fail("Give the project a short code (for example TF-2026-09).");
+  if (!code) fail("Give the project a short code (for example RT-2026-09).");
   if (!name) fail("Give the project a name.");
   const customerId = str("customerId") || null, managerId = str("managerId") || null;
   if (customerId) { const c = byId(S.customers, customerId); if (!c || c.companyId !== companyId) fail("That customer belongs to a different company than the project."); }
@@ -333,7 +333,7 @@ function projForm(p, v) {
   const ls = [...(v.lines || [])]; while (ls.length < PROJ_MAX_LINES) ls.push({});
   return `<div class="form-grid">
     ${p ? `<div class="fld"><label>Company</label><div class="in" style="display:flex;align-items:center">${coTag(p.companyId)}</div></div>` : `<div class="fld"><label for="pjCo">Company</label><select class="in" id="pjCo" name="companyId" required>${cos.map((c) => opt(c.id, c.displayName, c.id === (v.companyId || A.activeCompanyId))).join("")}</select></div>`}
-    <div class="fld"><label for="pjCode">Project code</label><input class="in mono" id="pjCode" name="code" value="${esc(v.code || "")}" placeholder="TF-2026-09" required></div>
+    <div class="fld"><label for="pjCode">Project code</label><input class="in mono" id="pjCode" name="code" value="${esc(v.code || "")}" placeholder="RT-2026-09" required></div>
     <div class="fld" style="grid-column:span 2"><label for="pjName">Name</label><input class="in" id="pjName" name="name" value="${esc(v.name || "")}" placeholder="What the job is called" required></div>
     <div class="fld" style="grid-column:1/-1"><label for="pjDesc">Description</label><input class="in" id="pjDesc" name="description" value="${esc(v.description || "")}" placeholder="One line on what this project covers (optional)"></div>
     <div class="fld"><label for="pjCu">Customer</label><select class="in" id="pjCu" name="customerId">${opt("", "— none (internal) —", !v.customerId)}${cus.map((c) => opt(c.id, `${c.name} · ${co(c.companyId).displayName}`, c.id === v.customerId)).join("")}</select></div>

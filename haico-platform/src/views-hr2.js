@@ -127,7 +127,7 @@ function hr2Remit(S, companyId, year, month) {
 
 /* ---- new employee from a hire (same steps as the employee.create reducer) ---- */
 function hr2CreateEmployee(S, ctx, p) {
-  const prefix = { HAICO: "EMP-3", TAAN: "EMP-2", TOUR: "EMP-1", SEAF: "EMP-4" }[p.companyId] || "EMP-9";
+  const prefix = { ALD: "EMP-3", RDG: "EMP-2", SLL: "EMP-1", NBS: "EMP-4" }[p.companyId] || "EMP-9";
   let max = 0;
   for (const e of S.employees) if (e.employeeNumber.startsWith(prefix)) max = Math.max(max, parseInt(e.employeeNumber.slice(4), 10) || 0);
   const employeeNumber = `EMP-${(max || Number(prefix.slice(4) + "000")) + 1}`;

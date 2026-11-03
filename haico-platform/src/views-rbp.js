@@ -43,14 +43,14 @@ const penAnnualPay = (S0, empId) => { const c = S0.compensations.filter((x) => x
       if (i % 3 !== 2) add("bp2", FAMILY.has(e.id));
       if (i % 2 === 0) add("bp5", FAMILY.has(e.id));
     });
-    const hist = [["e8", "bp5", "ENROL", "FAMILY", "2026-04-01", "Shawna Laboucan", "2026-03-18T17:20:00Z", "Paper form received — spouse and two children."], ["e13", "bp2", "CHANGE", "FAMILY", "2026-05-01", "Shawna Laboucan", "2026-04-22T16:05:00Z", "New baby — moved to family coverage."], ["e9", "bp5", "WAIVE", "EMPLOYEE", "2026-06-01", "Shawna Laboucan", "2026-05-20T19:40:00Z", "Covered under spouse's plan."], ["e5", "bp4", "ENROL", "EMPLOYEE", "2026-01-01", "Shawna Laboucan", "2025-12-15T18:00:00Z", "Annual enrolment."]];
+    const hist = [["e8", "bp5", "ENROL", "FAMILY", "2026-04-01", "Priya Raman", "2026-03-18T17:20:00Z", "Paper form received — spouse and two children."], ["e13", "bp2", "CHANGE", "FAMILY", "2026-05-01", "Priya Raman", "2026-04-22T16:05:00Z", "New baby — moved to family coverage."], ["e9", "bp5", "WAIVE", "EMPLOYEE", "2026-06-01", "Priya Raman", "2026-05-20T19:40:00Z", "Covered under spouse's plan."], ["e5", "bp4", "ENROL", "EMPLOYEE", "2026-01-01", "Priya Raman", "2025-12-15T18:00:00Z", "Annual enrolment."]];
     S.benefitChanges = S.benefitChanges || [];
     hist.forEach(([employeeId, planId, action, coverage, effectiveDate, byName, at, note], i) => { const e = byId(S.employees, employeeId); if (e) S.benefitChanges.push({ id: `bc_seed${i + 1}`, employeeId, companyId: e.companyId, planId, action, coverage, effectiveDate, note, byName, at }); });
 
     // pension: one group defined-contribution plan; members join after three months
-    S.pensionPlans = [{ id: PEN_PLAN_ID, code: "DEMO-DCPP", name: "Demo Group Defined Contribution Pension Plan", provider: "Coastal Pension Trust", registration: "BC 1104382", type: "Defined contribution", maxMatchPct: 6, vestingMonths: 24, eligibilityMonths: 3, remitDay: 15, glExpense: "5175", glLiability: "2310" }];
+    S.pensionPlans = [{ id: PEN_PLAN_ID, code: "ALD-DCPP", name: "Alderbrook Group Defined Contribution Pension Plan", provider: "Coastal Pension Trust", registration: "BC 1104382", type: "Defined contribution", maxMatchPct: 6, vestingMonths: 24, eligibilityMonths: 3, remitDay: 15, glExpense: "5175", glLiability: "2310" }];
     S.pensionMembers = []; S.pensionChanges = []; S.pensionRemittances = [];
-    const BENEF = { e1: "Spouse — Daniel Bellerose", e2: "Spouse — Joseph Sinclair", e3: "Spouse — Marie Desjarlais", e4: "Estate", e5: "Spouse — Luc Morin", e6: "Spouse — Carla Ladouceur", e7: "Spouse — Andrea Bigstone", e8: "Mother — Rose Cardinal", e9: "Father — Lyle Moosomin", e11: "Spouse — Paul Delorme", e12: "Estate", e13: "Spouse — Kim Baptiste", e15: "Spouse — Leah Gladue", e16: "Mother — Joanne Napoleon", e17: "Estate", e19: "Sister — Dana Ermineskin" };
+    const BENEF = { e1: "Spouse — Daniel Bennett", e2: "Spouse — Joseph Holloway", e3: "Spouse — Marie Okafor", e4: "Estate", e5: "Spouse — Luc Marquez", e6: "Spouse — Carla Clarke", e7: "Spouse — Andrea Foster", e8: "Mother — Rose Collins", e9: "Father — Lyle Fischer", e11: "Spouse — Murphy Thompson", e12: "Estate", e13: "Spouse — Kim Ellis", e15: "Spouse — Leah Moreau", e16: "Mother — Joanne Castillo", e17: "Estate", e19: "Sister — Dana Dubois" };
     staff.forEach((e, i) => {
       const elig = addDays(e.startDate, 91);
       if (e.id === "e14" || e.id === "e18") return; // newer crew members: eligible, not yet enrolled
@@ -68,7 +68,7 @@ const penAnnualPay = (S0, empId) => { const c = S0.compensations.filter((x) => x
         const month = `2026-${String(mo).padStart(2, "0")}`, due = `2026-${String(mo + 1).padStart(2, "0")}-15`;
         let ee = 0, er = 0;
         for (const m of ms) { const pay = penAnnualPay(S, m.employeeId) / 12; ee += Math.round(pay * m.employeeRatePct / 100); er += Math.round(pay * m.employerRatePct / 100); }
-        S.pensionRemittances.push({ id: `pr_${c.id}_${mo}`, companyId: c.id, month, dueDate: due, employeeCents: ee, employerCents: er, members: ms.length, status: mo <= 8 ? "PAID" : "DUE", paidDate: mo <= 8 ? `2026-${String(mo + 1).padStart(2, "0")}-12` : undefined, paidByName: mo <= 8 ? "Wesley Desjarlais" : undefined });
+        S.pensionRemittances.push({ id: `pr_${c.id}_${mo}`, companyId: c.id, month, dueDate: due, employeeCents: ee, employerCents: er, members: ms.length, status: mo <= 8 ? "PAID" : "DUE", paidDate: mo <= 8 ? `2026-${String(mo + 1).padStart(2, "0")}-12` : undefined, paidByName: mo <= 8 ? "Daniel Okafor" : undefined });
       }
     }
     return S;

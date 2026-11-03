@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DEMO Enterprise Platform — Rollout Plan</title>
+<link rel="stylesheet" href="../base.css">
+<style>
+  body{font-size:8.4pt;line-height:1.32}
+  :root{--plan:#1d5f73;--build:#a33a2a;--data:#c49a2c;--test:#3d4f8a;--go:#3d6b35;--pay:#7a5418;--settle:#6b6259;--arrow:#8a8f96}
+  .stripe{display:flex;width:118px;height:4px;margin:0 0 6px}
+  .stripe i{flex:1}
+  .hd{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;border-bottom:2px solid var(--rule);padding-bottom:8px;margin-bottom:9px}
+  .hd h1{font-size:19pt;margin-bottom:3px}
+  .hd h1 em{font-style:normal;color:var(--red)}
+  .hd .lead{font-size:9pt;margin:0;max-width:5.1in}
+  .hrow{display:flex;justify-content:space-between;align-items:flex-end;gap:18px}
+  .tiles{display:flex;gap:7px;flex:none}
+  .tile{border:1px solid var(--line);border-radius:7px;background:var(--card);padding:5px 11px 6px;min-width:1.0in}
+  .tile b{display:block;font-family:"Bitstream Charter",Georgia,serif;font-size:14pt;color:var(--teal);line-height:1.1}
+  .tile small{display:block;font-size:6.6pt;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .tile.red b{color:var(--red)}
+  .warn{background:#f8e7e3;border:1px solid #e9c6be;border-radius:7px;padding:6px 11px;font-size:8.2pt;color:#5b2a20;display:flex;gap:10px;margin-bottom:13px}
+  .warn .k{flex:none;font-weight:700;color:var(--red)}
+  /* flowchart */
+  .fc{display:grid;grid-template-columns:78px 18px 1fr 108px 1fr 108px 1fr;grid-auto-rows:auto}
+  .card{background:#fff;border:1px solid var(--line);border-left:5px solid var(--c);border-radius:6px;padding:6px 9px 7px;min-height:92px}
+  .card .t{display:flex;align-items:center;gap:6px;font-weight:700;font-size:9.2pt}
+  .card .t .no{width:18px;height:18px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-size:7.8pt;flex:none}
+  .card .d{font-size:7.4pt;color:var(--muted);margin:0 0 4px 24px}
+  .card ul{list-style:none;margin:0;padding:0}
+  .card li{font-size:7.9pt;margin:0 0 1px;padding-left:8px;position:relative}
+  .card li::before{content:"•";position:absolute;left:0;color:#5d6670}
+  .gap{position:relative}
+  .ln{position:absolute;top:50%;left:4px;right:4px;border-top:1.5px solid var(--arrow)}
+  .ln.r::after{content:"";position:absolute;right:-1px;top:-5px;border-left:7px solid var(--arrow);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .ln.l::after{content:"";position:absolute;left:-1px;top:-5px;border-right:7px solid var(--arrow);border-top:4.5px solid transparent;border-bottom:4.5px solid transparent}
+  .dia{position:absolute;left:50%;top:50%;width:60px;height:60px;transform:translate(-50%,-50%) rotate(45deg);background:#fbf3dc;border:1.5px solid var(--data)}
+  .dtx{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74px;text-align:center;font-size:6.8pt;font-weight:700;line-height:1.2;color:#6b4f12}
+  .yes{position:absolute;top:calc(50% - 13px);font-size:6.8pt;font-weight:700;color:var(--go)}
+  .yes.r{right:2px}.yes.l{left:2px}
+  .nol{position:absolute;left:50%;top:calc(50% + 46px);transform:translateX(-50%);white-space:nowrap;font-size:6.8pt;font-weight:700;color:var(--red)}
+  .lbl{position:absolute;left:0;right:0;top:calc(50% - 14px);text-align:center;font-size:6.8pt;font-weight:700;color:var(--go)}
+  .start{display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .start span{display:grid;place-items:center;width:74px;height:34px;border-radius:17px;background:var(--plan);color:#fff;font-weight:700;font-size:9pt}
+  .start small{font-size:6.8pt;color:var(--muted);margin-top:4px}
+  .down{height:34px;position:relative}
+  .down::before{content:"";position:absolute;left:50%;top:3px;bottom:8px;border-left:1.5px solid var(--arrow)}
+  .down::after{content:"";position:absolute;left:calc(50% - 4px);bottom:2px;border-top:7px solid var(--arrow);border-left:4.5px solid transparent;border-right:4.5px solid transparent}
+  .live{text-align:center;font-weight:700;color:var(--go);font-size:8.2pt;margin-top:6px}
+  .legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;font-size:7.8pt;color:var(--muted);margin:16px 0 6px}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .legend .chk{background:#fbf3dc;border:1.5px solid var(--data);width:12px;height:12px}
+  .foot{font-size:7.6pt;color:var(--muted);margin:0}
+  .foot .oc{color:var(--teal)}
+  /* page 2 */
+  .boxes{display:grid;grid-template-columns:1.12fr 1fr 1fr;gap:11px;margin-top:12px}
+  .boxes .box{margin:0;padding:8px 11px}
+  .boxes h3{font-size:10.5pt;color:var(--teal);margin:0 0 5px}
+  .boxes table{margin:0 0 5px}
+  .boxes th{font-size:6.6pt;padding:4px 6px;white-space:nowrap}
+  .boxes td{font-size:7.9pt;padding:4px 6px}
+  .boxes tr.rec td{background:#eef3ea}
+  .boxes ul{margin:0;padding-left:13px}
+  .boxes li{font-size:7.9pt;margin:0 0 3px}
+</style>
+</head>
+<body>
+
+<!-- ===================== PAGE 1 · flowchart ===================== -->
+<section class="page">
+  <div class="stripe"><i style="background:#a33a2a"></i><i style="background:#8a6417"></i><i style="background:#1d5f73"></i><i style="background:#3d6b35"></i><i style="background:#2c3e6b"></i><i style="background:#a33a2a"></i><i style="background:#1d5f73"></i></div>
+  <div class="hd" style="display:block">
+    <h1>DEMO Enterprise Platform — <em>real-data live rollout</em></h1>
+    <div class="hrow"><p class="lead">How the demo becomes the system Alderbrook Group runs on every day, with real people, real pay and real books. Nine steps, four checkpoints. Nothing goes live until its checkpoint says <b>Yes</b>.</p>
+    <div class="tiles">
+      <div class="tile"><b>130</b><small>Working days</small></div>
+      <div class="tile"><b>≈ 6½</b><small>Months</small></div>
+      <div class="tile"><b>3</b><small>Go-live waves</small></div>
+      <div class="tile red"><b>Apr 30, 2027</b><small>All live</small></div>
+    </div>
+    </div>
+  </div>
+  <div class="warn"><span class="k">⚠ Before day 1:</span><span>the current demo link and Netlify copy keep data in the web browser with demo sign-in and illustrative payroll. <b>Never type real names, SINs, bank details or pay into them.</b> Real data only goes into the real system built in step 3.</span></div>
+
+  <div class="fc">
+    <!-- row 1 -->
+    <div class="start"><span>Start</span><small>Oct 19, 2026</small></div>
+    <div class="gap"><div class="ln r"></div></div>
+    <div class="card" style="--c:var(--plan)"><div class="t"><span class="no">1</span>Approve &amp; set up</div><div class="d">10 working days · Oct 19 – Oct 30</div>
+      <ul><li>Leaders sign off scope and budget</li><li>Name the team + a champion per company</li><li>Book secure cloud hosting in Canada</li></ul></div>
+    <div class="gap"><div class="ln r"></div><span class="yes r">Yes</span><div class="dia"></div><div class="dtx">Scope &amp; budget signed?</div><span class="nol">No → fix, step 1</span></div>
+    <div class="card" style="--c:var(--plan)"><div class="t"><span class="no">2</span>Discover &amp; map</div><div class="d">10 working days · Nov 2 – Nov 16</div>
+      <ul><li>Workshops with HR, payroll and finance</li><li>Collect staff, vendor and account lists</li><li>Agree approval rules for each company</li></ul></div>
+    <div class="gap"><div class="ln r"></div><span class="yes r">Yes</span><div class="dia"></div><div class="dtx">Every process agreed?</div><span class="nol">No → fix, step 2</span></div>
+    <div class="card" style="--c:var(--build)"><div class="t"><span class="no">3</span>Build the real system</div><div class="d">40 working days · Nov 17 – Jan 20</div>
+      <ul><li>Turn the demo into a secure online system</li><li>Real database, Microsoft sign-in + MFA, backups</li><li>Bank files, CRA-certified payroll, emails</li></ul></div>
+    <!-- down: 3 -> 4 -->
+    <div></div><div></div><div></div><div></div><div></div><div></div><div class="down"></div>
+    <!-- row 2 (right to left) -->
+    <div></div><div></div>
+    <div class="card" style="--c:var(--go)"><div class="t"><span class="no">6</span>Train people</div><div class="d">6 working days · Feb 11 – Feb 19</div>
+      <ul><li>1-hour session per role</li><li>Champions coach their own teams</li><li>How-to guides are already in the app</li></ul></div>
+    <div class="gap"><div class="ln l"></div><span class="yes l">Yes</span><div class="dia"></div><div class="dtx">Data balances &amp; users pass?</div><span class="nol">No → fix, steps 3–5</span></div>
+    <div class="card" style="--c:var(--test)"><div class="t"><span class="no">5</span>Test</div><div class="d">15 working days · Jan 21 – Feb 10</div>
+      <ul><li>Each role runs the one-page demo script</li><li>Security test of sign-in and access</li><li>Fix everything marked “must fix”</li></ul></div>
+    <div class="gap"><div class="ln l"></div></div>
+    <div class="card" style="--c:var(--data)"><div class="t"><span class="no">4</span>Move the data</div><div class="d">20 working days · Dec 22 – Jan 27</div>
+      <ul><li>Clean the lists, do two trial loads</li><li>Opening balances, leave, banked OT, YTD pay</li><li>Totals must match the old books</li></ul></div>
+    <!-- down: 6 -> 7 -->
+    <div></div><div></div><div class="down"></div><div></div><div></div><div></div><div></div>
+    <!-- row 3 -->
+    <div></div><div></div>
+    <div class="card" style="--c:var(--go)"><div class="t"><span class="no">7</span>Go live in 3 waves</div><div class="d">30 working days · Feb 22 – Apr 5</div>
+      <ul><li>Wave 1 · Alderbrook Holdings</li><li>Wave 2 · Ridgeline Timber (crews, banked OT)</li><li>Wave 3 · Silver Lake Lodges + Northbay Seafoods (pre-season)</li></ul></div>
+    <div class="gap"><div class="ln r"></div><span class="lbl">at the same time</span></div>
+    <div class="card" style="--c:var(--pay)"><div class="t"><span class="no">8</span>Payroll side-by-side</div><div class="d">20 working days · Mar 8 – Apr 5</div>
+      <ul><li>Run 2 pay periods in BOTH systems</li><li>Compare every pay cheque, line by line</li><li>Old system stays as the safety net</li></ul></div>
+    <div class="gap"><div class="ln r"></div><span class="yes r">Yes</span><div class="dia"></div><div class="dtx">Every cheque matches to the ¢?</div><span class="nol">No → run 1 more period</span></div>
+    <div><div class="card" style="--c:var(--settle)"><div class="t"><span class="no">9</span>Settle in &amp; hand over</div><div class="d">19 working days · Apr 6 – Apr 30</div>
+      <ul><li>First real payroll from the new system</li><li>Close the first month-end in it</li><li>Hand admin to Alderbrook Group IT, switch old off</li></ul></div>
+      <div class="live">✓ Live everywhere · Apr 30, 2027</div></div>
+  </div>
+
+  <div class="legend">
+    <span><i class="chk"></i>Checkpoint — must be “Yes” to move on</span>
+    <span><i style="background:var(--plan)"></i>Plan</span>
+    <span><i style="background:var(--build)"></i>Build</span>
+    <span><i style="background:var(--data)"></i>Data</span>
+    <span><i style="background:var(--test)"></i>Test</span>
+    <span><i style="background:var(--go)"></i>People &amp; go-live</span>
+    <span><i style="background:var(--pay)"></i>Payroll</span>
+  </div>
+  <p class="foot">Working days = Mon–Fri, without BC stat holidays and a Dec 24 – Jan 1 closure. Start Oct 19, 2026.
+    <span class="oc">The waves follow the four companies; the demo can also be shown as one company (Alderbrook Holdings with the same eight departments, people and approvals), chosen on its first page.</span></p>
+</section>
+
+<!-- ===================== PAGE 2 · timeline ===================== -->
+<section class="page">
+  <div class="stripe"><i style="background:#a33a2a"></i><i style="background:#8a6417"></i><i style="background:#1d5f73"></i><i style="background:#3d6b35"></i><i style="background:#2c3e6b"></i><i style="background:#a33a2a"></i><i style="background:#1d5f73"></i></div>
+  <div class="hd" style="display:block">
+    <h1>Timeline — <em>Oct 19, 2026 to Apr 30, 2027</em></h1>
+    <p class="lead" style="max-width:none">Bars are working days. Steps 3 and 4 overlap; go-live waves run while payroll is checked side-by-side. First real payroll: pay period starting <b>Apr 12, 2027</b>.</p>
+  </div>
+
+  <!-- x = 200 + day*3.045 (day 0 = Oct 1, 2026; 243 days to Jun 1) -->
+  <svg viewBox="0 0 950 320" width="100%" style="display:block;margin-top:8px" font-family="Liberation Sans, Arial, sans-serif">
+    <g>
+      <rect x="200" y="22" width="94.4" height="240" fill="#f6f1e7"/>
+      <rect x="294.4" y="22" width="91.4" height="240" fill="#fcfaf5"/>
+      <rect x="385.7" y="22" width="94.4" height="240" fill="#f6f1e7"/>
+      <rect x="480.1" y="22" width="94.4" height="240" fill="#fcfaf5"/>
+      <rect x="574.5" y="22" width="85.3" height="240" fill="#f6f1e7"/>
+      <rect x="659.8" y="22" width="94.4" height="240" fill="#fcfaf5"/>
+      <rect x="754.2" y="22" width="91.4" height="240" fill="#f6f1e7"/>
+      <rect x="845.5" y="22" width="94.4" height="240" fill="#fcfaf5"/>
+      <rect x="455.8" y="22" width="27.4" height="240" fill="#f3dcdc"/>
+    </g>
+    <g font-size="8" font-weight="700" fill="#3a3f45" text-anchor="middle">
+      <text x="247" y="15">Oct 2026</text><text x="340" y="15">Nov</text><text x="433" y="15">Dec</text><text x="527" y="15">Jan 2027</text>
+      <text x="617" y="15">Feb</text><text x="707" y="15">Mar</text><text x="800" y="15">Apr</text><text x="892" y="15">May</text>
+    </g>
+    <text x="469.5" y="274" font-size="7" font-weight="700" fill="#a33a2a" text-anchor="middle">holiday closure</text>
+    <!-- milestone guide lines -->
+    <g stroke="#a33a2a" stroke-width="1" stroke-dasharray="2 3" opacity=".75">
+      <line x1="291.4" y1="22" x2="291.4" y2="282"/><line x1="541" y1="22" x2="541" y2="282"/><line x1="605" y1="22" x2="605" y2="282"/>
+      <line x1="638.5" y1="22" x2="638.5" y2="282"/><line x1="787.7" y1="22" x2="787.7" y2="282"/><line x1="845.5" y1="22" x2="845.5" y2="282"/>
+    </g>
+    <!-- rows: y = 30 + i*21, bar height 12 -->
+    <g font-size="7.8" fill="#3a3f45" text-anchor="end">
+      <text x="190" y="39">1 · Approve &amp; set up</text>
+      <text x="190" y="60">2 · Discover &amp; map</text>
+      <text x="190" y="81">3 · Build the real system</text>
+      <text x="190" y="102">4 · Move the data</text>
+      <text x="190" y="123">5 · Test</text>
+      <text x="190" y="144">6 · Train people</text>
+      <text x="190" y="165">7 · Wave 1 · Alderbrook Holdings</text>
+      <text x="190" y="186">Wave 2 · Ridgeline Timber</text>
+      <text x="190" y="207">Wave 3 · Silver Lake + Northbay</text>
+      <text x="190" y="228">8 · Payroll side-by-side</text>
+      <text x="190" y="249">9 · Settle in &amp; hand over</text>
+    </g>
+    <g>
+      <rect x="254.8" y="30" width="36.5" height="12" rx="4" fill="#1d5f73"/>
+      <rect x="297.4" y="51" width="45.7" height="12" rx="4" fill="#1d5f73"/>
+      <rect x="343.1" y="72" width="197.9" height="12" rx="4" fill="#a33a2a"/>
+      <rect x="449.7" y="93" width="112.7" height="12" rx="4" fill="#c49a2c"/>
+      <rect x="541" y="114" width="64" height="12" rx="4" fill="#3d4f8a"/>
+      <rect x="605" y="135" width="27.4" height="12" rx="4" fill="#3d6b35"/>
+      <rect x="638.5" y="156" width="36.5" height="12" rx="4" fill="#3d6b35"/>
+      <rect x="681.1" y="177" width="36.5" height="12" rx="4" fill="#3d6b35"/>
+      <rect x="723.7" y="198" width="45.7" height="12" rx="4" fill="#3d6b35"/>
+      <rect x="681.1" y="219" width="88.3" height="12" rx="4" fill="#7a5418"/>
+      <rect x="769.4" y="240" width="76.1" height="12" rx="4" fill="#6b6259"/>
+    </g>
+    <g font-size="7" fill="#5d6670">
+      <text x="295.3" y="39.5">10 d</text><text x="347.1" y="60.5">10 d</text><text x="545" y="81.5">40 d</text><text x="566.4" y="102.5">20 d</text>
+      <text x="609" y="123.5">15 d</text><text x="636.4" y="144.5">6 d</text><text x="679" y="165.5">10 d</text><text x="721.6" y="186.5">10 d</text>
+      <text x="773.4" y="207.5">10 d</text><text x="773.4" y="228.5">20 d</text><text x="849.5" y="249.5">19 d</text>
+    </g>
+    <!-- milestones -->
+    <g fill="#a33a2a">
+      <path d="M291.4 277 l5 5 l-5 5 l-5 -5 z"/><path d="M541 277 l5 5 l-5 5 l-5 -5 z"/><path d="M605 277 l5 5 l-5 5 l-5 -5 z"/>
+      <path d="M638.5 277 l5 5 l-5 5 l-5 -5 z"/><path d="M787.7 277 l5 5 l-5 5 l-5 -5 z"/><path d="M845.5 277 l5 5 l-5 5 l-5 -5 z"/>
+    </g>
+    <g font-size="7" font-weight="700" fill="#a33a2a" text-anchor="middle">
+      <text x="291.4" y="299">Scope signed · Oct 30</text>
+      <text x="541" y="311">System built · Jan 20</text>
+      <text x="605" y="299">Tests passed · Feb 10</text>
+      <text x="638.5" y="311">Wave 1 live · Feb 22</text>
+      <text x="787.7" y="299">First real payroll · Apr 12</text>
+      <text x="845.5" y="311">Hand-over · Apr 30</text>
+    </g>
+  </svg>
+
+  <div class="boxes">
+    <div class="box">
+      <h3>How long will it take?</h3>
+      <table>
+        <tr><th>Option</th><th>Days</th><th>All live by</th></tr>
+        <tr><td><b>Fast track</b> — HR, time, requests, purchasing, finance; keep today's payroll provider for now</td><td>≈ 95</td><td>Mar 11, 2027</td></tr>
+        <tr class="rec"><td><b>Recommended</b> — everything in the demo, including payroll</td><td><b>130</b></td><td><b>Apr 30, 2027</b></td></tr>
+        <tr><td><b>Solo build</b> — you build alone (no second developer); step 3 takes twice as long</td><td>≈ 170</td><td>Jun 28, 2027</td></tr>
+      </table>
+      <p class="small" style="margin:0">Assumes a project lead (you), 1–2 developers, and HR, payroll and finance leads giving about 1 day a week. Add 15–20% buffer for surprises.</p>
+    </div>
+    <div class="box">
+      <h3>Who you need</h3>
+      <ul>
+        <li><b>Sponsor</b> (CEO) — signs off checkpoints, clears roadblocks</li>
+        <li><b>Project lead</b> (you) — plan, weekly status, go / no-go calls</li>
+        <li><b>Developers</b> (1–2) — build, data loads, fixes</li>
+        <li><b>HR lead</b> — staff records, leave, benefits, pension</li>
+        <li><b>Payroll lead</b> — rates, deductions, side-by-side runs</li>
+        <li><b>Finance lead</b> — chart of accounts, vendors, opening balances</li>
+        <li><b>IT / security</b> — Microsoft sign-in, hosting, backups</li>
+        <li><b>Champion per company</b> — Alderbrook, Ridgeline, Silver Lake, Northbay</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Biggest risks — and the fix</h3>
+      <ul>
+        <li><b>Wrong pay.</b> Use CRA-certified payroll formulas; go live only after 2 pay runs match the old system to the cent.</li>
+        <li><b>Messy data.</b> Two trial loads; totals must match the old books before go-live.</li>
+        <li><b>Privacy.</b> Hosting in Canada, MFA, role-based access, audit log (BC PIPA).</li>
+        <li><b>Busy season.</b> Silver Lake Lodges and Northbay Seafoods go live in March, before their season.</li>
+        <li><b>Mid-year payroll switch.</b> Carry year-to-date totals across so T4s are right.</li>
+        <li><b>People don't adopt it.</b> Champions, 1-hour role training, in-app how-to guides.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DEMO Enterprise Platform — Questions to Expect</title>
+<link rel="stylesheet" href="../base.css">
+<style>
+  body{font-size:8.1pt;line-height:1.3}
+  .page{min-height:0}
+  .stripe{display:flex;width:118px;height:4px;margin:0 0 6px}
+  .stripe i{flex:1}
+  .hd{border-bottom:2px solid var(--rule);padding-bottom:7px;margin-bottom:9px}
+  .hrow{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+  .hd h1{font-size:17pt;margin-bottom:2px}
+  .hd h1 em{font-style:normal;color:var(--red)}
+  .hd .lead{font-size:8.4pt;margin:0;max-width:5.1in;line-height:1.35}
+  .pills{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;max-width:2.2in;flex:none}
+  .pill{font-size:7.3pt;font-weight:700;color:#fff;border-radius:9px;padding:1px 8px;white-space:nowrap}
+  .bg-navy{background:var(--navy)}.bg-teal{background:var(--teal)}.bg-ochre{background:var(--ochre)}.bg-red{background:var(--red)}.bg-green{background:var(--green)}.bg-black{background:var(--black)}
+  .answer{background:#eef3ea;border:1px solid #cfdcc6;border-radius:8px;padding:7px 11px;margin:0 0 4px}
+  .answer b{color:var(--green)}
+  .sec{display:flex;align-items:baseline;gap:7px;margin:9px 0 5px}
+  .sec .sq{display:inline-block;width:9px;height:9px;border-radius:2px;flex:none;transform:translateY(1px)}
+  .sec h2{border:0;padding:0;margin:0;font-size:11.5pt;color:var(--teal)}
+  .sec small{color:var(--muted);font-size:8pt}
+  .qgrid{display:grid;grid-template-columns:1fr 1fr;gap:5px 9px}
+  .q{border:1px solid var(--line);border-left:3px solid var(--navy);border-radius:6px;background:var(--card);padding:4px 8px 5px;break-inside:avoid}
+  .q h4{font-size:8.4pt;margin:0 0 1px;font-weight:700}
+  .q p{margin:0}
+  .q.l-teal{border-left-color:var(--teal)}.q.l-red{border-left-color:var(--red)}.q.l-ochre{border-left-color:var(--ochre)}.q.l-navy{border-left-color:var(--navy)}.q.l-green{border-left-color:var(--green)}
+  .t{display:inline-block;font-size:6.6pt;font-weight:700;letter-spacing:.06em;border-radius:3px;padding:0 5px;margin-right:4px;vertical-align:1px}
+  .t.fe{background:#dcebf0;color:var(--teal)}.t.be{background:#f4dcd6;color:var(--red)}.t.da{background:#f3e7cc;color:var(--ochre)}.t.se{background:#dde2ef;color:var(--navy)}.t.op{background:#dfeadb;color:var(--green)}
+  /* how it's built */
+  .built{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .panel{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:7px 8px 8px}
+  .panel .ph{font-size:9pt;margin:0 0 6px}
+  .panel .ph small{color:var(--muted);font-size:7.6pt;margin-left:3px}
+  .chain{display:grid;grid-template-columns:1fr 12px 1fr 12px 1fr;align-items:stretch;margin-bottom:6px}
+  .chain .arr{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:9pt}
+  .mini{background:#f7f2e8;border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:5px;padding:4px 6px;font-size:7.4pt;line-height:1.28}
+  .mini h5{font-size:7.8pt;margin:0 0 1px}
+  .mini.be{border-top-color:var(--red)}.mini.da{border-top-color:var(--ochre)}.mini.se{border-top-color:var(--navy)}.mini.op{border-top-color:var(--green)}
+  .mini.wide{background:#fff;border-top-color:var(--navy)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:7.6pt;color:var(--muted);margin:6px 0 0}
+  .legend .t{margin-right:3px}
+  .one-co{margin-top:4px;padding-top:4px;border-top:1px dashed var(--line);color:var(--teal)}
+  /* page 3 */
+  .gaps{background:#f8e7e3;border:1px solid #e9c6be;border-radius:8px;padding:7px 11px 6px;margin:11px 0 9px}
+  .gaps h3{font-size:10.5pt;color:var(--red);margin:0 0 4px}
+  .gaps ul{columns:2;column-gap:22px;margin:0;padding-left:15px}
+  .gaps li{margin:0 0 2px;break-inside:avoid}
+  .gaps li::marker{color:var(--red)}
+  .close{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .close .box{padding:7px 11px;margin:0}
+  .close h3{font-size:10pt;margin:0 0 4px}
+  .close ul{margin:0;padding-left:15px}
+  .close li{margin:0 0 3px}
+</style>
+</head>
+<body>
+
+<!-- ===================== PAGE 1 ===================== -->
+<section class="page">
+  <div class="stripe"><i style="background:#a33a2a"></i><i style="background:#8a6417"></i><i style="background:#1d5f73"></i><i style="background:#3d6b35"></i><i style="background:#2c3e6b"></i><i style="background:#a33a2a"></i><i style="background:#1d5f73"></i></div>
+  <div class="hd">
+    <h1>DEMO Enterprise Platform — <em>questions you'll be asked</em></h1>
+    <div class="hrow"><p class="lead">Short, honest answers for the demo with the CEO, CAO, Finance, HR, department managers and IT. Page 1: how it's built + leadership. Page 2: IT (front end, back end, data, security). Page 3: Finance, HR &amp; payroll, managers — and what the demo does <b>not</b> do yet.</p><div class="pills"><span class="pill bg-navy">CEO</span><span class="pill bg-teal">CAO</span><span class="pill bg-ochre">Finance</span><span class="pill bg-red">HR</span><span class="pill bg-green">Managers</span><span class="pill bg-black">IT</span></div></div>
+  </div>
+
+  <div class="answer"><b>The 30-second answer.</b> What you're seeing is a working <b>prototype</b>: every screen, role and approval rule Alderbrook Group needs, built and tested with fictional data. Going live means putting the same screens on a secure <b>server and database in Canada</b>, with <b>Microsoft sign-in</b>, real backups and <b>CRA-certified payroll</b> — about <b>130 working days</b> (Oct 19, 2026 → Apr 30, 2027) in three company waves, with two pay runs checked side-by-side before payroll switches over.</div>
+
+  <div class="sec"><span class="sq" style="background:var(--teal)"></span><h2>How it's built — today vs. live</h2></div>
+  <div class="built">
+    <div class="panel">
+      <div class="ph"><b>Today: the demo</b><small>prototype · fictional data</small></div>
+      <div class="chain">
+        <div class="mini"><h5>Front end</h5>Screens in plain JavaScript, built into one web page (42 code modules · ~15,600 lines).</div>
+        <span class="arr">→</span>
+        <div class="mini be"><h5>“Back end” rules</h5>162 actions (approve, post, pay…) — each checks the role, validates, writes the audit log.</div>
+        <span class="arr">→</span>
+        <div class="mini da"><h5>Data</h5>Saved in <b>this browser only</b>. Demo sign-in, no passwords.</div>
+      </div>
+      <div class="mini wide"><h5>Why it matters</h5>The rules are already written the way a server runs them — they move to the server, they aren't rewritten from scratch.</div>
+    </div>
+    <div class="panel">
+      <div class="ph"><b>Live: the real system</b><small>proposed · built in step 3</small></div>
+      <div class="chain">
+        <div class="mini"><h5>Front end</h5>Same screens, as a TypeScript web app. Works on phones. Keeps <b>no data</b> on the device.</div>
+        <span class="arr">→</span>
+        <div class="mini be"><h5>Back end — API</h5>Node.js/TypeScript server; the 162 actions become API calls with the <b>same permission checks</b>.</div>
+        <span class="arr">→</span>
+        <div class="mini da"><h5>Data</h5>PostgreSQL database + encrypted file storage, in a cloud region <b>in Canada</b>.</div>
+      </div>
+      <div class="two">
+        <div class="mini wide"><h5>Microsoft 365 sign-in + MFA</h5>One account; leavers lose access when IT disables it.</div>
+        <div class="mini wide"><h5>Connections</h5>Email · bank EFT file · CRA payroll formulas · Excel/CSV.</div>
+      </div>
+    </div>
+  </div>
+  <div class="legend">
+    <span><span class="t fe">FRONT END</span>what runs in the browser</span>
+    <span><span class="t be">BACK END</span>server rules &amp; API</span>
+    <span><span class="t da">DATA</span>database, files, migration</span>
+    <span><span class="t se">SECURITY</span>access &amp; privacy</span>
+    <span><span class="t op">OPERATIONS</span>hosting, support, cost</span>
+  </div>
+
+  <div class="sec"><span class="sq" style="background:var(--navy)"></span><h2 style="color:var(--navy)">CEO &amp; CAO</h2><small>— decision, money, risk</small></div>
+  <div class="qgrid">
+    <div class="q"><h4>Is this real software or a mock-up?</h4><p>Real software with fictional data. Every button works — approvals route, payroll calculates, journals post, files attach. What's missing is the secure server, real sign-in and real data, which is the build step.</p></div>
+    <div class="q"><h4>How long, and when do we see value?</h4><p>130 working days. Alderbrook Holdings goes live first (Feb 19, 2027), then Ridgeline Timber (Mar 5), then Silver Lake Lodges + Northbay Seafoods (Mar 19). First real payroll: Apr 12, 2027, after two side-by-side runs.</p></div>
+    <div class="q"><h4>What does it cost?</h4><p>Three parts: the build team (1–2 developers for ~6 months), cloud hosting (an estimated CAD $300–800 a month at our size — to be quoted in step 1), and staff time from HR, payroll and finance leads (~1 day a week). No per-user licence fees for the platform itself.</p></div>
+    <div class="q"><h4>What does it replace — and what does it save?</h4><p>Paper/email approvals, spreadsheets for leave and banked OT, separate HR, payroll and AP tools. Savings come from one sign-in, approvals in minutes, no re-keying between payroll and the books, and a full audit trail. Confirm the systems we switch off in step 2.</p></div>
+    <div class="q"><h4>What's the biggest risk?</h4><p>Paying people wrong. That's why payroll uses CRA-certified formulas and only goes live after two pay runs match the old system to the cent — the old system stays as the safety net.</p></div>
+    <div class="q"><h4>Who owns the code? What if the developer leaves?</h4><p>Agree it in the contract: Alderbrook Group gets the source code (private repository), the right to change it, and documentation. Standard technology (TypeScript, PostgreSQL) means any competent team can maintain it. Step 9 hands admin to Alderbrook Group IT.</p></div>
+    <div class="q"><h4>Is our data safe and in Canada?</h4><p>Yes — hosted in a cloud region in Canada, encrypted in transit and at rest, Microsoft sign-in with MFA, role-based access, every action in an audit log. Built to BC PIPA; an independent security test runs before go-live.</p></div>
+    <div class="q"><h4>Can it grow with us — new companies, new rules?</h4><p>Yes. Four companies today; each record carries its company, so adding a fifth is a settings change. Approval limits, menus and wording change from Administration screens, without code.</p><p class="one-co">The demo can also be shown as one company — Alderbrook Holdings with the same eight departments, people and approvals — chosen on its first page.</p></div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 2 ===================== -->
+<section class="page">
+  <div class="stripe"><i style="background:#a33a2a"></i><i style="background:#8a6417"></i><i style="background:#1d5f73"></i><i style="background:#3d6b35"></i><i style="background:#2c3e6b"></i><i style="background:#a33a2a"></i><i style="background:#1d5f73"></i></div>
+  <div class="hd">
+    <h1>IT Manager — <em>the technical questions</em></h1>
+    <div class="hrow"><p class="lead">Front end, back end, data, security and operations. “Proposed” means the recommendation for the live build; the final choices are confirmed with IT in steps 1–2.</p><div class="pills"><span class="pill bg-black">IT Manager</span></div></div>
+  </div>
+
+  <div class="sec" style="margin-top:6px"><span class="sq" style="background:var(--teal)"></span><h2>Front end</h2><small>— what runs in the browser</small></div>
+  <div class="qgrid">
+    <div class="q l-teal"><h4><span class="t fe">FE</span>What is the demo built with?</h4><p>Plain JavaScript modules (no framework), HTML and CSS, compiled by a small build script into one self-contained page (~8.2 MB incl. sample data and how-to images). It runs in any modern browser with nothing installed.</p></div>
+    <div class="q l-teal"><h4><span class="t fe">FE</span>What will the live front end be?</h4><p>Proposed: the same screens moved to a TypeScript web app (React) served from the cloud over HTTPS. The browser only displays data and sends actions — nothing sensitive is stored on the device.</p></div>
+    <div class="q l-teal"><h4><span class="t fe">FE</span>Phones and tablets? Offline for crews?</h4><p>Layouts already adapt to phone width — approvals, timesheets and requests work on a phone browser. No native app; offline timesheet entry for camps with no signal is a phase-2 option.</p></div>
+    <div class="q l-teal"><h4><span class="t fe">FE</span>Browsers, accessibility, theming?</h4><p>Current Chrome, Edge, Safari and Firefox. Keyboard and screen-reader labels on controls, light/dark themes, readable font sizes. A formal WCAG 2.1 AA check is part of testing.</p></div>
+  </div>
+
+  <div class="sec"><span class="sq" style="background:var(--red)"></span><h2 style="color:var(--red)">Back end</h2><small>— server, API, business rules</small></div>
+  <div class="qgrid">
+    <div class="q l-red"><h4><span class="t be">BE</span>Is there a back end today?</h4><p>Not a separate server — the demo runs its “server” rules inside the page. They're written as 162 actions, each one: check permission → validate → change data → write audit. That's exactly the shape of an API, so they port across rather than being redesigned.</p></div>
+    <div class="q l-red"><h4><span class="t be">BE</span>Proposed back-end stack?</h4><p>Node.js + TypeScript API (same language as the front end, so rules are shared), PostgreSQL, encrypted object storage for attachments, a job queue for emails, reminders and bank files. Containerised, deployed to Azure Canada.</p></div>
+    <div class="q l-red"><h4><span class="t be">BE</span>How are permissions enforced?</h4><p>On the server, for every action — never just by hiding buttons. 13 roles with grants (e.g. ap.approve), scoped to company. Menus already show only what the server would allow; the automated test checks every role against every page (176 routes).</p></div>
+    <div class="q l-red"><h4><span class="t be">BE</span>APIs and integrations?</h4><p>Planned: a documented REST API (not in the demo). First connections: Microsoft 365 (sign-in, email), bank direct-deposit/EFT file (CPA-005), CRA payroll formulas, Excel/CSV import and export. Live bank feeds need a bank-data provider agreement.</p></div>
+    <div class="q l-red"><h4><span class="t be">BE</span>How do approvals and workflows work?</h4><p>A rules table per request type (the supervisor first, then director level above a threshold; Finance processes it after). The engine resolves the next approver, notifies them, records each decision with comment, and posts results (e.g. bill → journal). Admins edit thresholds on screen.</p></div>
+    <div class="q l-red"><h4><span class="t be">BE</span>How is it tested?</h4><p>Automated browser tests sign in as every role and click through every page and workflow — the full demo script (62 steps) runs end-to-end with zero errors. The live build adds unit tests, payroll checks against CRA's PDOC calculator, and a pen test.</p></div>
+  </div>
+
+  <div class="sec"><span class="sq" style="background:var(--ochre)"></span><h2 style="color:var(--ochre)">Data, security &amp; operations</h2></div>
+  <div class="qgrid">
+    <div class="q l-ochre"><h4><span class="t da">DATA</span>Where does demo data go today?</h4><p>Only into the presenter's browser storage — fictional people, nothing sent anywhere. Never type real names, SINs or pay into the demo or the Netlify copy.</p></div>
+    <div class="q l-ochre"><h4><span class="t da">DATA</span>How is the data modelled?</h4><p>Every change is an event (who, what, when) applied to tables — so history and the audit log come for free. ~80 record types: employees, timesheets, pay runs, accounts, journals, bills, POs, projects, files.</p></div>
+    <div class="q l-ochre"><h4><span class="t da">DATA</span>How do we migrate our data?</h4><p>From Excel/CSV exports of today's systems: staff, vendors, chart of accounts, opening balances, leave and banked OT, year-to-date pay. Two trial loads; totals must match the old books before go-live.</p></div>
+    <div class="q l-navy"><h4><span class="t se">SECURITY</span>Sign-in, MFA, leavers?</h4><p>Microsoft Entra ID (your Microsoft 365 accounts) single sign-on with MFA. Disable the account in Microsoft and access ends. Roles are assigned in the app by an administrator; every change is logged.</p></div>
+    <div class="q l-navy"><h4><span class="t se">SECURITY</span>Sensitive fields — SIN, bank, pay?</h4><p>Encrypted in the database and masked on screen (e.g. •••••2239). Pay and SIN visible only to HR/payroll roles. Files open only for roles that can see the record — AP files need AP access.</p></div>
+    <div class="q l-green"><h4><span class="t op">OPS</span>Backups, uptime, disaster recovery?</h4><p>Managed database with daily backups and point-in-time restore; files replicated within Canada. Monitoring and alerts; target 99.9% uptime; restore tested before go-live. Records kept 6+ years for CRA.</p></div>
+    <div class="q l-green"><h4><span class="t op">OPS</span>Performance and scale?</h4><p>Sized for hundreds of users across four companies; indexed database queries and paged lists. A load test with a year of real-volume data is part of step 5.</p></div>
+    <div class="q l-green"><h4><span class="t op">OPS</span>Support and updates after go-live?</h4><p>Agree a support plan (response times, a test environment, monthly updates). Releases go to a staging copy first; Alderbrook Group IT gets admin access, runbooks and the source repository.</p></div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 3 ===================== -->
+<section class="page">
+  <div class="stripe"><i style="background:#a33a2a"></i><i style="background:#8a6417"></i><i style="background:#1d5f73"></i><i style="background:#3d6b35"></i><i style="background:#2c3e6b"></i><i style="background:#a33a2a"></i><i style="background:#1d5f73"></i></div>
+  <div class="hd">
+    <h1>Finance, HR &amp; managers — <em>and the honest gaps</em></h1>
+    <div class="hrow"><p class="lead">What each department will ask, then the list of things the demo doesn't do yet — say these before someone else finds them.</p><div class="pills"><span class="pill bg-ochre">Finance</span><span class="pill bg-red">HR &amp; Payroll</span><span class="pill bg-green">Managers</span></div></div>
+  </div>
+
+  <div class="sec" style="margin-top:6px"><span class="sq" style="background:var(--ochre)"></span><h2 style="color:var(--ochre)">Finance</h2></div>
+  <div class="qgrid">
+    <div class="q l-ochre"><h4>Does it replace our accounting system?</h4><p>It covers the general ledger, AP, AR, banking and reconciliation, budgets, fixed assets, inter-company and month-end close for all four companies, with GST. Decide in step 2 whether it replaces the current package or feeds it.</p></div>
+    <div class="q l-ochre"><h4>How do bills, POs and payments flow?</h4><p>Purchase order request → approval → printed PO → goods received → bill (with its invoice files) → 3-way match → approval → payment batch → one journal entry. Each step links to the next and is in the audit log.</p></div>
+    <div class="q l-ochre"><h4>Can anyone change a posted entry or a closed month?</h4><p>No. Posted journals are reversed, not edited, and a closed period refuses back-dated entries. Who did what, and when, is always on record — auditors can be given view-only access.</p></div>
+    <div class="q l-ochre"><h4>Reports and exports?</h4><p>Trial balance, P&amp;L and balance sheet by company and group, budgets vs actual, project budget vs spent. Most lists download as Excel, PDF or CSV.</p></div>
+  </div>
+
+  <div class="sec"><span class="sq" style="background:var(--red)"></span><h2 style="color:var(--red)">HR &amp; Payroll</h2></div>
+  <div class="qgrid">
+    <div class="q l-red"><h4>Is the payroll calculation CRA-correct?</h4><p>Not in the demo — its tax figures are illustrative. The live build uses CRA-certified formulas (federal + BC, CPP/CPP2, EI) checked against CRA's PDOC, then two real pay runs side-by-side before switching.</p></div>
+    <div class="q l-red"><h4>T4s, ROEs, remittances?</h4><p>T4 boxes build from posted pay runs; ROEs draft from end-of-employment; PD7A remittances are tracked to their due dates. In the demo these are produced for filing by hand (ROE Web, CRA) — electronic filing is a later step.</p></div>
+    <div class="q l-red"><h4>Who can see salaries and SINs?</h4><p>HR and payroll roles only. Managers see their team's time, leave and reviews — not pay. Employees see their own pay statements, T4 and documents.</p></div>
+    <div class="q l-red"><h4>BC rules — overtime, stat holidays, banked time?</h4><p>Daily and weekly overtime (1.5× after 8 h / 40 h, 2× after 12 h), stat holidays, and banked OT with an 8-hour daily limit are built in and shown on timesheets and balances. Settings are per company.</p></div>
+  </div>
+
+  <div class="sec"><span class="sq" style="background:var(--navy)"></span><h2 style="color:var(--navy)">Department managers</h2></div>
+  <div class="qgrid">
+    <div class="q l-navy"><h4>How much extra work is this for me?</h4><p>Less: one Approvals page for timesheets, time off, expenses, purchases and travel — approve with a note, from a phone. Hiring requests and new projects are one form each, with status you can see.</p></div>
+    <div class="q l-navy"><h4>What if I'm away — who approves?</h4><p>If you're on approved full-day time off when a request is sent, it also goes to your own manager — the first decision counts. A “delegate my approvals while I'm away” setting is on the build list (not in the demo).</p></div>
+  </div>
+
+  <div class="gaps">
+    <h3>Say it straight — what the demo does not do yet (all in the build plan)</h3>
+    <ul>
+      <li>No server, real sign-in or passwords — data stays in one browser</li>
+      <li>Payroll tax is illustrative, not CRA-certified</li>
+      <li>No direct-deposit (EFT/CPA-005) bank file yet</li>
+      <li>No electronic filing to CRA / Service Canada</li>
+      <li>Emails are simulated inside the app, not sent</li>
+      <li>No live bank feeds — statements are imported</li>
+      <li>No open API for other systems yet</li>
+      <li>Dollars (CAD) only; English only</li>
+      <li>No native phone app or offline mode</li>
+      <li>No approval delegation setting for holidays</li>
+    </ul>
+  </div>
+
+  <div class="close">
+    <div class="box" style="border-left:3px solid var(--navy)">
+      <h3 style="color:var(--navy)">Questions to ask them back</h3>
+      <ul>
+        <li>Which systems and spreadsheets do we switch off — and when do their contracts end?</li>
+        <li>Do we keep the current accounting package, or replace it?</li>
+        <li>Who is the champion in each company, and who signs off each checkpoint?</li>
+        <li>Must payroll go live before the 2027 tax year starts, or after year-end?</li>
+      </ul>
+    </div>
+    <div class="box" style="border-left:3px solid var(--ochre)">
+      <h3 style="color:var(--ochre)">If you don't know the answer</h3>
+      <ul>
+        <li>“Good question — that's decided in step 2 (Discover &amp; map); I'll note it.”</li>
+        <li>Never promise a date, price or integration on the spot — write it down.</li>
+        <li>Show, don't tell: open the screen in the demo (press / to search).</li>
+        <li>Keep the parking-lot list and send it with the rollout plan after the meeting.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

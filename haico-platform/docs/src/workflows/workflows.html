@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DEMO Enterprise Platform — Demo Workflows</title>
+<link rel="stylesheet" href="../base.css">
+<style>
+  body{font-size:8.4pt;line-height:1.32}
+  :root{--A:#1d5f73;--B:#a33a2a;--C:#3d6b35;--D:#2c3e6b;--E:#a87a16;
+        --mc:#1d5f73;--lf:#3d6b35;--pr:#a33a2a;--do:#b07d1a;--rd:#7a5418;--ob:#2c3e6b;--ec:#5b6b2e;--sa:#22262a;--loop:#6b6259}
+  .stripe{display:flex;width:118px;height:4px;margin:0 0 6px}
+  .stripe i{flex:1}
+  .av{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;font-size:5.9pt;font-weight:700;letter-spacing:0;flex:none;border:1.5px solid #fff;margin-left:-3px}
+  .av:first-child{margin-left:0}
+  .avs{display:inline-flex;align-items:center}
+  .mc{background:var(--mc)}.lf{background:var(--lf)}.pr{background:var(--pr)}.do{background:var(--do)}.rd{background:var(--rd)}.ob{background:var(--ob)}.ec{background:var(--ec)}.sa{background:var(--sa)}.lp{background:var(--loop)}
+  /* page 1 */
+  .p1hd{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;border-bottom:2px solid var(--rule);padding-bottom:7px;margin-bottom:10px}
+  .p1hd h1{font-size:20pt;margin-bottom:3px}
+  .p1hd h1 em{font-style:normal;color:var(--red)}
+  .p1hd .lead{font-size:9pt;margin:0;max-width:5.4in}
+  .every{flex:none;width:3.35in;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:6px 10px;font-size:7.8pt;color:#3a3f45}
+  .every .oc{display:block;margin-top:3px;padding-top:3px;border-top:1px dashed var(--line);color:var(--teal)}
+  .opts{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+  .opt{border:1px solid var(--line);border-top:5px solid var(--c);border-radius:9px;background:var(--card);padding:8px 10px 9px;display:flex;flex-direction:column;height:5.75in}
+  .opt .top{display:flex;gap:7px;align-items:flex-start}
+  .opt .let{width:25px;height:25px;border-radius:5px;background:var(--c);color:#fff;font-weight:700;font-size:12pt;display:grid;place-items:center;flex:none}
+  .opt h3{font-size:12pt;line-height:1.1;margin:1px 0 2px}
+  .opt .sub{font-size:7.6pt;color:var(--muted);line-height:1.25}
+  .opt .big{display:flex;align-items:baseline;gap:3px;color:var(--c);margin:7px 0 4px;padding-top:6px;border-top:1px dashed var(--line)}
+  .opt .big b{font-size:17pt;font-family:"Bitstream Charter",Georgia,serif}
+  .opt .big small{font-size:6.8pt;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;font-weight:700;margin-right:9px}
+  .bar{height:5px;border-radius:3px;background:#ece6d9;margin:7px 0 2px}
+  .bar i{display:block;height:100%;background:var(--c);border-radius:3px}
+  .opt .pct{font-size:7.4pt;color:var(--muted)}
+  .opt .k{font-size:6.6pt;letter-spacing:.12em;font-weight:700;color:var(--muted);text-transform:uppercase;margin:8px 0 2px}
+  .opt .v{font-size:8.4pt;font-weight:700;line-height:1.28}
+  .opt ol{margin:0;padding-left:15px;font-size:8pt}
+  .opt ol li{margin:0 0 2px}
+  .opt ol li::marker{color:var(--c);font-weight:700}
+  .opt .foot{margin-top:auto;font-size:7.6pt;font-weight:700;color:var(--c)}
+  /* option pages */
+  .ohd{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:2.5px solid var(--c);padding-bottom:7px;margin-bottom:10px}
+  .ohd .l{display:flex;align-items:center;gap:10px}
+  .ohd .let{width:34px;height:34px;border-radius:7px;background:var(--c);color:#fff;font-weight:700;font-size:16pt;display:grid;place-items:center}
+  .ohd h1{font-size:18pt;line-height:1.05}
+  .ohd .sub{font-size:8.8pt;color:var(--muted)}
+  .ohd .r{display:flex;align-items:baseline;gap:4px;color:var(--muted);font-size:8pt}
+  .ohd .r b{font-size:14pt;color:var(--c);font-family:"Bitstream Charter",Georgia,serif}
+  .ohd .r .avs{margin-left:8px;align-self:center}
+  .flow{display:grid;grid-template-columns:1fr 20px 1fr 20px 1fr 20px 1fr;align-items:stretch}
+  .flow.f3{grid-template-columns:1fr 22px 1fr 22px 1fr}
+  .flow .ar{display:flex;align-items:center;justify-content:center;color:#8a8f96;font-size:10pt}
+  .step{border:1px solid var(--line);border-top:4px solid var(--c);border-radius:8px;background:var(--card);padding:6px 10px 8px;display:flex;flex-direction:column}
+  .step .who{display:flex;align-items:center;gap:6px;font-size:7.4pt;font-weight:700;color:var(--muted);margin-bottom:4px}
+  .step .no{width:19px;height:19px;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-size:8pt;font-weight:700;flex:none}
+  .step h3{font-size:10.8pt;margin:0 0 4px;line-height:1.15}
+  .step ul{list-style:none;padding:0;margin:0}
+  .step li{position:relative;padding-left:10px;font-size:8pt;line-height:1.3;margin:0 0 3px}
+  .step li::before{content:"";position:absolute;left:0;top:.48em;width:5px;height:5px;border-radius:50%;background:var(--c)}
+  .step .sl{margin-top:auto;border-top:1px dashed #d8cdb8;padding-top:5px;font-size:8pt;color:#4a4f55}
+  .step .sl b{color:var(--c);font-style:normal}
+  .step .sl i{font-style:italic}
+  .conn{display:block;width:100%;height:22px}
+  .tall .step{min-height:248px}
+  .relay .step{min-height:200px}
+  .notes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:9px}
+  .note{border:1px dashed #d9cdb5;border-radius:6px;padding:5px 9px;font-size:7.7pt;background:var(--card);color:#3a3f45}
+  .banner{background:#f6efdc;border:1px solid #e8dcbc;border-radius:6px;padding:5px 10px;font-size:7.9pt;margin:0 0 9px;color:#4a3f22}
+  /* follow the money */
+  .lane{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:8px;background:var(--card);padding:6px 10px 9px;margin-bottom:9px}
+  .lane .lh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+  .lane .lh b{font-family:"Bitstream Charter",Georgia,serif;font-size:11.5pt;color:var(--c)}
+  .lane .lh small{font-size:7.4pt;font-weight:700;color:var(--muted)}
+  .lane .row{display:flex;align-items:stretch}
+  .lane .ar{width:20px;flex:none;display:flex;align-items:center;justify-content:center;color:#8a8f96}
+  .pbox{flex:1;display:flex;align-items:center;gap:8px;background:#f7f2e8;border:1px solid var(--line);border-radius:6px;padding:6px 9px;min-height:84px}
+  .pbox .av{width:24px;height:24px;font-size:7pt;margin:0;border:0}
+  .pbox b{display:block;font-size:9pt}
+  .pbox span.t{display:block;font-size:7.9pt;line-height:1.28;color:#3a3f45}
+  /* threads */
+  .threads{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:6px 10px 4px;margin-top:9px}
+  .threads .k{font-size:7pt;letter-spacing:.14em;font-weight:700;color:var(--muted);text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<!-- ===================== PAGE 1 · pick your workflow ===================== -->
+<section class="page">
+  <div class="stripe"><i style="background:#a33a2a"></i><i style="background:#8a6417"></i><i style="background:#1d5f73"></i><i style="background:#3d6b35"></i><i style="background:#2c3e6b"></i><i style="background:#a33a2a"></i><i style="background:#1d5f73"></i></div>
+  <div class="p1hd">
+    <div>
+      <h1>DEMO Enterprise Platform — <em>pick your workflow</em></h1>
+      <p class="lead">Five ways to present the same system. Each has its own flowchart on the next pages. Choose by who's in the room and how much time you have.</p>
+    </div>
+    <div class="every"><b>Every option:</b> pick a name in the sign-in list → <b>OK</b> (no password). Change person with <b>Switch role</b> (top right). The list is already sorted in presentation order.
+      <span class="oc">On the first page choose <b>Group of companies</b> — or <b>One company</b> (Alderbrook Holdings with the same eight departments, people and approvals; the same steps work, without company switching).</span></div>
+  </div>
+
+  <div class="opts">
+    <div class="opt" style="--c:var(--A)">
+      <div class="top"><span class="let">A</span><div><h3>The Relay</h3><div class="sub">Person by person — every page in the system</div></div></div>
+      <div class="big"><b>25</b><small>min</small><b>8</b><small>sign-ins</small></div>
+      <div class="avs"><span class="av mc">MC</span><span class="av lf">LF</span><span class="av pr">PR</span><span class="av do">DO</span><span class="av rd">RD</span><span class="av ob">OB</span><span class="av ec">EC</span><span class="av sa">SA</span></div>
+      <div class="bar"><i style="width:100%"></i></div><div class="pct">Every page</div>
+      <div class="k">Best for</div><div class="v">Full walkthrough · training · first-time viewers</div>
+      <div class="k">The flow</div>
+      <ol><li>Maya — enter, ask, explore</li><li>Liam — approve the team</li><li>Priya — HR, benefits, pension</li><li>Daniel — pay, match, close</li><li>Rachel — the ready pay run</li><li>Olivia — approve, oversee</li><li>Close the loop · Admin</li></ol>
+      <div class="k">Pick it if</div><div class="v">you want to show everything</div>
+      <div class="foot">Flowchart on page 2</div>
+    </div>
+    <div class="opt" style="--c:var(--B)">
+      <div class="top"><span class="let">B</span><div><h3>Follow the Money</h3><div class="sub">Three stories from request to done</div></div></div>
+      <div class="big"><b>15</b><small>min</small><b>7</b><small>sign-ins</small></div>
+      <div class="avs"><span class="av mc">MC</span><span class="av lf">LF</span><span class="av do">DO</span><span class="av rd">RD</span><span class="av ob">OB</span><span class="av ec">EC</span><span class="av sa">SA</span></div>
+      <div class="bar"><i style="width:45%"></i></div><div class="pct">About 45% of pages</div>
+      <div class="k">Best for</div><div class="v">Finance · auditors · board members</div>
+      <div class="k">The flow</div>
+      <ol><li>$28,500 purchase, 6 hand-offs</li><li>$640 expense, 4 hand-offs</li><li>Pay run, ready to approve</li><li>Prove it: rules + audit log</li></ol>
+      <div class="k">Pick it if</div><div class="v">they care about approvals and controls</div>
+      <div class="foot">Flowchart on page 3</div>
+    </div>
+    <div class="opt" style="--c:var(--C)">
+      <div class="top"><span class="let">C</span><div><h3>Department Tour</h3><div class="sub">One module at a time, in plain order</div></div></div>
+      <div class="big"><b>20</b><small>min</small><b>8</b><small>sign-ins</small></div>
+      <div class="avs"><span class="av pr">PR</span><span class="av mc">MC</span><span class="av lf">LF</span><span class="av rd">RD</span><span class="av do">DO</span><span class="av ec">EC</span><span class="av ob">OB</span><span class="av sa">SA</span></div>
+      <div class="bar"><i style="width:85%"></i></div><div class="pct">About 85% of pages</div>
+      <div class="k">Best for</div><div class="v">Department heads choosing a system</div>
+      <div class="k">The flow</div>
+      <ol><li>People &amp; HR</li><li>Time &amp; time off</li><li>Reviews, Benefits &amp; Pension</li><li>Payroll</li><li>Finance</li><li>Purchasing &amp; stock</li><li>Reports &amp; control</li></ol>
+      <div class="k">Pick it if</div><div class="v">each team wants to see its own area</div>
+      <div class="foot">Flowchart on page 4</div>
+    </div>
+    <div class="opt" style="--c:var(--D)">
+      <div class="top"><span class="let">D</span><div><h3>Executive 10-Minute</h3><div class="sub">Mostly the CEO's view, a few big wins</div></div></div>
+      <div class="big"><b>10</b><small>min</small><b>2</b><small>sign-ins</small></div>
+      <div class="avs"><span class="av ob">OB</span><span class="av sa">SA</span></div>
+      <div class="bar"><i style="width:30%"></i></div><div class="pct">About 30% of pages</div>
+      <div class="k">Best for</div><div class="v">CEO · board · busy leaders</div>
+      <div class="k">The flow</div>
+      <ol><li>CEO's home page</li><li>Approve in one click</li><li>The numbers</li><li>Contracts, all teams</li><li>Nothing is hidden</li><li>Make it yours</li></ol>
+      <div class="k">Pick it if</div><div class="v">time is short</div>
+      <div class="foot">Flowchart on page 5</div>
+    </div>
+    <div class="opt" style="--c:var(--E)">
+      <div class="top"><span class="let">E</span><div><h3>What's New</h3><div class="sub">Only the latest changes</div></div></div>
+      <div class="big"><b>8</b><small>min</small><b>4</b><small>sign-ins</small></div>
+      <div class="avs"><span class="av mc">MC</span><span class="av pr">PR</span><span class="av do">DO</span><span class="av rd">RD</span></div>
+      <div class="bar"><i style="width:20%"></i></div><div class="pct">New features only</div>
+      <div class="k">Best for</div><div class="v">People who saw the last demo</div>
+      <div class="k">The flow</div>
+      <ol><li>Banked overtime</li><li>Profile in one row</li><li>Choose a look</li><li>Reviews, Benefits &amp; Pension</li><li>Payroll Administrator</li><li>Smoother &amp; sorted</li></ol>
+      <div class="k">Pick it if</div><div class="v">they've seen it before</div>
+      <div class="foot">Flowchart on page 6</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 2 · A The Relay ===================== -->
+<section class="page relay" style="--c:var(--A)">
+  <div class="ohd">
+    <div class="l"><span class="let">A</span><div><h1>The Relay</h1><div class="sub">Person by person — every page in the system</div></div></div>
+    <div class="r"><b>25</b>min <b style="margin-left:8px">8</b>sign-ins <span class="avs"><span class="av mc">MC</span><span class="av lf">LF</span><span class="av pr">PR</span><span class="av do">DO</span><span class="av rd">RD</span><span class="av ob">OB</span><span class="av ec">EC</span><span class="av sa">SA</span></span></div>
+  </div>
+
+  <div class="flow">
+    <div class="step" style="--c:var(--mc)"><div class="who"><span class="no">1</span><span class="av mc">MC</span>Maya</div><h3>Employee: enter, ask, explore</h3>
+      <ul><li><b>My Time</b>: 6 h + 3 banked → red error; fix to 2 → Send</li><li><b>My Time Off</b>: banked card · ask 2 days</li><li><b>Requests</b>: $28,500 grapple (purchase order) · $640 boots · travel</li><li><b>Profile</b> 5 tabs · <b>Choose a look</b> · Feedback</li></ul></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--lf)"><div class="who"><span class="no">2</span><span class="av lf">LF</span>Liam</div><h3>Manager: approve the team</h3>
+      <ul><li><b>Approvals</b>: timesheet, time off, $640, travel ✓ (under $5,000)</li><li>$28,500 → goes on to director level (over $5,000)</li><li><b>My Team</b>: new task · finish Maya's review</li><li><b>Contracts</b>: upload one for the team</li></ul></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--pr)"><div class="who"><span class="no">3</span><span class="av pr">PR</span>Priya</div><h3>HR: people, benefits, pension</h3>
+      <ul><li>Add employee → onboarding · job opening</li><li>Certificates reminder · Time &amp; Attendance</li><li><b>Reviews, Benefits &amp; Pension</b>: cycle · enrol</li><li>End employment → draft ROE</li></ul></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--do)"><div class="who"><span class="no">4</span><span class="av do">DO</span>Daniel</div><h3>Finance: pay, match, close</h3>
+      <ul><li>Approve finance bill INV-10245 only</li><li>Pay back Maya's $640 (Finance queue) · payment batch</li><li>Matching · AR · bank auto-match</li><li>Accounting · Pension read-only · Reports</li></ul></div>
+  </div>
+  <svg class="conn" viewBox="0 0 950 22" preserveAspectRatio="none"><path d="M838 0 V10 H112 V18" fill="none" stroke="#8a8f96" stroke-width="1.3"/><path d="M108 16 L112 22 L116 16 Z" fill="#8a8f96"/></svg>
+  <div class="flow">
+    <div class="step" style="--c:var(--rd)"><div class="who"><span class="no">5</span><span class="av rd">RD</span>Rachel</div><h3>Payroll: a run ready to go</h3>
+      <ul><li><b>PR-2026-0019</b> → Calculate (6, no warnings)</li><li>Send for approval → waits on the Executive Director (Olivia)</li><li>Issue the ROE · record the PD7A</li><li>Statements · Year-end · By pay period</li></ul></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--ob)"><div class="who"><span class="no">6</span><span class="av ob">OB</span>Olivia</div><h3>CEO: approve and oversee</h3>
+      <ul><li>Approve payroll · $28,500 (director level) · job opening</li><li>Contracts across every team</li><li>Income statement · Balance sheet</li><li>Headcount · History of the day</li></ul></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--rd)"><div class="who"><span class="no">7</span><span class="avs"><span class="av rd">RD</span><span class="av ec">EC</span><span class="av do">DO</span><span class="av mc">MC</span></span>4 people</div><h3>Close the loop</h3>
+      <ul><li>Rachel posts the payroll</li><li>Ethan receives the grapple (the PO was made at Olivia's approval)</li><li>Daniel: invoice amount → close the PO</li><li>Maya: requests approved · notifications</li></ul></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--sa)"><div class="who"><span class="no">8</span><span class="av sa">SA</span>Admin</div><h3>Admin: rules and trail</h3>
+      <ul><li>Users &amp; access · Companies</li><li>Approval rules → change a threshold</li><li>Audit log: the whole demo · Feedback</li><li>Page &amp; Experience · Settings · How-to</li></ul></div>
+  </div>
+
+  <div class="threads">
+    <div class="k">Follow the threads — what passes from person to person</div>
+    <svg viewBox="0 0 930 150" width="100%" style="display:block;margin-top:2px" font-family="Liberation Sans, Arial, sans-serif">
+      <!-- columns: x = 150 + i*108 -->
+      <g stroke="#e3ddd2" stroke-dasharray="3 3">
+        <line x1="150" y1="28" x2="150" y2="146"/><line x1="258" y1="28" x2="258" y2="146"/><line x1="366" y1="28" x2="366" y2="146"/><line x1="474" y1="28" x2="474" y2="146"/>
+        <line x1="582" y1="28" x2="582" y2="146"/><line x1="690" y1="28" x2="690" y2="146"/><line x1="798" y1="28" x2="798" y2="146"/><line x1="906" y1="28" x2="906" y2="146"/>
+      </g>
+      <g font-size="7" font-weight="700" fill="#fff" text-anchor="middle">
+        <circle cx="150" cy="14" r="9" fill="#1d5f73"/><text x="150" y="16.5">MC</text>
+        <circle cx="258" cy="14" r="9" fill="#3d6b35"/><text x="258" y="16.5">LF</text>
+        <circle cx="366" cy="14" r="9" fill="#a33a2a"/><text x="366" y="16.5">PR</text>
+        <circle cx="474" cy="14" r="9" fill="#b07d1a"/><text x="474" y="16.5">DO</text>
+        <circle cx="582" cy="14" r="9" fill="#7a5418"/><text x="582" y="16.5">RD</text>
+        <circle cx="690" cy="14" r="9" fill="#2c3e6b"/><text x="690" y="16.5">OB</text>
+        <circle cx="798" cy="14" r="9" fill="#6b6259"/><text x="798" y="17" font-size="9">↺</text>
+        <circle cx="906" cy="14" r="9" fill="#22262a"/><text x="906" y="16.5">SA</text>
+      </g>
+      <g font-size="6.5" fill="#5d6670">
+        <text x="162" y="10">1</text><text x="270" y="10">2</text><text x="378" y="10">3</text><text x="486" y="10">4</text><text x="594" y="10">5</text><text x="702" y="10">6</text><text x="810" y="10">7</text><text x="918" y="10">8</text>
+      </g>
+      <!-- thread rows -->
+      <g font-size="7.6" font-weight="700">
+        <text x="0" y="47" fill="#a33a2a">Purchase $28,500</text>
+        <text x="0" y="71" fill="#a87a16">Expense $640</text>
+        <text x="0" y="95" fill="#7a5418">Pay run</text>
+        <text x="0" y="119" fill="#3d6b35">Hiring &amp; leaving</text>
+        <text x="0" y="143" fill="#2c3e6b">Feedback &amp; audit</text>
+      </g>
+      <g stroke-width="3.2" stroke-linecap="round">
+        <line x1="150" y1="44" x2="798" y2="44" stroke="#a33a2a"/>
+        <line x1="150" y1="68" x2="798" y2="68" stroke="#a87a16"/>
+        <line x1="582" y1="92" x2="798" y2="92" stroke="#7a5418"/>
+        <line x1="366" y1="116" x2="690" y2="116" stroke="#3d6b35"/>
+        <line x1="150" y1="140" x2="906" y2="140" stroke="#2c3e6b"/>
+      </g>
+      <g fill="#fff" stroke-width="2">
+        <g stroke="#a33a2a"><circle cx="150" cy="44" r="4"/><circle cx="258" cy="44" r="4"/><circle cx="690" cy="44" r="4"/><circle cx="798" cy="44" r="4"/></g>
+        <g stroke="#a87a16"><circle cx="150" cy="68" r="4"/><circle cx="258" cy="68" r="4"/><circle cx="474" cy="68" r="4"/><circle cx="798" cy="68" r="4"/></g>
+        <g stroke="#7a5418"><circle cx="582" cy="92" r="4"/><circle cx="690" cy="92" r="4"/><circle cx="798" cy="92" r="4"/></g>
+        <g stroke="#3d6b35"><circle cx="366" cy="116" r="4"/><circle cx="582" cy="116" r="4"/><circle cx="690" cy="116" r="4"/></g>
+        <g stroke="#2c3e6b"><circle cx="150" cy="140" r="4"/><circle cx="906" cy="140" r="4"/></g>
+      </g>
+      <g font-size="6.6" font-weight="700">
+        <g fill="#a33a2a"><text x="156" y="38">asks</text><text x="264" y="38">✓</text><text x="696" y="38">✓ director · PO made</text><text x="804" y="38">received · closed</text></g>
+        <g fill="#a87a16"><text x="156" y="62">asks</text><text x="264" y="62">✓</text><text x="480" y="62">paid back</text><text x="804" y="62">sees it</text></g>
+        <g fill="#7a5418"><text x="588" y="86">calculate · send</text><text x="696" y="86">✓ approved</text><text x="804" y="86">posted</text></g>
+        <g fill="#3d6b35"><text x="372" y="110">opening · ROE</text><text x="588" y="110">ROE issued</text><text x="696" y="110">✓ opening</text></g>
+        <g fill="#2c3e6b"><text x="156" y="134">note</text><text x="836" y="134">resolved · audited</text></g>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ===================== PAGE 3 · B Follow the Money ===================== -->
+<section class="page" style="--c:var(--B)">
+  <div class="ohd">
+    <div class="l"><span class="let">B</span><div><h1>Follow the Money</h1><div class="sub">Three stories from request to done</div></div></div>
+    <div class="r"><b>15</b>min <b style="margin-left:8px">7</b>sign-ins <span class="avs"><span class="av mc">MC</span><span class="av lf">LF</span><span class="av do">DO</span><span class="av rd">RD</span><span class="av ob">OB</span><span class="av ec">EC</span><span class="av sa">SA</span></span></div>
+  </div>
+
+  <div class="lane" style="--c:var(--B)">
+    <div class="lh"><b>① Purchase — $28,500 grapple</b><small>Shows: thresholds, two-step approval, PO, receiving</small></div>
+    <div class="row">
+      <div class="pbox"><span class="av mc">MC</span><div><b>Maya</b><span class="t">asks: Requests › New Purchase Order</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av lf">LF</span><div><b>Liam</b><span class="t">approves step 1</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av ob">OB</span><div><b>Olivia</b><span class="t">over $5,000 → director level approves; the PO is made</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av ec">EC</span><div><b>Ethan</b><span class="t">receives the goods</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av do">DO</span><div><b>Daniel</b><span class="t">records the invoice, closes the PO</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av mc">MC</span><div><b>Maya</b><span class="t">sees it done</span></div></div>
+    </div>
+  </div>
+
+  <div class="lane" style="--c:var(--E)">
+    <div class="lh"><b>② Expense — $640 safety boots</b><small>Shows: one-step approval, reimbursement</small></div>
+    <div class="row">
+      <div class="pbox"><span class="av mc">MC</span><div><b>Maya</b><span class="t">claims with receipt: Requests › New Expense Claim</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av lf">LF</span><div><b>Liam</b><span class="t">approves — under $5,000, done</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av do">DO</span><div><b>Daniel</b><span class="t">pays it back (Finance queue → Record as paid)</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av mc">MC</span><div><b>Maya</b><span class="t">sees “Processed”</span></div></div>
+    </div>
+  </div>
+
+  <div class="lane" style="--c:var(--rd)">
+    <div class="lh"><b>③ Pay run — Alderbrook Holdings salaried</b><small>Shows: banked OT rules, payroll controls, posting</small></div>
+    <div class="row">
+      <div class="pbox"><span class="av mc">MC</span><div><b>Maya</b><span class="t">sends timesheet (2 h banked)</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av lf">LF</span><div><b>Liam</b><span class="t">approves it</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av rd">RD</span><div><b>Rachel</b><span class="t">calculates PR-2026-0019, sends</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av ob">OB</span><div><b>Olivia</b><span class="t">approves payroll (Executive Director step)</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av rd">RD</span><div><b>Rachel</b><span class="t">posts: journal + statements</span></div></div>
+    </div>
+  </div>
+
+  <div class="lane" style="--c:var(--sa)">
+    <div class="lh"><b>④ Prove it</b><small>Shows: rules are editable, nothing is hidden</small></div>
+    <div class="row">
+      <div class="pbox"><span class="av sa">SA</span><div><b>Admin</b><span class="t">changes a threshold in Administration › Approval rules</span></div></div><span class="ar">→</span>
+      <div class="pbox"><span class="av sa">SA</span><div><b>Admin</b><span class="t">Audit log: every step, who and when</span></div></div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><b>Tip:</b> keep two browser tabs open — present in one, use the other to switch person quickly.</div>
+    <div class="note"><b>Thresholds:</b> under $5,000 the manager's approval is enough; from $5,000 it also goes to director level (Executive Director or CEO) — purchase orders only when over $5,000.</div>
+    <div class="note"><b>Finish strong:</b> the Audit log shows every click above, with who and when.</div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 4 · C Department Tour ===================== -->
+<section class="page tall" style="--c:var(--C)">
+  <div class="ohd">
+    <div class="l"><span class="let">C</span><div><h1>Department Tour</h1><div class="sub">One module at a time, in plain order</div></div></div>
+    <div class="r"><b>20</b>min <b style="margin-left:8px">8</b>sign-ins <span class="avs"><span class="av pr">PR</span><span class="av mc">MC</span><span class="av lf">LF</span><span class="av rd">RD</span><span class="av do">DO</span><span class="av ec">EC</span><span class="av ob">OB</span><span class="av sa">SA</span></span></div>
+  </div>
+
+  <div class="flow">
+    <div class="step" style="--c:var(--pr)"><div class="who"><span class="no">1</span><span class="av pr">PR</span>Priya</div><h3>People &amp; HR</h3>
+      <ul><li>Employees · Maya's record</li><li>Add employee → onboarding</li><li>Hiring · Departments · Org chart</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Every person's record, from first day to last.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--mc)"><div class="who"><span class="no">2</span><span class="avs"><span class="av mc">MC</span><span class="av lf">LF</span></span>Maya + Liam</div><h3>Time &amp; time off</h3>
+      <ul><li>Timesheet: banked OT ≤ balance, ≤ 8 h/day</li><li>Time off with balances · Calendar</li><li>Liam approves both</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Hours and time off fill in by themselves — the rules are built in.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--pr)"><div class="who"><span class="no">3</span><span class="avs"><span class="av pr">PR</span><span class="av do">DO</span></span>Priya + Daniel</div><h3>Reviews, Benefits &amp; Pension</h3>
+      <ul><li>Priya: review cycle · enrol · pension</li><li>Daniel: same pages, view + download</li><li>Employee sees own pension</li></ul>
+      <div class="sl"><b>Say:</b> <i>“HR keeps it current; Finance can see it but not change it.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--rd)"><div class="who"><span class="no">4</span><span class="av rd">RD</span>Rachel</div><h3>Payroll</h3>
+      <ul><li>Ready run → Calculate → Send</li><li>ROE · PD7A remittance</li><li>Statements · Year-end</li></ul>
+      <div class="sl"><b>Say:</b> <i>“From approved hours to pay statements, with a check at every step.”</i></div></div>
+  </div>
+  <svg class="conn" viewBox="0 0 950 22" preserveAspectRatio="none"><path d="M838 0 V10 H112 V18" fill="none" stroke="#8a8f96" stroke-width="1.3"/><path d="M108 16 L112 22 L116 16 Z" fill="#8a8f96"/></svg>
+  <div class="flow">
+    <div class="step" style="--c:var(--do)"><div class="who"><span class="no">5</span><span class="av do">DO</span>Daniel</div><h3>Finance</h3>
+      <ul><li>AP bills · payment batch · claims</li><li>AR invoice · bank auto-match</li><li>Month-end · budgets · assets</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Bills, payments, the bank and month-end in one place.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--mc)"><div class="who"><span class="no">6</span><span class="avs"><span class="av mc">MC</span><span class="av do">DO</span><span class="av ec">EC</span></span>3 people</div><h3>Purchasing &amp; stock</h3>
+      <ul><li>Maya's purchase order → approvals → PO</li><li>Ethan receives · 3-way match</li><li>Stock · items · sales orders</li></ul>
+      <div class="sl"><b>Say:</b> <i>“From a request to goods received, matched to the bill.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--ob)"><div class="who"><span class="no">7</span><span class="avs"><span class="av ob">OB</span><span class="av sa">SA</span></span>Olivia + Admin</div><h3>Reports &amp; control</h3>
+      <ul><li>Olivia: P&amp;L · balance sheet · history</li><li>Admin: approval rules · audit log</li><li>Page &amp; Experience · Settings</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Every number, and a record of who did what.”</i></div></div>
+    <span></span><div></div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><b>Tip:</b> let each department head take the mouse for their own stop.</div>
+    <div class="note"><b>Order:</b> people first, money last — it follows how work flows through the group.</div>
+    <div class="note"><b>Skip freely:</b> each stop stands on its own.</div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 5 · D Executive 10-Minute ===================== -->
+<section class="page tall" style="--c:var(--D)">
+  <div class="ohd">
+    <div class="l"><span class="let">D</span><div><h1>Executive 10-Minute</h1><div class="sub">Mostly the CEO's view, a few big wins</div></div></div>
+    <div class="r"><b>10</b>min <b style="margin-left:8px">2</b>sign-ins <span class="avs"><span class="av ob">OB</span><span class="av sa">SA</span></span></div>
+  </div>
+  <div class="banner"><b>5 minutes before:</b> as Maya send the $28,500 purchase order · as Liam approve it · as Rachel calculate and send PR-2026-0019 · as Priya post a job opening with Olivia as hiring manager. Then present only as Olivia.</div>
+
+  <div class="flow f3">
+    <div class="step" style="--c:var(--ob)"><div class="who"><span class="no">1</span><span class="av ob">OB</span>Olivia</div><h3>The CEO's home page</h3>
+      <ul><li>Sign in as Olivia → OK</li><li>At a glance: cash · people · bills · owed to us</li><li>“Waiting on you” list on the same page</li></ul>
+      <div class="sl"><b>Say:</b> <i>“One screen tells you how the whole group is doing.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--ob)"><div class="who"><span class="no">2</span><span class="av ob">OB</span>Olivia</div><h3>Approve in one click</h3>
+      <ul><li>Right on the home page:</li><li>payroll PR-2026-0019 · $28,500 purchase order</li><li>the job opening — each with a note</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Nothing sits in an inbox — approve with a note, right here.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--ob)"><div class="who"><span class="no">3</span><span class="av ob">OB</span>Olivia</div><h3>The numbers</h3>
+      <ul><li>Profit &amp; Loss: each company side by side</li><li>Balance sheet · Headcount</li><li>Download to Excel / PDF</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Each company side by side, plus the whole group.”</i></div></div>
+  </div>
+  <svg class="conn" viewBox="0 0 950 22" preserveAspectRatio="none"><path d="M799 0 V10 H151 V18" fill="none" stroke="#8a8f96" stroke-width="1.3"/><path d="M147 16 L151 22 L155 16 Z" fill="#8a8f96"/></svg>
+  <div class="flow f3">
+    <div class="step" style="--c:var(--ob)"><div class="who"><span class="no">4</span><span class="av ob">OB</span>Olivia</div><h3>Contracts, all teams</h3>
+      <ul><li>Who signed what, for how much</li><li>When each one ends</li><li>Who uploaded it, and when</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Every contract, its value and its end date, in one list.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--sa)"><div class="who"><span class="no">5</span><span class="av sa">SA</span>Admin</div><h3>Nothing is hidden</h3>
+      <ul><li>History: everything today</li><li>Audit log: who did what</li><li>Approval rules you can change</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Every action is recorded — who, what and when.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--ob)"><div class="who"><span class="no">6</span><span class="av ob">OB</span>Olivia</div><h3>Make it yours</h3>
+      <ul><li>Palette → Choose a look</li><li>5 looks · light / dark</li><li>Saved per device</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Each person picks how it looks, just for them.”</i></div></div>
+  </div>
+
+  <div class="notes" style="grid-template-columns:1fr 1fr">
+    <div class="note"><b>Say it in one line:</b> “Everything waiting for you, the numbers, and a full record of who did what — in one place.”</div>
+    <div class="note"><b>Questions?</b> Switch to Option C's stops for any area they ask about.</div>
+  </div>
+</section>
+
+<!-- ===================== PAGE 6 · E What's New ===================== -->
+<section class="page tall" style="--c:var(--E)">
+  <div class="ohd">
+    <div class="l"><span class="let">E</span><div><h1>What's New</h1><div class="sub">Only the latest changes</div></div></div>
+    <div class="r"><b>8</b>min <b style="margin-left:8px">4</b>sign-ins <span class="avs"><span class="av mc">MC</span><span class="av pr">PR</span><span class="av do">DO</span><span class="av rd">RD</span></span></div>
+  </div>
+
+  <div class="flow f3">
+    <div class="step" style="--c:var(--mc)"><div class="who"><span class="no">1</span><span class="av mc">MC</span>Maya</div><h3>Banked overtime</h3>
+      <ul><li>Balance next to Vacation · Sick</li><li>Timesheet: 6 + 3 → red error</li><li>“12.00 h left” beside the column</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Banked hours can't be overspent, and you always see what's left.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--mc)"><div class="who"><span class="no">2</span><span class="av mc">MC</span>Maya</div><h3>Profile in one row</h3>
+      <ul><li>Overview · Employment</li><li>Pension &amp; Benefits · Reviews</li><li>Certificates</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Everything about you, one click away.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--mc)"><div class="who"><span class="no">3</span><span class="av mc">MC</span>Maya</div><h3>Choose a look</h3>
+      <ul><li>Palette button → popup</li><li>Sandstone · Coastal · Cedar Bark · Spruce · Slate</li><li>Light / Dark / Follow my device</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Five looks — your choice stays on your device.”</i></div></div>
+  </div>
+  <svg class="conn" viewBox="0 0 950 22" preserveAspectRatio="none"><path d="M799 0 V10 H151 V18" fill="none" stroke="#8a8f96" stroke-width="1.3"/><path d="M147 16 L151 22 L155 16 Z" fill="#8a8f96"/></svg>
+  <div class="flow f3">
+    <div class="step" style="--c:var(--pr)"><div class="who"><span class="no">4</span><span class="avs"><span class="av pr">PR</span><span class="av do">DO</span></span>Priya + Daniel</div><h3>Reviews, Benefits &amp; Pension</h3>
+      <ul><li>Priya: enrol · change a rate</li><li>Daniel: view + download only</li><li>6 plans · group pension</li></ul>
+      <div class="sl"><b>Say:</b> <i>“HR edits; Finance and Payroll can look and download.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--rd)"><div class="who"><span class="no">5</span><span class="av rd">RD</span>Rachel</div><h3>Payroll Administrator</h3>
+      <ul><li>Her own sign-in, 6th in the list</li><li>PR-2026-0019 ready to go</li><li>Calculate → Send → Executive Director</li></ul>
+      <div class="sl"><b>Say:</b> <i>“Payroll is ready the moment they sign in.”</i></div></div>
+    <span class="ar">→</span>
+    <div class="step" style="--c:var(--mc)"><div class="who"><span class="no">6</span><span class="av mc">MC</span>Maya</div><h3>Smoother &amp; sorted</h3>
+      <ul><li>Login list = presentation order</li><li>Pages glide in only on arrival</li><li>New fonts and colours</li></ul>
+      <div class="sl"><b>Say:</b> <i>“The list follows the demo, and pages move smoothly.”</i></div></div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><b>Start with:</b> “Since last time, we've added…” then click straight to each one.</div>
+    <div class="note"><b>Rules to say out loud:</b> banked hours never exceed the balance; regular + banked ≤ 8 h a day.</div>
+    <div class="note"><b>Access:</b> HR edits benefits &amp; pension; Finance and Payroll view and download.</div>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DEMO Enterprise Platform · Live demo script</title>
+<link rel="stylesheet" href="../base.css">
+<style>
+  .bar{height:16px;border-radius:4px;background:var(--red);margin:0 0 30px}
+  .cover{min-height:0;justify-content:flex-start}
+  .cover h1{font-size:30pt;margin:0 0 12px}
+  .cover .lead{font-size:12pt;max-width:6.2in;line-height:1.45}
+  .facts{margin:20px 0 16px}
+  .facts div{border:1px solid var(--line);border-radius:8px;background:var(--card);padding:9px 11px}
+  .facts small{font-size:7pt}
+  .facts b{font-size:15pt;font-family:"Bitstream Charter","Liberation Serif",Georgia,serif}
+  .facts span{font-size:8.3pt;color:var(--muted);line-height:1.3;display:block}
+  .cover .shot{margin:0 0 10px}
+  .coverfoot{display:flex;justify-content:space-between;font-size:8.5pt;color:var(--muted)}
+  .callout{border:1px solid #cfe0c9;background:#eef4ec;border-radius:6px;padding:6px 10px;margin:0 0 10px;font-size:9.3pt}
+  table{font-size:8.6pt}
+  td{padding:4px 6px} th{padding:5px 6px}
+  td.c{text-align:center;width:30px}
+  td.go{width:20%;font-weight:700}
+  td.sy{width:29%;font-style:italic;color:#4a5057}
+  td.no{width:22px;color:var(--muted);font-weight:700}
+  .seq td:first-child{width:30px}
+  .seq td b{display:block}
+  .seq td:last-child{white-space:nowrap}
+  .threads{font-size:8.1pt}
+  .threads td{padding:5px 5px}
+  .threads td:first-child{font-weight:700;width:15%}
+  .threads td:last-child{color:var(--teal);font-weight:700;white-space:nowrap}
+  .acthd{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:8px;background:var(--sand);overflow:hidden;margin:0 0 8px}
+  .acthd .num{width:62px;flex:none;display:grid;place-items:center;color:#fff;font:700 24pt "Bitstream Charter","Liberation Serif",Georgia,serif;background:var(--c)}
+  .acthd .t{flex:1;padding:9px 12px}
+  .acthd h2{border:0;padding:0;margin:0 0 2px;font-size:16pt}
+  .acthd .role{font-size:9pt;color:var(--muted)}
+  .acthd .r{padding:9px 14px;text-align:right;white-space:nowrap}
+  .acthd .r small{display:block;font-size:8pt;color:var(--muted)}
+  .acthd .r b{display:block;font:700 15pt "Bitstream Charter","Liberation Serif",Georgia,serif;margin-top:10px}
+  .signin{border:1px solid var(--line);border-radius:6px;background:var(--card);padding:6px 10px;margin:0 0 8px;font-size:9.2pt}
+  .signin .tag{background:#f3e1dc;color:var(--red);margin-right:6px}
+  .intro{margin:0 0 8px;font-size:9.6pt}
+  .tag.new{background:var(--teal);color:#fff;margin-right:4px}
+  .looks h2{margin-bottom:10px}
+  .looks .shot{width:100%}
+  .looks .grid2 .shot{margin-bottom:6px}
+  .box h3{margin-bottom:6px}
+  .box ul{margin:0;padding-left:16px}
+  .box li{margin:0 0 5px}
+  .rules td:first-child{width:52%}
+  ol.short li{margin:0 0 5px}
+  .fn td:first-child{font-weight:700;width:17%}
+  .fn td:last-child{width:9%;color:var(--teal);font-weight:700}
+  .c1{--c:var(--green)}.c2{--c:var(--teal)}.c3{--c:var(--red)}.c4{--c:var(--ochre)}.c5{--c:var(--navy)}.c6{--c:var(--slate)}.c7{--c:var(--black)}
+</style>
+</head>
+<body>
+
+<!-- 1 · cover -->
+<section class="page cover">
+  <div class="bar"></div>
+  <h1>DEMO Enterprise Platform<br>Live demo script</h1>
+  <p class="lead">Who signs in, which pages to show, what to click and what to say — one connected story that touches every function, from an employee's request to the CEO's approval and the administrator's audit trail.</p>
+  <div class="facts">
+    <div><small>Running time</small><b>about 65 min</b><span>30-minute version on page 4</span></div>
+    <div><small>Sign-ins</small><b>7 acts</b><span>6 demo roles + 2 names from the list</span></div>
+    <div><small>Password</small><b>none</b><span>pick a name, press OK</span></div>
+    <div><small>Data</small><b>fictional</b><span>4 companies · 19 people</span></div>
+  </div>
+  <img class="shot" src="s04-liam-home.jpg" alt="Liam Foster's Home with nine things waiting">
+  <div class="coverfoot"><span>DEMO Enterprise Platform · demo edition · November 2026</span><span>All names, figures and identifiers are fictional.</span></div>
+</section>
+
+<!-- 2 · sign-in sequence -->
+<section class="page">
+  <h2>The sign-in sequence</h2>
+  <p class="lead">Sign in as these people in this order. Each act picks up what the previous one created, so the same requests travel all the way through the group.</p>
+  <div class="callout">On the first page, <b>How do you want to see the demo?</b>, choose <b>Group of companies</b> (or <b>One company</b>; the same people and steps work there too, without company switching).</div>
+  <table class="seq">
+    <thead><tr><th></th><th>Sign in as</th><th>How</th><th>What they show</th><th>Time</th></tr></thead>
+    <tbody>
+      <tr><td><span class="n">1</span></td><td><b>Maya Collins</b><small>Employee · Equipment Operator, Harvest Operations, Ridgeline Timber</small></td><td>Employee button</td><td>Raises everything: hours, time off, a $28,500 purchase order, an expense, a trip, a certificate renewal</td><td>10 min</td></tr>
+      <tr><td><span class="n c2">2</span></td><td><b>Liam Foster</b><small>Manager · Field Supervisor, Ridgeline Timber (Maya's manager)</small></td><td>Manager button</td><td>Approves the team's work, completes a review, assigns a task, uploads a contract</td><td>8 min</td></tr>
+      <tr><td><span class="n c3">3</span></td><td><b>Priya Raman</b><small>HR Manager · Alderbrook Holdings, all companies</small></td><td>HR Manager button</td><td>Hires, onboards, opens a job, runs reviews and benefits, ends an employment</td><td>10 min</td></tr>
+      <tr><td><span class="n c4">4</span></td><td><b>Daniel Okafor</b><small>Finance Manager · Chief Financial Officer, also runs payroll</small></td><td>Finance Manager button</td><td>Finance team approvals, the finance queue, bills, payments, banking, books, stock, payroll, ROE</td><td>15 min</td></tr>
+      <tr><td><span class="n c5">5</span></td><td><b>Olivia Bennett</b><small>CEO · Chief Executive Officer (executive role)</small></td><td>Who are you? → name → OK</td><td>Director-level approvals on larger amounts, payroll and hiring; the whole-group view</td><td>6 min</td></tr>
+      <tr><td><span class="n c6">6</span></td><td><b>Daniel · Ethan Clarke · Maya</b><small>Closing the loop (Ethan: General Manager, Ridgeline Timber)</small></td><td>Finance Manager button · name list · Employee button</td><td>Post payroll, see the purchase order sent, receive the goods, the employee sees the results</td><td>7 min</td></tr>
+      <tr><td><span class="n c7">7</span></td><td><b>System Administrator</b><small>Administrator · all companies</small></td><td>Administrator button</td><td>Users and roles, approval rules, audit log, feedback, Page &amp; Experience Manager</td><td>8 min</td></tr>
+    </tbody>
+  </table>
+  <div class="grid2" style="margin-top:12px">
+    <div class="box"><h3>How to sign in and switch</h3><ul>
+      <li><b>Demo roles:</b> on the sign-in page, under <b>Or explore with a demo role</b>, click the role.</li>
+      <li><b>Anyone else:</b> pick the name in <b>Who are you?</b> and press <b>OK</b> — no password. The list is numbered in the presentation order (see the Presentation Sequence handout).</li>
+      <li>If asked, choose <b>The whole group</b> to see all four companies.</li>
+      <li>To change person: <b>Switch role</b> in the yellow bar at the top.</li></ul></div>
+    <div class="box"><h3>Before you start</h3><ul>
+      <li>Open the link in a <b>private / incognito window</b> so it starts from fresh demo data (data stays in that browser). On the shared link, reset it from Administration › Settings.</li>
+      <li>Screen at least 1360 px wide; on a projector, zoom to 90%.</li>
+      <li>Keep a small PDF handy for the receipt, the certificate, the contract and the travel confirmation uploads.</li>
+      <li>Run through Acts 1–2 once before presenting.</li></ul></div>
+  </div>
+</section>
+
+<!-- 3 · threads -->
+<section class="page">
+  <h2>The threads that tie it together</h2>
+  <p class="lead">Each row is one request or story, followed across the acts. Use it to tell the audience where something is going next.</p>
+  <table class="threads">
+    <thead><tr><th>Story</th><th>Employee</th><th>Manager</th><th>HR / Finance</th><th>CEO</th><th>Closing</th><th>Acts</th></tr></thead>
+    <tbody>
+      <tr><td>Timesheet → pay</td><td>Maya sends hours</td><td>Liam approves</td><td>Daniel runs pay run PR-2026-0006</td><td>Olivia approves the payroll</td><td>Daniel posts; Maya sees the Oct 9 statement</td><td>1·2·4·5·6</td></tr>
+      <tr><td>Time off, Nov 23–25</td><td>Maya asks (21 h)</td><td>Liam approves</td><td>Priya sees the new balance</td><td></td><td>Maya sees it approved</td><td>1·2·3·6</td></tr>
+      <tr><td>Purchase order $28,500 (PO-2026-0012)</td><td>Maya asks</td><td>Liam: step 1 of 2</td><td></td><td>Olivia: director level (over $5,000)</td><td>Sent to the supplier; Ethan receives it</td><td>1·2·5·6</td></tr>
+      <tr><td>Expense $640 (EC-2026-0020)</td><td>Maya claims, with the receipt</td><td>Liam approves (under $5,000)</td><td>Daniel records it as paid</td><td></td><td></td><td>1·2·4</td></tr>
+      <tr><td>Bill INV-10245 (finance team)</td><td></td><td></td><td>Daniel approves as the team's manager</td><td></td><td>Posts to the ledger</td><td>4</td></tr>
+      <tr><td>Travel $825 (TR-2026-0020)</td><td>Maya asks</td><td>Liam approves (under $5,000)</td><td>Daniel books it and attaches the confirmation</td><td></td><td></td><td>1·2·4</td></tr>
+      <tr><td>Contract CT-2026-0006</td><td></td><td>Liam uploads it for Harvest Operations</td><td>Priya can't see it (other team)</td><td>Olivia sees every contract</td><td>In the admin's audit log</td><td>2·3·5·7</td></tr>
+      <tr><td>Job opening: Log Loader Operator</td><td></td><td></td><td>Priya opens it</td><td>Olivia approves as hiring manager</td><td></td><td>3·5</td></tr>
+      <tr><td>End of season: Emma Lawson</td><td></td><td></td><td>Priya ends the employment; Daniel issues the Record of Employment</td><td></td><td></td><td>3·4</td></tr>
+      <tr><td>Review and certificates</td><td>Maya renews her First Aid ticket</td><td>Liam completes Maya's review</td><td>Priya starts the Q4 cycle, sends a renewal reminder</td><td></td><td></td><td>1·2·3</td></tr>
+      <tr><td>Feedback</td><td>Maya sends a note</td><td></td><td></td><td></td><td>Administrator marks it done</td><td>1·7</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 4 · rules and 30-minute version -->
+<section class="page">
+  <div class="box">
+    <h3>Approval rules the demo shows (Administration › Approval rules — the administrator can change every step)</h3>
+    <table class="rules">
+      <thead><tr><th>Request</th><th>Who approves</th></tr></thead>
+      <tbody>
+        <tr><td>Time off</td><td>Manager</td></tr>
+        <tr><td>Expense claims, travel requests and claims, credit-card purchases, purchase requests and orders</td><td>Manager, then the Director above $5,000</td></tr>
+        <tr><td>Vendor bills</td><td>The requester's manager (the Finance Manager for finance-team bills), then the Director from $25,000</td></tr>
+        <tr><td>Payroll runs</td><td>Director</td></tr>
+        <tr><td>Job openings</td><td>The chosen hiring manager</td></tr>
+        <tr><td>New projects</td><td>Director</td></tr>
+      </tbody>
+    </table>
+    <p class="small">Director level is anyone with the executive role: the Executive Director (Grace Holloway) or the CEO (Olivia Bennett).</p>
+  </div>
+  <div class="box" style="margin-top:14px">
+    <h3>The 30-minute version</h3>
+    <ol class="short">
+      <li><b>Maya</b> (Act 1): Home, time off, the $28,500 purchase order.</li>
+      <li><b>Liam</b> (Act 2): Home queue, approve the purchase order in its popup, upload a contract.</li>
+      <li><b>Daniel</b> (Act 4): approve the finance team's bill, open and send a pay run.</li>
+      <li><b>Olivia</b> (Act 5): approve the payroll and the purchase order (director level).</li>
+      <li><b>Daniel</b> (Act 6): post the payroll; show the purchase order already sent, under Finance › PO.</li>
+      <li><b>Administrator</b> (Act 7): the audit log, then Page &amp; Experience.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- 5 · Act 1 -->
+<section class="page c1">
+  <div class="acthd"><div class="num">1</div><div class="t"><h2>Maya Collins</h2><div class="role">Employee · Equipment Operator · Harvest Operations · Ridgeline Timber</div></div><div class="r"><small>Act 1</small><b>10 min</b></div></div>
+  <div class="signin"><span class="tag">Sign in</span>On the first page choose <b>Group of companies</b>. On the sign-in page, under <b>Or explore with a demo role</b>, click <b>Employee</b>.</div>
+  <p class="intro">Start with the person closest to the work. Everything Maya raises in this act comes back later as an approval for someone else.</p>
+  <table>
+    <thead><tr><th>#</th><th>Go to</th><th>Do</th><th>Say</th></tr></thead>
+    <tbody>
+      <tr><td class="no">1</td><td class="go">First page · sign-in page</td><td>Choose <b>Group of companies</b>. Then, before clicking anything, point out the four companies, the <b>Who are you?</b> list (20 people, numbered in the presentation order) and the demo-role buttons. There is no password: pick a name and press <b>OK</b>.</td><td class="sy">One platform for Alderbrook Holdings and the three operating companies. Everyone signs in once and sees only what their role allows.</td></tr>
+      <tr><td class="no">2</td><td class="go">Home</td><td>Show <b>My summary</b> (timesheet hours, vacation left, latest pay, my requests), <b>Needs your attention</b>, <b>Recent activity</b> and <b>Coming up</b>.</td><td class="sy">An employee's day starts here — everything waiting for them, one click away.</td></tr>
+      <tr><td class="no">3</td><td class="go">My work › My Time</td><td>Pay period Nov 2 – Nov 15: type 7 h on each weekday. Note that Nov 11 (Remembrance Day) is already filled in. Click <b>Send for approval</b>.</td><td class="sy">Stat holidays and approved time off fill themselves in; overtime is applied by the rules, not typed by the employee.</td></tr>
+      <tr><td class="no">4</td><td class="go">My work › My Time Off</td><td>Request time off: Annual Vacation Entitlement, Nov 23 → Nov 25 (21 h calculates), description “Family visit”. The button reads <b>Send to Liam</b>. Open the <b>Calendar</b> tab.</td><td class="sy">The button names the approver — the reporting line is built in.</td></tr>
+      <tr><td class="no">5</td><td class="go">Requests › New Purchase Order</td><td>Supplier: a new supplier, “Coastal Heavy Equipment” · estimated amount 28500 · expense code 5215 Field Equipment · what “Replacement grapple for the log loader” · notes “Current grapple cracked at Site 14; the loader is down without it.” Click <b>Submit request</b> (PO-2026-0012).</td><td class="sy">Over $5,000, so it goes to Liam first, then to director level.</td></tr>
+      <tr><td class="no">6</td><td class="go">Requests › New Expense Claim</td><td>“Caulk boots and rain gear for Site 14” · Nov 2 · Caulk boots and rain gear · 5205 Operating Supplies · 640 · attach the receipt → <b>Submit request</b> (EC-2026-0020).</td><td class="sy">Under $5,000, so Liam's approval is the only one. Finance then pays it back.</td></tr>
+      <tr><td class="no">7</td><td class="go">Requests › New Travel Request</td><td>Kelowna, BC · WorkSafeBC faller refresher course · Dec 1–3 · Vehicle only · hotel booked by Finance · training Yes · estimated cost 825 → <b>Submit request</b> (TR-2026-0020).</td><td class="sy">Under $5,000, so only her manager needs to say yes.</td></tr>
+      <tr><td class="no">8</td><td class="go">My work › My Tasks</td><td>Set the Block 12 safety walk to 75% and add a note.</td><td class="sy">Managers see progress without asking.</td></tr>
+      <tr><td class="no">9</td><td class="go">My Profile › Certificates</td><td>Occupational First Aid Level 1 expires Nov 10: <b>Renew…</b> · certificate number OFA1-2026-4471 · attach any PDF → <b>Save renewal</b>. Then show Overview, Employment, Pension &amp; Benefits and Reviews.</td><td class="sy">HR is reminded before tickets expire — no spreadsheet.</td></tr>
+      <tr><td class="no">10</td><td class="go">My Pay · My Documents</td><td>Show pay statements (download one), tax slips and company policies.</td><td class="sy"></td></tr>
+      <tr><td class="no">11</td><td class="go">Directory · Search · Look · Feedback</td><td>People › Directory and Org chart. Press <b>/</b> and search “Liam”. Try the palette (five looks) and dark mode. <b>Feedback</b> at the bottom: “Could My Time remember my usual department?” → <b>Send</b>.</td><td class="sy">Feedback lands with the administrators with the page attached — we'll see it in Act 7.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 6 · Act 1 shots -->
+<section class="page looks">
+  <h2>Act 1 · what it looks like</h2>
+  <img class="shot" src="s02-maya-home.jpg" alt="Maya's Home">
+  <p class="cap">Maya's Home: summary, things that need her, what's coming up.</p>
+  <div class="grid2">
+    <div><img class="shot" src="s01-signin.jpg" alt="Sign-in page"><p class="cap">The sign-in page: companies, names, demo roles.</p></div>
+    <div><img class="shot" src="s03-po-form.jpg" alt="New purchase order form"><p class="cap">The $28,500 purchase order request.</p></div>
+  </div>
+</section>
+
+<!-- 7 · Act 2 -->
+<section class="page c2">
+  <div class="acthd"><div class="num">2</div><div class="t"><h2>Liam Foster</h2><div class="role">Manager · Field Supervisor · Ridgeline Timber · Maya's manager</div></div><div class="r"><small>Act 2</small><b>8 min</b></div></div>
+  <div class="signin"><span class="tag">Sign in</span>Click <b>Switch role</b> in the yellow bar, then <b>Manager</b>.</div>
+  <p class="intro">Everything Maya sent is now waiting for Liam — on Home, in Approvals, and as counts in the menu.</p>
+  <table>
+    <thead><tr><th>#</th><th>Go to</th><th>Do</th><th>Say</th></tr></thead>
+    <tbody>
+      <tr><td class="no">1</td><td class="go">Home</td><td>My team tiles: <b>Waiting for you 9</b> (5 requests · 2 time offs · 2 timesheets), Away this week, Team tasks late or stuck. Approve or decline right from <b>Waiting on you</b>.</td><td class="sy">A manager can clear the queue without leaving Home.</td></tr>
+      <tr><td class="no">2</td><td class="go">Approvals › Timesheets</td><td>On Maya's Sep 21 – Oct 4 sheet click <b>View full timesheet</b> (day by day, overtime, stat, leave) → <b>Approve</b>. Approve the current period too.</td><td class="sy">Approved hours flow straight into the next payroll run.</td></tr>
+      <tr><td class="no">3</td><td class="go">Approvals › Purchases &amp; bills</td><td>Open the PO-2026-0012 card: who, what, why, and the two steps with their thresholds → <b>Approve</b>.</td><td class="sy">It now waits for director level. Nobody can approve their own request, and Finance does not approve other teams' requests.</td></tr>
+      <tr><td class="no">4</td><td class="go">Approvals › the rest</td><td>Approve Maya's expense claim and travel request (both go straight on to Finance — under $5,000) and both time-off requests.</td><td class="sy"></td></tr>
+      <tr><td class="no">5</td><td class="go">People › Performance Reviews</td><td>Maya Collins → write a manager summary, pick a rating → <b>Complete review</b>.</td><td class="sy"></td></tr>
+      <tr><td class="no">6</td><td class="go">Team › My Team</td><td>Show Board, List and Timeline. <b>+ New task</b>: “Grease the loader before the grapple swap”, assign Maya, due Nov 13. Then the Timesheets, Time off, Requests and Expense claims tabs.</td><td class="sy"></td></tr>
+      <tr><td class="no">7</td><td class="go"><span class="tag new">New</span>Operations › Documents › Contracts</td><td><b>Upload a contract</b>: “Grapple repair and service — 2026/27” · with Coastal Heavy Equipment · team Harvest Operations — Ridgeline Timber · amount 12500 (optional) · Nov 15 2026 → Nov 14 2027 · reference CHE-SVC-2026 · attach the PDF → <b>Upload contract</b> (CT-2026-0006). On the contract page show <b>Who can open this contract</b> and <b>History</b>.</td><td class="sy">No share lists: the team and the reporting line decide who sees a contract. Every upload, edit and file is recorded with who and when.</td></tr>
+      <tr><td class="no">8</td><td class="go">Reports › History</td><td>History → <b>My team</b>: Maya's requests and Liam's decisions, with PO-2026-0012 now waiting at director level.</td><td class="sy"></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 8 · Act 2 shots -->
+<section class="page looks">
+  <h2>Act 2 · what it looks like</h2>
+  <img class="shot" src="s05-po-popup.jpg" alt="Purchase order approval popup">
+  <p class="cap">The purchase order with its approval steps.</p>
+  <div class="grid2">
+    <div><img class="shot" src="s04-liam-home.jpg" alt="Liam's Home"><p class="cap">Liam's Home: nine things waiting.</p></div>
+    <div><img class="shot" src="s06-contract.jpg" alt="Contract page"><p class="cap">A contract: details, files, who can open it, history.</p></div>
+  </div>
+</section>
+
+<!-- 9 · Act 3 -->
+<section class="page c3">
+  <div class="acthd"><div class="num">3</div><div class="t"><h2>Priya Raman</h2><div class="role">HR Manager · Alderbrook Holdings · works across all four companies</div></div><div class="r"><small>Act 3</small><b>10 min</b></div></div>
+  <div class="signin"><span class="tag">Sign in</span><b>Switch role</b> → <b>HR Manager</b> → choose <b>The whole group</b>.</div>
+  <p class="intro">HR sees the result of Liam's approvals on people's records, then runs the people side of the group.</p>
+  <table>
+    <thead><tr><th>#</th><th>Go to</th><th>Do</th><th>Say</th></tr></thead>
+    <tbody>
+      <tr><td class="no">1</td><td class="go">Home</td><td><b>At a glance</b> (people, starting soon, time off and timesheets waiting); <b>Needs your attention</b> (hiring requests for HR, an expired certificate, benefit requests).</td><td class="sy"></td></tr>
+      <tr><td class="no">2</td><td class="go">People › Employees › Maya Collins</td><td>Tabs: Overview (job, reporting line), Pay &amp; benefits (pay change), Time &amp; time off (balance now includes the approved vacation), Certificates (the renewed First Aid ticket with its file), History.</td><td class="sy">One record — HR's side of what Maya saw in her profile.</td></tr>
+      <tr><td class="no">3</td><td class="go">People › Employees › Add employee</td><td>Nora Bishop · Ridgeline Timber · Harvest Operations · Equipment Operator · reports to Liam Foster · start Nov 16 · $32.50/h → <b>Add employee</b>. Then the <b>Onboarding</b> tab: tick a task.</td><td class="sy">Onboarding tasks are created automatically.</td></tr>
+      <tr><td class="no">4</td><td class="go">People › Hiring › New opening</td><td>Log Loader Operator · Ridgeline Timber · Harvest Operations · hiring manager <b>Olivia Bennett</b> · 1 opening · $62,000–$70,000 · start Dec 14 · Prince George → <b>Send for approval</b>. The <b>Hiring requests</b> tab holds what managers have asked HR to hire.</td><td class="sy">An opening goes to the hiring manager before it is posted — we'll approve it as the CEO.</td></tr>
+      <tr><td class="no">5</td><td class="go">People › Directory · Org chart</td><td>Optional: drag a person onto another department to move them.</td><td class="sy"></td></tr>
+      <tr><td class="no">6</td><td class="go">Time &amp; Attendance</td><td>Timesheets (Liam's approvals), By pay period (<b>Remind people who haven't sent</b>), Time off (Requests, Balances).</td><td class="sy"></td></tr>
+      <tr><td class="no">7</td><td class="go">Reviews, Benefits &amp; Pension · Certificates</td><td>Performance Reviews: start a review cycle “Q4 2026 check-in”, due Dec 15, Ridgeline Timber. People › Certificates: the expired Pesticide Applicator ticket (Samuel Fischer) → <b>Send reminder</b>. Benefits: enrol Maya in Vision Care, Family, from Dec 1 → <b>Save</b>.</td><td class="sy"></td></tr>
+      <tr><td class="no">8</td><td class="go">People › Employees › Emma Lawson</td><td>Overview tab → <b>End employment</b> card: last day Oct 30, reason “Shortage of work / end of contract or season” → <b>End employment &amp; draft ROE</b>.</td><td class="sy">Sign-in off, benefits ended, the Record of Employment drafted for Payroll.</td></tr>
+      <tr><td class="no">9</td><td class="go">Documents › Contracts</td><td>Priya sees only her own team's contract (the external audit engagement).</td><td class="sy">Ridgeline Timber's contracts stay with Ridgeline Timber's reporting line.</td></tr>
+      <tr><td class="no">10</td><td class="go">Reports</td><td>Time off report and Headcount.</td><td class="sy"></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 10 · Act 3 shots -->
+<section class="page looks">
+  <h2>Act 3 · what it looks like</h2>
+  <img class="shot" src="s07-hr-maya.jpg" alt="Maya's employee record">
+  <p class="cap">Maya's employee record, HR's view.</p>
+  <div class="grid2">
+    <div><img class="shot" src="s08-opening.jpg" alt="New opening form"><p class="cap">A new opening routed to the CEO.</p></div>
+    <div><img class="shot" src="s09-end-employment.jpg" alt="End employment card"><p class="cap">End employment — drafts the ROE.</p></div>
+  </div>
+</section>
+
+<!-- 11 · Act 4 -->
+<section class="page c4">
+  <div class="acthd"><div class="num">4</div><div class="t"><h2>Daniel Okafor</h2><div class="role">Finance Manager · Chief Financial Officer · also runs payroll</div></div><div class="r"><small>Act 4</small><b>15 min</b></div></div>
+  <div class="signin"><span class="tag">Sign in</span><b>Switch role</b> → <b>Finance Manager</b> → <b>The whole group</b>.</div>
+  <p class="intro">Approves his own finance team's requests, then the money: the finance queue, payables, receivables, bank, books, stock and payroll.</p>
+  <table>
+    <thead><tr><th>#</th><th>Go to</th><th>Do</th><th>Say</th></tr></thead>
+    <tbody>
+      <tr><td class="no">1</td><td class="go">Home</td><td><b>At a glance</b>: cash on hand, bills we owe, owed to us, last payroll; open bills by status.</td><td class="sy"></td></tr>
+      <tr><td class="no">2</td><td class="go">Approvals</td><td>Bill INV-10245 from Coast Marine Supply, $8,912.44. Sofia Marquez in the finance team entered it, so it comes to Daniel as their manager, next to three small requests from his team. Open its PDF first, then <b>Approve</b>.</td><td class="sy">The Finance Manager approves only the finance team's own requests; every other team's goes to their manager, then the Director. An approved bill posts to the ledger by itself.</td></tr>
+      <tr><td class="no">3</td><td class="go">Requests › Finance queue</td><td>Maya's EC-2026-0020 → paid through Direct deposit → <b>Record as paid</b>. Her trip TR-2026-0020 → cost before tax 740 (GST and PST fill in) · attach the confirmation → <b>Mark processed and send the confirmation</b>.</td><td class="sy">Approved requests wait here for Finance: claims are paid, trips are booked, and each one posts to the ledger.</td></tr>
+      <tr><td class="no">4</td><td class="go">Accounts Payable › Bills</td><td><b>New bill</b> (or drop a vendor PDF on the page), <b>Batch entry</b>, <b>Payment batch</b>: tick approved bills → <b>Post payment batch</b>. Then Vendors and Files.</td><td class="sy">One payment run, one ledger entry.</td></tr>
+      <tr><td class="no">5</td><td class="go">Purchasing › Matching</td><td>3-way match: IDC-88812 matches; SS-30417 shows a variance (billed 24 saw chains, 18 received) → <b>Accept variance</b> with a reason, or wait for delivery.</td><td class="sy">Bills are checked against the order and what actually arrived.</td></tr>
+      <tr><td class="no">6</td><td class="go">Accounts Receivable</td><td><b>New invoice</b> (a customer, $18,400 of cedar logs), then <b>Record payment</b> or a <b>Deposit batch</b>.</td><td class="sy"></td></tr>
+      <tr><td class="no">7</td><td class="go">Banking</td><td>Ridgeline Timber tab → <b>Load sample statement</b> → <b>Auto-match</b> → <b>Post as new entry</b> for bank fees. Show <b>Matching rules</b>.</td><td class="sy"></td></tr>
+      <tr><td class="no">8</td><td class="go">Accounting</td><td>Journal entries → <b>New manual entry</b> (must balance, open period only); Recurring → <b>Run all due</b>; Fixed assets → <b>Run depreciation</b>; Budgets; Month-end → <b>Close period</b>; Chart of accounts; Inter-company.</td><td class="sy"></td></tr>
+      <tr><td class="no">9</td><td class="go">Sales &amp; Stock · Projects</td><td>Stock reorder alerts → <b>Create purchase order</b>; Stock count; Sales orders; Shipments. Projects: budget against actual.</td><td class="sy"></td></tr>
+      <tr><td class="no">10</td><td class="go">Payroll › Pay runs</td><td>Start a pay run: Ridgeline Timber — Ridgeline Hourly Crews · period Sep 21 – Oct 4 · pay day Oct 9 → <b>Open pay run</b> → <b>Calculate</b> → <b>Send for approval</b>. (PR-2026-0006: Maya, $2,567.50 gross.)</td><td class="sy">CPP, EI and tax are calculated; the executive approves before anything posts.</td></tr>
+      <tr><td class="no">11</td><td class="go">Payroll › Records of Employment · CRA remittances</td><td>Emma Lawson → <b>Open</b> → <b>Issue ROE</b> → Download. CRA remittances → <b>Generate PD7A</b>.</td><td class="sy"></td></tr>
+      <tr><td class="no">12</td><td class="go">Reports</td><td>Profit &amp; Loss, Balance sheet, Trial balance; every purchase order is under Finance › PO. Every list has <b>Download ▾</b> for Excel, PDF and CSV.</td><td class="sy"></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 12 · Act 4 shots -->
+<section class="page looks">
+  <h2>Act 4 · what it looks like</h2>
+  <img class="shot" src="s12-payrun.jpg" alt="Pay run calculated">
+  <p class="cap">Pay run calculated, ready to send to the executive.</p>
+  <div class="grid2">
+    <div><img class="shot" src="s10-daniel-home.jpg" alt="Daniel's Home"><p class="cap">Daniel's Home: money at a glance and his approvals.</p></div>
+    <div><img class="shot" src="s11-match.jpg" alt="3-way match"><p class="cap">3-way match workbench.</p></div>
+  </div>
+</section>
+
+<!-- 13 · Act 5 -->
+<section class="page c5">
+  <div class="acthd"><div class="num">5</div><div class="t"><h2>Olivia Bennett</h2><div class="role">CEO · Chief Executive Officer · executive role</div></div><div class="r"><small>Act 5</small><b>6 min</b></div></div>
+  <div class="signin"><span class="tag">Sign in</span><b>Switch role</b>, then in <b>Who are you?</b> pick <b>Olivia Bennett</b> (number 9 in the list, just below Grace Holloway), press <b>OK</b>, then <b>The whole group</b>. Her system role is Executive, so the yellow bar reads “Executive Director”. (The Executive Director button signs in Grace Holloway.)</div>
+  <p class="intro">The top of every ladder: the last approvals on large amounts, payroll and hiring, and the whole-group picture.</p>
+  <table>
+    <thead><tr><th>#</th><th>Go to</th><th>Do</th><th>Say</th></tr></thead>
+    <tbody>
+      <tr><td class="no">1</td><td class="go">Home</td><td><b>At a glance</b>: cash on hand, people, bills we owe, owed to us; people by company.</td><td class="sy"></td></tr>
+      <tr><td class="no">2</td><td class="go">Approvals</td><td>Payroll PR-2026-0006 → <b>Approve</b>. Purchase order PO-2026-0012, director level — it shows Liam's approval → <b>Approve</b> (the order is numbered and sent to the supplier). Job opening Log Loader Operator → <b>Approve</b> (now open for applicants). The other items are older demo requests.</td><td class="sy">Three different workflows, one inbox, each with its full trail.</td></tr>
+      <tr><td class="no">3</td><td class="go">Documents › Contracts</td><td>All six contracts across the four companies.</td><td class="sy">The CEO is above every team, so she sees every contract.</td></tr>
+      <tr><td class="no">4</td><td class="go">Reports · History</td><td>Profit &amp; Loss, Balance sheet, Headcount; History → <b>Everything I can see</b>; switch the company in the top bar.</td><td class="sy"></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 14 · Act 5 shots -->
+<section class="page looks">
+  <h2>Act 5 · what it looks like</h2>
+  <img class="shot" src="s13-ceo-approvals.jpg" alt="The CEO's approvals">
+  <p class="cap">The CEO's approvals: payroll, the job opening and the $28,500 purchase order (director level).</p>
+  <div class="grid2">
+    <div><img class="shot" src="s14-ceo-home.jpg" alt="Olivia's Home"><p class="cap">At a glance.</p></div>
+    <div><img class="shot" src="s15-contracts.jpg" alt="Every contract"><p class="cap">Every team's contracts.</p></div>
+  </div>
+</section>
+
+<!-- 15 · Act 6 -->
+<section class="page c6">
+  <div class="acthd"><div class="num">6</div><div class="t"><h2>Close the loop</h2><div class="role">Daniel · Ethan · Maya · Payroll posted, purchase order sent and received, the employee sees it all</div></div><div class="r"><small>Act 6</small><b>7 min</b></div></div>
+  <div class="signin"><span class="tag">Sign in</span>Three quick sign-ins, below.</div>
+  <p class="intro">Show that every request from Act 1 reached its end.</p>
+  <table>
+    <thead><tr><th>#</th><th>Go to</th><th>Do</th><th>Say</th></tr></thead>
+    <tbody>
+      <tr><td class="no">1</td><td class="go">Daniel Okafor · Finance Manager button</td><td>Payroll › Pay runs → PR-2026-0006 → <b>Post to ledger</b> (statements go out). Finance › PO: PO-2026-0012 is already there — approved by Liam and Olivia and sent to the supplier.</td><td class="sy">The last approval produces the order; nobody types it again.</td></tr>
+      <tr><td class="no">2</td><td class="go">Ethan Clarke · Who are you? → Ethan Clarke → OK</td><td>General Manager of Ridgeline Timber and its company administrator — the site receives the goods. Purchasing › Receiving → PO-2026-0012 → <b>Received in full</b>.</td><td class="sy">Receiving is a site job; Finance can pay but not receive.</td></tr>
+      <tr><td class="no">3</td><td class="go">Maya Collins · Employee button</td><td>My Pay → the new Oct 9 statement. Requests › My requests → the three requests from Act 1 are processed or PO ready. The bell → the whole notification trail. My Time Off → approved.</td><td class="sy">From request to result, without one email or spreadsheet.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 16 · Act 6 shots -->
+<section class="page looks">
+  <h2>Act 6 · what it looks like</h2>
+  <img class="shot" src="s16-maya-pay.jpg" alt="Maya's pay statements">
+  <p class="cap">Maya's new pay statement.</p>
+  <div class="grid2">
+    <div><img class="shot" src="s17-receiving.jpg" alt="Receiving"><p class="cap">Ethan receives PO-2026-0012.</p></div>
+    <div><img class="shot" src="s18-notifs.jpg" alt="Notifications"><p class="cap">The notification trail.</p></div>
+  </div>
+</section>
+
+<!-- 17 · Act 7 -->
+<section class="page c7">
+  <div class="acthd"><div class="num">7</div><div class="t"><h2>System Administrator</h2><div class="role">Administrator · All companies · runs the platform</div></div><div class="r"><small>Act 7</small><b>8 min</b></div></div>
+  <div class="signin"><span class="tag">Sign in</span><b>Switch role</b> → <b>Administrator</b>.</div>
+  <p class="intro">Who can do what, the rules, the record of everything that just happened, and how the experience is shaped.</p>
+  <table>
+    <thead><tr><th>#</th><th>Go to</th><th>Do</th><th>Say</th></tr></thead>
+    <tbody>
+      <tr><td class="no">1</td><td class="go">Administration › Users &amp; access</td><td>Every sign-in with roles and company scope; the roles table and what each role can do.</td><td class="sy"></td></tr>
+      <tr><td class="no">2</td><td class="go">Companies</td><td>The four companies and their details.</td><td class="sy"></td></tr>
+      <tr><td class="no">3</td><td class="go">Approval rules</td><td>Purchase orders › Director level: change 5000.01 to 10000 → <b>Save</b>. Try changing the approver, removing a step or adding one.</td><td class="sy">The next request follows the new rule immediately.</td></tr>
+      <tr><td class="no">4</td><td class="go">Audit log</td><td>Every action from this demo: who, what, when. Append-only.</td><td class="sy">Nothing can be edited or deleted here.</td></tr>
+      <tr><td class="no">5</td><td class="go">Feedback</td><td>Maya's note, with the page she was on → <b>Mark done</b>.</td><td class="sy"></td></tr>
+      <tr><td class="no">6</td><td class="go">Settings · Email templates</td><td>Data mode, and <b>Reset the demo for everyone</b> (shared link only). Email templates: the wording of every email the platform sends.</td><td class="sy"></td></tr>
+      <tr><td class="no">7</td><td class="go">Page &amp; Experience</td><td>Rename a menu; add Leave balance to employees' Home; <b>View as</b> Maya with Edit mode; <b>Review &amp; publish</b> → version 1; compare and restore.</td><td class="sy">Administrators shape what people see without a developer — and every version is kept.</td></tr>
+      <tr><td class="no">8</td><td class="go">How-to</td><td>Guides by role (Manager has “Upload a contract and see who can open it”) and What's new.</td><td class="sy"></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 18 · Act 7 shots -->
+<section class="page looks">
+  <h2>Act 7 · what it looks like</h2>
+  <img class="shot" src="s19-rules.jpg" alt="Approval rules">
+  <p class="cap">Approval rules: change the approver and amount, remove or add a step.</p>
+  <div class="grid2">
+    <div><img class="shot" src="s20-audit.jpg" alt="Audit log"><p class="cap">The audit log after the demo.</p></div>
+    <div><img class="shot" src="s21-pe.jpg" alt="Page and Experience Manager"><p class="cap">Page &amp; Experience Manager.</p></div>
+  </div>
+</section>
+
+<!-- 19 · every function -->
+<section class="page">
+  <h2>Every function, and where it is shown</h2>
+  <p class="lead">Use this to check nothing is missed, or to answer “can it do …?” by jumping to the right act.</p>
+  <table class="fn">
+    <thead><tr><th>Area</th><th>Functions shown</th><th>Act</th></tr></thead>
+    <tbody>
+      <tr><td>Employee self-service</td><td>Home summary · timesheet with auto-filled stat/leave · time off with balance and calendar · travel, credit-card, travel-claim, expense-claim and purchase-order requests in one Requests menu · receipts and quotes attached · tasks · profile tabs · certificates with files and renewals · reviews · pay statements · documents · directory · org chart · search · looks and dark mode · feedback · notifications · email and calendar · how-to</td><td>1, 6</td></tr>
+      <tr><td>Manager</td><td>Home queue · approvals by kind · full timesheet review · approval popups with history · team tasks (board, list, timeline) · team time off, requests, claims · performance review · requests to hire · contracts upload, files, history · team history</td><td>2</td></tr>
+      <tr><td>HR</td><td>Employee records and pay changes · add employee · onboarding · hiring openings with approval · hiring requests from managers · departments · org-chart moves · time &amp; attendance · reminders by pay period · leave balances · review cycles · certificate reminders · benefits enrolment · pension · end of employment · reports</td><td>3</td></tr>
+      <tr><td>Finance</td><td>Finance team approvals · finance queue: claims paid, trips booked, orders closed · bills with PDFs · batch entry · payment batches · vendors and files · 3-way match · AR invoices, payments, deposits · bank reconciliation and rules · journals · recurring entries · depreciation · budgets · month-end close · chart of accounts · inter-company · sales orders, shipments, stock, counts · projects · reports and downloads</td><td>4, 6</td></tr>
+      <tr><td>Payroll</td><td>Pay runs: open, calculate, send, director approval, post · statements · Records of Employment · CRA PD7A remittances · year-end · payroll settings · stat holidays</td><td>4, 5, 6</td></tr>
+      <tr><td>Purchasing</td><td>Purchase order request → manager, then director level by amount → numbered order sent to the supplier → receiving · every order under Finance › PO</td><td>1, 2, 5, 6</td></tr>
+      <tr><td>Executive / CEO</td><td>At a glance · final approvals (large purchases, payroll, hiring) · every contract · P&amp;L, balance sheet, headcount · whole-group history</td><td>5</td></tr>
+      <tr><td>Administration</td><td>Users and roles · companies · approval thresholds · audit log · feedback · settings and reset · email templates · Page &amp; Experience Manager · how-to guides</td><td>7</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 20 · good to know -->
+<section class="page">
+  <div class="box">
+    <h3>Good to know while presenting</h3>
+    <ul>
+      <li><b>Show the 3-way match on the existing bills</b> (IDC-88812, SS-30417). Orders made from a request, such as PO-2026-0012, have no item lines, so there is nothing for the match to compare line by line. Don't link a supplier bill to it in Matching.</li>
+      <li><b>Don't approve a bill you entered yourself</b> — the platform won't let you. Say it out loud as a control: nobody approves their own request or bill.</li>
+      <li><b>“End employment” is refused for the seven demo sign-ins</b>, so they stay usable. Use Emma Lawson or another crew member.</li>
+      <li><b>Uploads are required in three places:</b> the receipt on an expense claim, the new certificate on a renewal, and the booking confirmation before Finance marks a trip processed. Keep the small PDF ready.</li>
+      <li><b>Payroll as its own role:</b> the Payroll Administrator button signs in Rachel Dubois, who can run the same pay run as Daniel.</li>
+      <li><b>The shared link needs no password.</b> Anyone with it can pick any name; use the Administrator's Settings to reset.</li>
+      <li><b>Numbers like PO-2026-0012, EC-2026-0020, TR-2026-0020, PR-2026-0006 and CT-2026-0006</b> assume you start from fresh demo data. Dates assume a demo in the Nov 2 – Nov 15, 2026 pay period; on another day, use the current period and dates a few weeks ahead.</li>
+      <li><b>Lost?</b> Esc closes any popup; <b>Switch role</b> in the yellow bar always returns to the sign-in page.</li>
+    </ul>
+  </div>
+  <div class="box" style="margin-top:14px">
+    <h3>Talking points that land well</h3>
+    <ul>
+      <li><b>Built-in reporting line.</b> Buttons name the approver (“Send to Liam”); requests climb by amount, never skipping a level.</li>
+      <li><b>Finance approves only its own team.</b> Every other request goes to the requester's manager, then the Director above the amount; the administrator edits this in Approval rules.</li>
+      <li><b>Separation of duties.</b> Nobody approves their own request or bill; Finance pays but the site receives.</li>
+      <li><b>Menus follow the role.</b> Maya sees five menus, Daniel sees the whole finance side; every page also checks permission on its own.</li>
+      <li><b>Contracts follow the ladder.</b> Liam, his managers and the executives see the grapple contract; HR does not.</li>
+      <li><b>Everything is recorded.</b> The audit log and each record's history show who did what, and when.</li>
+    </ul>
+  </div>
+</section>
+
+</body>
+</html>

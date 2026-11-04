@@ -7,7 +7,7 @@
    are left out so inboxes start clean.
    ========================================================================== */
 const RC_DEMO = {
-  places: ["Kelowna, BC", "Vancouver, BC", "Victoria, BC", "Vernon, BC", "Nanaimo, BC", "Kamloops, BC", "Terrace, BC", "Nanaimo, BC"],
+  places: ["Kelowna, BC", "Vancouver, BC", "Victoria, BC", "Vernon, BC", "Nanaimo, BC", "Kamloops, BC", "Terrace, BC", "Prince George, BC"],
   why: ["Fisheries technical committee", "Forestry stewardship workshop", "First aid instructor course", "Tourism partners meeting", "Board orientation", "Seafood buyers meeting", "Records management training", "Annual audit planning"],
   suppliers: [["Example Office Supply Co.", "Printer toner and paper"], ["North Coast Safety Ltd.", "High-visibility rain gear"], ["Island Hardware Co-op", "Chainsaw chains and files"], ["Harbour Marine Supply", "Life vests"], ["Coastal Tech Store", "USB headsets for meetings"], ["Valley Books & Print", "Printed visitor maps"]],
   bought: [["Coffee and snacks for the open house", 4250], ["Taxi from the airport", 3800], ["Parking at the hospital", 1600], ["Batteries for the field radios", 2799], ["Printer ink for the home office", 6499], ["Postage for the board package", 2210]],
@@ -35,7 +35,8 @@ const RC_DEMO = {
       try {
         // 1. a trip: approved and booked by Finance; every fourth one needs director level
         const big = i % 4 === 0;
-        run(u.id, "rc.submit", { kind: "travel", forWho: "", from: "Nanaimo, BC", to: P("places"), reason: P("why"), out: `2026-10-${String(13 + (i % 14)).padStart(2, "0")}`, back: `2026-10-${String(14 + (i % 14)).padStart(2, "0")}`, transport: i % 2 ? "Flight" : "Ferry and vehicle", accommodation: "Hotel, booked by Finance", training: i % 3 === 0 ? "Yes" : "No", estimate: big ? "6200" : String(900 + i * 85), departmentId: dep, accountNumber: "5300", files: [] }, ts(day, 0));
+        const home = `${byId(S0.companies, e.companyId)?.city || "Kamloops"}, BC`, dest = P("places") === home ? RC_DEMO.places[(i + 1) % RC_DEMO.places.length] : P("places"); // trips start from the traveller's own office
+        run(u.id, "rc.submit", { kind: "travel", forWho: "", from: home, to: dest, reason: P("why"), out: `2026-10-${String(13 + (i % 14)).padStart(2, "0")}`, back: `2026-10-${String(14 + (i % 14)).padStart(2, "0")}`, transport: i % 2 ? "Flight" : "Ferry and vehicle", accommodation: "Hotel, booked by Finance", training: i % 3 === 0 ? "Yes" : "No", estimate: big ? "6200" : String(900 + i * 85), departmentId: dep, accountNumber: "5300", files: [] }, ts(day, 0));
         const tr = last(); if (big && i % 8 === 4) decide(first(tr), tr, "APPROVED", "", ts(day + 1, 0)); else approveAll(tr, ts(day + 1, 0)); // one trip left waiting on director level
         if (i % 3 !== 2 && tr.status === "approved") run(finance(tr), "rc.process", { id: tr.id, subtotals: [String(big ? 5480 : 780 + i * 70)], gst: big ? "274.00" : ((780 + i * 70) * 0.05).toFixed(2), pst: big ? "383.60" : ((780 + i * 70) * 0.07).toFixed(2), link: "https://outlook.office.com/mail/demo-confirmation", note: "Booked on the company card" }, ts(day + 2, 0));
         // 2. a card purchase: waiting, with Finance, or returned for a fix

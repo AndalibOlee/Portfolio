@@ -11,7 +11,7 @@ const prefs = loadPrefs();
 const UI = {
   userId: prefs.userId || null, activeCompanyId: prefs.activeCompanyId || null, chosenCompany: !!prefs.userId,
   route: prefs.route || "/", readUpTo: prefs.readUpTo || {}, flash: null, pop: null, sideOpen: false, modal: null,
-  dirty: false, stale: false, loginError: false, ts: null, je: null, apDraft: null, tabs: {}, filters: {}, navOpen: prefs.navOpen || {}, emailOpen: null, emailInbox: "me", theme: prefs.theme || "system", look: prefs.look || "cedar", section: prefs.section || null,
+  dirty: false, stale: false, loginError: false, ts: null, je: null, apDraft: null, tabs: {}, filters: {}, navOpen: prefs.navOpen || {}, emailOpen: null, emailInbox: "me", theme: prefs.theme || "light", look: prefs.look || "cedar", section: prefs.section || null,
 };
 
 /* ---------------- tiny html helpers ---------------- */

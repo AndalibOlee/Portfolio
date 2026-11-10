@@ -22,7 +22,7 @@ const OUT = __dirname + "/shots/";
     run("u1", "rc.submit", { kind: "po", forWho: "", vendorName: "Example Equipment Ltd.", description: "Grapple attachment for the loader", notes: "Deliver to the main yard.", estimate: "6800", departmentId: dep, accountNumber: "5215", files: [] }, 185); const po = last();
     run(first(po), "approval.decide", { instanceId: po.currentApprovalId, decision: "APPROVED", comment: "Needed before the winter block." }, 118);
     const tsRows = S.timesheets.filter((t) => t.periodStart === ps).map((t) => t.status);
-    return { out, po: po.id, ready: S.rcRequests.find((r) => r.kind === "po" && r.status === "ready")?.id, ps, ts: tsRows.reduce((m, s) => (m[s] = (m[s] || 0) + 1, m), {}) };
+    return { out, ec: ec.id, po: po.id, ready: S.rcRequests.find((r) => r.kind === "po" && r.status === "ready")?.id, ps, ts: tsRows.reduce((m, s) => (m[s] = (m[s] || 0) + 1, m), {}) };
   });
   console.log(JSON.stringify(st)); require("fs").writeFileSync(OUT + "meta.json", JSON.stringify({ approved: st.ts.APPROVED || 0, total: 19 }));
   const mark = (list) => ev((list) => { document.querySelectorAll(".dk-mark").forEach((x) => x.remove());
@@ -63,5 +63,11 @@ const OUT = __dirname + "/shots/";
   await snap("ts-status", { top: [".content h1"], bottom: [".content table tbody tr", 2], padTop: 4, padBottom: 2 }, [[1, ".content .wrap .card, .content .wrap section", 0, 250, 40], [2, ".content .wrap .card .btn, .content .wrap section .btn", 0, -6, -30], [3, ".content table tbody tr td:nth-child(4)", 0, -34]]);
   await login("u6"); await ev(() => go("/admin/audit")); await W(400); await page.setViewportSize({ width: 1180, height: 1700 }); await W(300);
   await snap("audit", { top: [".content h1"], bottom: [".content table tbody tr", 3], padTop: 4, padBottom: 2 }, [[1, ".content table thead th", 0, 62, 3], [2, ".content table thead th", 1, 50, 3], [3, ".content table thead th", 4, 122, 3]]);
+  // a request with its attachment and history (the route bar is left out)
+  await login("u1"); await ev((id) => go("/requests/" + id), st.ec); await W(400); await tag("^Detail", "dk-det"); await tag("^Attachments", "dk-att"); await tag("^History", "dk-his");
+  await snap("req-attach", { top: [".dk-his"], bottom: [".dk-att"] }, [[1, ".dk-att .card-h, .dk-att", 0, 130, 10], [2, ".dk-his .card-h, .dk-his", 0, 100, 10]]);
+  // the automatic notices, as they arrive in a person's inbox
+  const mail = async (name, u, re) => { await login(u); await ev(() => go("/mail/inbox")); await W(400); await cls(".ml-li", re, "dk-m"); await ev(() => { const v = document.querySelector(".dk-m .pv"); v.textContent = v.textContent.replace(/\s+\S*$/, "") + " …"; }); await page.addStyleTag({ content: ".dk-m .sj,.dk-m .pv{white-space:normal!important;overflow:visible!important;display:block!important;-webkit-line-clamp:unset!important;max-height:none!important}.dk-m{height:auto!important}" }); await W(150); const r = await ev(() => { const x = document.querySelector(".dk-m").getBoundingClientRect(); return [x.left, x.right]; }); await snap(name, { top: [".dk-m"], bottom: [".dk-m"], x0: r[0] + 8, x1: r[1] - 8, padTop: 0, padBottom: 0 }); };
+  await mail("mail-approver", "u2", "Approval needed: PO-"); await mail("mail-staff", "u1", "Approved: PO-");
   console.log("errors", errs); await b.close();
 })();

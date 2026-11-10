@@ -17,10 +17,9 @@ const META = require("./shots/meta.json");
 const MODEL = {
   staff: 100, hourly: 40,
   items: [
-    { key: "Request", plural: "Requests", perYear: 600, today: 30, system: 5, stepsT: 6, stepsS: 2, emailsT: 3, pages: 3 },
-    { key: "Purchase order", plural: "Purchase orders", perYear: 240, today: 40, system: 6, stepsT: 8, stepsS: 3, emailsT: 3, pages: 3 },
-    { key: "Timesheet", plural: "Timesheets", perYear: 2600, today: 20, system: 5, stepsT: 5, stepsS: 2, emailsT: 2, pages: 1 },
-    { key: "Task", plural: "Tasks", perYear: 2400, today: 20, system: 5, stepsT: 5, stepsS: 2, emailsT: 3, pages: 0 },
+    { key: "Request", plural: "Requests", perYear: 600, today: 90, todayLabel: "1–2 hours", system: 30, stepsT: 6, stepsS: 2, emailsT: 3, pages: 3 },
+    { key: "Purchase order", plural: "Purchase orders", perYear: 240, today: 90, todayLabel: "1–2 hours", system: 30, stepsT: 8, stepsS: 3, emailsT: 3, pages: 3 },
+    { key: "Timesheet", plural: "Timesheets", perYear: 2600, today: 20, todayLabel: "≈ 20 min", system: 7, stepsT: 5, stepsS: 2, emailsT: 2, pages: 1 },
   ],
 };
 for (const i of MODEL.items) i.hours = Math.round(i.perYear * (i.today - i.system) / 60);
@@ -84,15 +83,15 @@ const HEX = THEME.colors;
     const hdr = (t, fill, color) => ({ text: t, options: { bold: true, fontSize: 12, color, fill: { color: fill }, align: "center", valign: "middle", margin: [0.02, 0.04, 0.02, 0.04] } });
     const body = rows.map(([label, a, b]) => [
       { text: label, options: { fontSize: 14, color: C.text1, valign: "middle", fill: { color: C.background2 } } },
-      { text: a, options: { fontSize: 17, bold: true, color: C.accent2, align: "center", valign: "middle", fill: { color: C.accent6 }, margin: [0.02, 0.04, 0.02, 0.04] } },
-      { text: b, options: { fontSize: 17, bold: true, color: C.accent1, align: "center", valign: "middle", fill: { color: C.accent5 }, margin: [0.02, 0.04, 0.02, 0.04] } },
+      { text: a, options: { fontSize: a.length > 10 ? 13 : 17, bold: true, color: C.accent2, align: "center", valign: "middle", fill: { color: C.accent6 }, margin: [0.02, 0.04, 0.02, 0.04] } },
+      { text: b, options: { fontSize: b.length > 10 ? 13 : 17, bold: true, color: C.accent1, align: "center", valign: "middle", fill: { color: C.accent5 }, margin: [0.02, 0.04, 0.02, 0.04] } },
     ]);
     s.addTable([[{ text: "", options: { fill: { color: C.background1 } } }, hdr("TODAY", HEX.accent2, C.background1), hdr("NEW SYSTEM", HEX.accent1, C.background1)], ...body], { x, y, w, colW: [w * 0.42, w * 0.28, w * 0.30], rowH: [0.36, ...rows.map(() => 0.5)], border: { type: "solid", color: HEX.lt1, pt: 2 }, margin: [0.02, 0.06, 0.02, 0.1], objectName: "Today vs system" });
     return y + 0.36 + rows.length * 0.5;
   };
   const note = (s, text, x, y, w, h = 0.3) => s.addText(text, { x, y, w, h, fontSize: 11, color: C.accent4, margin: 0, valign: "top", isTextBox: true, objectName: "Footnote" });
   const content = (title, section) => { const s = pres.addSlide({ masterName: "Content", sectionTitle: section }); s.addText(title, { placeholder: "title" }); return s; };
-  const EST = "Estimates for an organization of 100 staff; the assumptions are on slide 12.";
+  const EST = "Estimates for an organization of 100 staff; how they were estimated is on slide 2.";
 
   /* ================= 1. Title ================= */
   pres.addSection({ title: "Overview" });
@@ -108,41 +107,49 @@ const HEX = THEME.colors;
   /* ================= 2. Summary ================= */
   {
     const s = content("The proposal in one minute", "Overview");
-    s.addText("Today these four jobs run on paper forms, signatures, scans and email. One central system would handle all four, with every approval recorded automatically.", { x: 0.6, y: 1.35, w: 11.6, h: 0.9, fontSize: 19, color: C.text1, margin: 0, valign: "top", isTextBox: true, objectName: "Summary statement" });
-    const cards = [[`≈ ${PCT}%`, "less staff time spent on each request, purchase order, timesheet and task"], [`≈ ${fmt(round100(HOURS))} h`, "a year given back to real work, for every 100 staff"], [`≈ $${fmt(Math.round(DOLLARS / 1000) * 1000)}`, `a year in staff time, at $${MODEL.hourly} an hour`], ["No hunting", "for a missing form or PO: every one has a number, a status and its approvals on record"]];
+    const rq = item("Request"), po = item("Purchase order"), tsh = item("Timesheet");
+    s.addText("Today requests, purchase orders and timesheets run on paper and PDF forms, signatures, scans and email, and there is no shared place for tasks. One central system would handle all four, with every approval recorded automatically.", { x: 0.6, y: 1.3, w: 12.1, h: 0.9, fontSize: 18, color: C.text1, margin: 0, valign: "top", isTextBox: true, objectName: "Summary statement" });
+    const cards = [["≈ 1/3", "of the task time: a request, purchase order or timesheet takes about one third of the time it takes today"], [`≈ ${fmt(round100(HOURS))} h`, "a year given back to real work, for every 100 staff"], [`≈ $${fmt(Math.round(DOLLARS / 1000) * 1000)}`, `a year in staff time, at $${MODEL.hourly} an hour`], ["No hunting", "for a missing form or PO: every one has a number, a status and its approvals on record"]];
     cards.forEach(([big, label], i) => {
       const x = 0.6 + i * 3.08;
-      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 2.65, w: 2.86, h: 2.75, rectRadius: 0.08, fill: { color: i === 3 ? C.accent6 : C.accent5 }, line: { color: i === 3 ? C.accent6 : C.accent5, width: 0 }, objectName: `Stat card ${i + 1}` });
-      s.addText(big, { x: x + 0.2, y: 2.9, w: 2.46, h: 0.95, fontSize: i === 3 ? 32 : 40, bold: true, color: i === 3 ? C.accent2 : C.accent1, margin: 0, valign: "middle", isTextBox: true, objectName: `Stat ${i + 1}` });
-      s.addText(label, { x: x + 0.2, y: 3.95, w: 2.46, h: 1.3, fontSize: 15, color: C.text1, margin: 0, valign: "top", isTextBox: true, objectName: `Stat label ${i + 1}` });
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 2.4, w: 2.86, h: 2.3, rectRadius: 0.08, fill: { color: i === 3 ? C.accent6 : C.accent5 }, line: { color: i === 3 ? C.accent6 : C.accent5, width: 0 }, objectName: `Stat card ${i + 1}` });
+      s.addText(big, { x: x + 0.2, y: 2.55, w: 2.46, h: 0.85, fontSize: i === 3 ? 32 : 40, bold: true, color: i === 3 ? C.accent2 : C.accent1, margin: 0, valign: "middle", isTextBox: true, objectName: `Stat ${i + 1}` });
+      s.addText(label, { x: x + 0.2, y: 3.45, w: 2.46, h: 1.15, fontSize: 14, color: C.text1, margin: 0, valign: "top", isTextBox: true, objectName: `Stat label ${i + 1}` });
     });
-    s.addText([{ text: "What is being asked today: ", options: { bold: true } }, { text: "agreement to confirm these numbers with our own counts and to pilot the system in one department." }], { x: 0.6, y: 5.75, w: 12.1, h: 0.5, fontSize: 16, color: C.text1, margin: 0, isTextBox: true, objectName: "Ask" });
-    note(s, EST, 0.6, 6.45, 12.1);
-    s.addNotes(`The whole proposal on one page. Today these four jobs run on paper forms, signatures, scans and email. In one system, the time staff spend on each item drops by about ${PCT} percent, because nobody prints, walks a form round for signatures, scans it or goes looking for it. For every 100 staff that is roughly ${fmt(round100(HOURS))} hours a year, worth about $${fmt(Math.round(DOLLARS / 1000) * 1000)} at $${MODEL.hourly} an hour. These are estimates built step by step from the paper process; slide 12 shows the assumptions so we can replace them with our own counts. The fourth box is not about time: nothing goes missing, because every form and purchase order has a number, a status and its approvals on record. The ask is at the bottom: confirm the numbers and run a pilot in one department.`);
+    s.addText("How these were estimated", { x: 0.6, y: 4.95, w: 12.1, h: 0.35, fontSize: 16, bold: true, color: C.text1, margin: 0, isTextBox: true, objectName: "Assumptions heading" });
+    s.addText([
+      { text: `An organization of ${MODEL.staff} staff at $${MODEL.hourly} an hour: ${fmt(tsh.perYear)} timesheets a year (one every two weeks each), about ${fmt(rq.perYear)} requests and ${fmt(po.perYear)} purchase orders.`, options: { bullet: true, breakLine: true } },
+      { text: `Task time today: ${rq.todayLabel} for a request or purchase order (filling in or editing the PDF, signatures, scanning, emailing, following up) and about ${tsh.today} minutes for a timesheet. In the system: about one third of that.`, options: { bullet: true, breakLine: true } },
+      { text: "The yearly counts are assumptions; CHN’s own counts would give CHN’s figure. The cost to build and host the live system is not counted.", options: { bullet: true } },
+    ], { x: 0.6, y: 5.35, w: 12.1, h: 1.55, fontSize: 13, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 4, isTextBox: true, objectName: "Assumptions" });
+    s.addNotes(`The whole proposal on one page. Today requests, purchase orders and timesheets run on paper and PDF forms, signatures, scans and email, and there is nothing in place for tasks. In one system, each of these takes about one third of the task time it takes today, because nobody edits a PDF, walks a form round for signatures, scans it, emails it or goes looking for it. For every 100 staff that is roughly ${fmt(round100(HOURS))} hours a year, worth about $${fmt(Math.round(DOLLARS / 1000) * 1000)} at $${MODEL.hourly} an hour. The fourth box is not about time: nothing goes missing, because every form and purchase order has a number, a status and its approvals on record. The bottom of the slide says how the figures were estimated: 100 staff, ${fmt(tsh.perYear)} timesheets, about ${fmt(rq.perYear)} requests and ${fmt(po.perYear)} purchase orders a year; one to two hours today for a request or purchase order and about ${tsh.today} minutes for a timesheet. These are estimates, and our own counts can replace them.`);
   }
 
   /* ================= 3. Today vs system flow ================= */
   {
     const r = item("Purchase order");
     const s = content("Today a purchase order travels by paper, scanner and email", "Overview");
-    const row = (label, steps, y, fill, color, w, gap, h) => {
+    const row = (label, steps, y, fill, color, w, gap, h, fs = 14) => {
       s.addText(label, { x: 0.6, y, w: 8, h: 0.35, fontSize: 14, bold: true, color, margin: 0, isTextBox: true, objectName: `${label} label` });
       steps.forEach((t, i) => {
         const x = 0.6 + i * (w + gap);
         s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: y + 0.45, w, h, rectRadius: 0.06, fill: { color: fill }, line: { color: fill, width: 0 }, objectName: `${label} step ${i + 1}` });
-        s.addText([{ text: `${i + 1}  `, options: { bold: true, color } }, { text: t }], { x: x + 0.12, y: y + 0.45, w: w - 0.24, h, fontSize: 14, color: C.text1, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} step text ${i + 1}` });
+        s.addText([{ text: `${i + 1}  `, options: { bold: true, color } }, { text: t }], { x: x + 0.12, y: y + 0.45, w: w - 0.24, h, fontSize: fs, color: C.text1, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} step text ${i + 1}` });
         if (i < steps.length - 1) s.addText("›", { x: x + w, y: y + 0.45, w: gap, h, fontSize: 18, bold: true, color, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `${label} arrow ${i + 1}` });
       });
     };
-    row("TODAY: paper, signatures, scanner and email", ["A paper PO form is filled in by hand", "It is taken round for signatures", "Someone scans it", "The scan is emailed", "It is saved in a folder or inbox", "Later it has to be hunted for. Sometimes it is missing"], 1.4, C.accent6, C.accent2, 1.82, 0.2, 1.25);
-    row("WITH THE SYSTEM: one place", ["It is filled in online", "The supervisor approves with one click", "Director level approves if it is over $5,000", "The PO is numbered and stays on record"], 3.45, C.accent5, C.accent1, 2.82, 0.28, 1.0);
-    [["Pages printed", `about ${r.pages}`, "0"], ["Emails people write", `about ${r.emailsT}`, "0"], ["Missing purchase orders", "sometimes", "none"]].forEach(([label, a, b], i) => {
-      const x = 0.6 + i * 4.1;
-      s.addText(label, { x, y: 5.4, w: 3.8, h: 0.35, fontSize: 14, color: C.accent4, margin: 0, isTextBox: true, objectName: `Flow stat label ${i + 1}` });
-      s.addText([{ text: a, options: { color: C.accent2, bold: true } }, { text: "  →  ", options: { color: C.accent4 } }, { text: b, options: { color: C.accent1, bold: true } }], { x, y: 5.75, w: 3.9, h: 0.7, fontSize: 28, margin: 0, valign: "middle", isTextBox: true, objectName: `Flow stat ${i + 1}` });
+    row("TODAY: paper, signatures, scanner and email", ["A paper PO form is filled in by hand", "It is taken round for signatures", "Someone scans it", "The scan is sent to Finance; the department keeps one copy", "Finance stores it on a computer", "Later it has to be hunted for. Sometimes it is missing"], 1.35, C.accent6, C.accent2, 1.82, 0.2, 1.3, 13);
+    row("WITH THE SYSTEM: one place", ["It is filled in online", "The supervisor approves with one click", "Director level approves if it is over $5,000", "The PO is numbered and stays on record"], 3.3, C.accent5, C.accent1, 2.82, 0.28, 0.9);
+    [["Pages printed", `about ${r.pages}`, "0"], ["Missing purchase orders", "sometimes", "none"]].forEach(([label, a, b], i) => {
+      const x = 0.6 + i * 2.75;
+      s.addText(label, { x, y: 5.0, w: 2.6, h: 0.3, fontSize: 13, color: C.accent4, margin: 0, isTextBox: true, objectName: `Flow stat label ${i + 1}` });
+      s.addText([{ text: a, options: { color: C.accent2, bold: true } }, { text: " → ", options: { color: C.accent4 } }, { text: b, options: { color: C.accent1, bold: true } }], { x, y: 5.35, w: 2.7, h: 0.7, fontSize: 20, margin: 0, valign: "middle", isTextBox: true, objectName: `Flow stat ${i + 1}` });
     });
-    note(s, "System notices (“a purchase order is waiting for you”) are sent automatically; nobody writes them.", 0.6, 6.55, 12.1);
-    s.addNotes("This is how a purchase order moves today. It is completely on paper. Someone fills in the form by hand and takes it round for signatures. Then someone scans it, the scan is emailed, and it is saved in a folder or an inbox. Later, when the order is needed, somebody has to hunt for it, and sometimes it cannot be found. A missing PO also means the proof of approval is missing. In the system it is filled in online, the supervisor approves with one click, director level approves if it is over $5,000, and the purchase order gets its number and stays on record. No printing, no scanning, no emails to write, and no hunting. The same pattern applies to the other requests and to timesheets, which the next slides show.");
+    s.addText([{ text: "Nobody writes an email. ", options: { bold: true, color: C.text1 } }, { text: "The system sends the notices itself:", options: { color: C.accent4 } }], { x: 6.35, y: 5.0, w: 6.4, h: 0.3, fontSize: 13, margin: 0, isTextBox: true, objectName: "Notices heading" });
+    const m1 = await shot(s, "mail-approver", 6.4, 5.42, 3.05, 1.2, "The automatic notice a supervisor receives: Approval needed, with the purchase order number");
+    const m2 = await shot(s, "mail-staff", 9.7, 5.42, 3.05, 1.2, "The automatic notice the employee receives: Approved, with the purchase order number");
+    caption(s, "The supervisor receives this", m1.x, m1.y + m1.h + 0.08, 3.05); caption(s, "The employee receives this", m2.x, m2.y + m2.h + 0.08, 3.05);
+    s.addNotes("This is how a purchase order moves today. It is completely on paper. Someone fills in the form by hand and takes it round for signatures. Then someone scans it and sends the scan to Finance, and the department keeps one copy. Finance stores it on a computer. Later, when the order is needed, somebody has to hunt for it, and sometimes it cannot be found. A missing PO also means the proof of approval is missing. In the system it is filled in online, the supervisor approves with one click, director level approves if it is over $5,000, and the purchase order gets its number and stays on record. No printing, no scanning and no hunting. Nobody writes an email either: the two small pictures at the bottom right are the notices the system sends by itself, one telling the supervisor that an approval is needed and one telling the employee it was approved. The same pattern applies to the other requests and to timesheets, which the next slides show.");
   }
 
   /* ================= 4-5. Requests ================= */
@@ -153,8 +160,23 @@ const HEX = THEME.colors;
     caption(s, "Screen: My requests, as an employee sees it.", 0.65, f.y + f.h + 0.1, 7.3);
     points(s, [["Find any request in seconds", "Search by number, person, department or what it was for."], ["See where it stands right now", "Awaiting approval, awaiting director level, returned to you, or ready."], ["Nothing goes missing", "A finished request stays on the list with its number. It cannot be lost in an inbox or a filing tray."]], 8.4, 1.55, 4.35, 1.3);
     s.addText([{ text: "Five request types, one short form each: ", options: { bold: true, color: C.text1 } }, { text: "travel, credit card purchase, travel claim, expense claim and purchase order.", options: { color: C.accent4 } }], { x: 8.4, y: 5.55, w: 4.35, h: 0.95, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Request types" });
-    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "a paper form for each type. To know where one is, you ask around.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.55, w: 7.3, h: 0.5, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Requests today" });
-    s.addNotes("This is what an employee sees under Requests. The red numbers on the picture match the three points on the right. One: a search box finds any request by number, person or department. Two: the Status column says in plain words where each request stands: awaiting approval, awaiting director level, returned to you with a comment, or ready. Three: finished requests stay on the list with their number, so nothing is lost. There are five kinds of request, each with one short form: travel, credit card purchase, travel claim, expense claim and purchase order. Today each of these is a paper form, and the only way to know where one is, is to ask around.");
+    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "a paper or PDF form for each type, saved and passed on as an email attachment. To know where one is, you ask around.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.55, w: 7.3, h: 0.5, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Requests today" });
+    s.addNotes("This is what an employee sees under Requests. The red numbers on the picture match the three points on the right. One: a search box finds any request by number, person or department. Two: the Status column says in plain words where each request stands: awaiting approval, awaiting director level, returned to you with a comment, or ready. Three: finished requests stay on the list with their number, so nothing is lost. There are five kinds of request, each with one short form: travel, credit card purchase, travel claim, expense claim and purchase order. Today each of these is a paper or PDF form that is saved and passed on as an email attachment, and the only way to know where one is, is to ask around.");
+  }
+  {
+    const s = content("Five kinds of request, each with its files and its history", "Requests");
+    const types = [["Travel request", "Approval before a trip: where, when and the estimated cost."], ["Credit card purchase", "Approval before buying something on the organization’s card."], ["Travel claim", "Mileage, meals and other costs after a trip."], ["Expense claim", "Money spent out of pocket, with the receipt."], ["Purchase order", "Approval to order from a supplier."]];
+    types.forEach(([head, body], i) => {
+      const y = 1.5 + i * 1.02;
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y, w: 4.2, h: 0.9, rectRadius: 0.06, fill: { color: C.background2 }, line: { color: C.background2, width: 0 }, objectName: `Request type card ${i + 1}` });
+      s.addText([{ text: head, options: { bold: true, fontSize: 16, color: C.text1, breakLine: true } }, { text: body, options: { fontSize: 13, color: C.accent4 } }], { x: 0.78, y, w: 3.9, h: 0.9, margin: 0, valign: "middle", isTextBox: true, objectName: `Request type ${i + 1}` });
+    });
+    const f = await shot(s, "req-attach", 5.15, 1.5, 4.55, 3.5, "An expense claim opened: its details, the attached receipt and the history of who did what");
+    caption(s, "Screen: one expense claim opened.", 5.15, f.y + f.h + 0.1, 4.55);
+    points(s, [["Files attached", "Receipts, quotes and other files are added while filling in the request. They stay with it."], ["Its own history", "Who sent it, who approved or returned it, when, and any comment."]], f.x + f.w + 0.35, 1.5, 12.75 - (f.x + f.w + 0.35), 1.75);
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 5.1, y: 5.45, w: 7.65, h: 1.15, rectRadius: 0.08, fill: { color: C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: "Audit trail card" });
+    s.addText([{ text: "A proper audit trail for every type. ", options: { bold: true, color: C.accent1 } }, { text: "The request, its files and each approval are kept together under one number. Nothing can be edited or removed.", options: { color: C.text1 } }], { x: 5.3, y: 5.5, w: 7.25, h: 1.05, fontSize: 15, margin: 0, valign: "middle", isTextBox: true, objectName: "Audit trail note" });
+    s.addNotes("These are the five kinds of request the system handles: a travel request before a trip, a credit card purchase, a travel claim after a trip, an expense claim for money spent out of pocket, and a purchase order. Each one is a short form. The picture is one expense claim opened. One: files can be attached while filling in the request, such as a receipt or a quote, and they stay with the request, so there is no separate email attachment to keep track of. Two: each request has its own history: who sent it, who approved or returned it, when, and any comment. Here the supervisor returned the claim asking for the full receipt. This is the audit trail: the request, its files and every approval are kept together under one number, and nothing can be edited or removed.");
   }
   {
     const r = item("Request");
@@ -163,8 +185,8 @@ const HEX = THEME.colors;
     caption(s, "Screen: one request opened. The bar shows the route.", 0.65, f.y + f.h + 0.1, 6.3);
     const x = f.x + f.w + 0.45, w = 12.75 - x;
     points(s, [["The route", "Who has approved and who is next."], ["The history", "Each step with name, date and comment."], ["The details", "Department and expense code are required."]], x, 1.5, w, 0.82);
-    note(s, EST, x, compare(s, [["Steps people do", String(r.stepsT), String(r.stepsS)], ["Emails written", `≈ ${r.emailsT}`, "0"], ["Time per request", `≈ ${r.today} min`, `≈ ${r.system} min`], ["Signatures to collect", "by hand", "one click"]], x, 4.0, w) + 0.12, w, 0.45);
-    s.addNotes(`Here one request is opened. One: the bar across the top is the route. It shows the request was submitted, the supervisor approved it, and it is now waiting at director level because it is over $5,000. Two: the history lists every step with the person's name, the date and any comment. Nothing there can be edited. Three: the details, including the department and expense code, which are required on every request. The table compares today with the system. On paper it takes about ${r.stepsT} steps: fill in the form, print, get it signed, scan, email, then follow up. In the system it is ${r.stepsS}: submit and approve. Staff time per request falls from about ${r.today} minutes to about ${r.system}. If a supervisor is away on approved leave, the request also goes to the next person up, so it does not wait on someone's desk.`);
+    note(s, EST, x, compare(s, [["Steps people do", String(r.stepsT), String(r.stepsS)], ["Emails written", `≈ ${r.emailsT}`, "0"], ["Time per request", r.todayLabel, `≈ ${r.system} min`], ["Signatures", "hand or e-sign", "one click"]], x, 4.0, w) + 0.12, w, 0.45);
+    s.addNotes(`Here one request is opened. One: the bar across the top is the route. It shows the request was submitted, the supervisor approved it, and it is now waiting at director level because it is over $5,000. Two: the history lists every step with the person's name, the date and any comment. Nothing there can be edited. Three: the details, including the department and expense code, which are required on every request. The table compares today with the system. Today it takes about ${r.stepsT} steps: fill in or edit the PDF form, print, collect signatures by hand or by e-sign, scan, email, then follow up, which adds up to one to two hours. In the system it is ${r.stepsS}: submit and approve, about ${r.system} minutes in all. If a supervisor is away on approved leave, the request also goes to the next person up, so it does not wait on someone's desk.`);
   }
 
   /* ================= 6-7. Purchase orders ================= */
@@ -183,18 +205,18 @@ const HEX = THEME.colors;
     const s = content("Proper approval every time, and no missing POs", "Purchase orders");
     const f = await shot(s, "po-print", 0.65, 1.5, 6.9, 3.0, "The one-page purchase order the system produces after the last approval");
     caption(s, "Screen: the one-page purchase order, ready to print or download as a PDF.", 0.65, f.y + f.h + 0.1, 6.9);
-    const steps = ["Employee asks", "Supervisor approves", "Director level if over $5,000", "PO is ready, with its number", "Goods received"];
+    const steps = ["Employee asks", "Supervisor approves", "Director level if over $5,000", "PO is ready, with its number"];
     steps.forEach((t, i) => {
-      const w = 1.3, x = 0.65 + i * (w + 0.1), y = 5.15;
+      const w = 1.65, x = 0.65 + i * (w + 0.1), y = 5.15;
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w, h: 1.25, rectRadius: 0.06, fill: { color: i === 3 ? C.accent1 : C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: `PO step ${i + 1}` });
       s.addText(t, { x: x + 0.06, y, w: w - 0.12, h: 1.25, fontSize: 14, bold: i === 3, color: i === 3 ? C.background1 : C.text1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `PO step text ${i + 1}` });
     });
     const x = 8.0, w = 4.75;
     s.addText("What changes for one purchase order", { x, y: 1.5, w, h: 0.4, fontSize: 17, bold: true, color: C.text1, margin: 0, isTextBox: true, objectName: "Compare heading" });
-    compare(s, [["Steps people do", String(r.stepsT), String(r.stepsS)], ["Time per order", `≈ ${r.today} min`, `≈ ${r.system} min`], ["Pages printed", `≈ ${r.pages}`, "0 to 1"], ["Missing POs", "sometimes", "none"]], x, 2.0, w);
+    compare(s, [["Steps people do", String(r.stepsT), String(r.stepsS)], ["Time per order", r.todayLabel, `≈ ${r.system} min`], ["Pages printed", `≈ ${r.pages}`, "0 to 1"], ["Missing POs", "sometimes", "none"]], x, 2.0, w);
     s.addText([{ text: "The approval is always complete. ", options: { bold: true, color: C.text1 } }, { text: "Nobody approves their own order and no level can be skipped. The PO shows who approved it, so the printed order always matches what was approved.", options: { color: C.accent4 } }], { x, y: 4.65, w, h: 1.4, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "PO note" });
     note(s, EST, x, 6.5, w, 0.45);
-    s.addNotes(`How a purchase order is approved in the system. The row of boxes at the bottom is the path: the employee asks, the supervisor approves, and anything over $5,000 also needs director level. After the last approval the system produces the purchase order itself, with its number. The picture is that one-page order: the supplier, department, expense code, amount, and at the bottom the names of the people who approved it. Compare that with paper: about ${r.stepsT} steps become ${r.stepsS}, and staff time drops from about ${r.today} minutes to about ${r.system}. Two points matter most. First, a PO cannot go missing, because it only exists in the system. Second, the approval is always complete: nobody can approve their own order and no level can be skipped. The $5,000 limit is a setting an administrator can change.`);
+    s.addNotes(`How a purchase order is approved in the system. The row of boxes at the bottom is the path: the employee asks, the supervisor approves, and anything over $5,000 also needs director level. After the last approval the system produces the purchase order itself, with its number. The picture is that one-page order: the supplier, department, expense code, amount, and at the bottom the names of the people who approved it. Compare that with paper: about ${r.stepsT} steps become ${r.stepsS}, and the time for one order drops from one to two hours to about ${r.system} minutes. Two points matter most. First, a PO cannot go missing, because it only exists in the system. Second, the approval is always complete: nobody can approve their own order and no level can be skipped. The $5,000 limit is a setting an administrator can change.`);
   }
 
   /* ================= 8-9. Timesheets ================= */
@@ -216,32 +238,33 @@ const HEX = THEME.colors;
     const x = f.x + f.w + 0.45, w = 12.75 - x;
     points(s, [["Progress for the pay period", "How many timesheets are approved."], ["One button reminds the rest", "No chasing by email or phone."], ["Each person’s status", "Not started, submitted or approved."]], x, 1.5, w, 0.82);
     note(s, EST, x, compare(s, [["Steps people do", String(r.stepsT), String(r.stepsS)], ["Time per timesheet", `≈ ${r.today} min`, `≈ ${r.system} min`], ["Overtime, banked time", "by hand", "automatic"], ["Chasing late ones", "one by one", "one button"]], x, 4.0, w) + 0.12, w, 0.45);
-    s.addNotes(`This page is for the person who collects the timesheets each pay period. One: the bar shows how many are approved, here ${META.approved} of ${META.total}. Two: one button sends a reminder to everyone who has not sent theirs, instead of chasing people one by one. Three: the list shows each person's status: not started, submitted or approved. Per timesheet, staff time goes from about ${r.today} minutes to about ${r.system}, because nothing is printed, signed, scanned or emailed, and overtime and banked time are worked out automatically. With ${fmt(r.perYear)} timesheets a year for 100 staff, this is the largest saving of the four.`);
+    s.addNotes(`This page is for the person who collects the timesheets each pay period. One: the bar shows how many are approved, here ${META.approved} of ${META.total}. Two: one button sends a reminder to everyone who has not sent theirs, instead of chasing people one by one. Three: the list shows each person's status: not started, submitted or approved. Per timesheet, the time goes from about ${r.today} minutes to about ${r.system}, because nothing is printed, signed, scanned or emailed, and overtime and banked time are worked out automatically. With ${fmt(r.perYear)} timesheets a year for 100 staff, the small saving on each one adds up.`);
   }
 
-  /* ================= 10. My Tasks ================= */
+  /* ================= My Tasks ================= */
   pres.addSection({ title: "My Tasks" });
   {
-    const r = item("Task");
     const s = content("My Tasks: assigned, tracked and reported in one place", "My Tasks");
     const f = await shot(s, "tasks", 0.65, 1.5, 7.3, 4.4, "A task card: progress buttons on the left and the history of who did what on the right");
     caption(s, "Screen: My Tasks. One task a manager assigned to an employee.", 0.65, f.y + f.h + 0.1, 7.3);
-    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "tasks are given by email or in a meeting, and progress is found out by asking.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.5, w: 7.3, h: 0.5, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Tasks today" });
     const x = 8.4, w = 4.35;
     points(s, [["Progress with one click", "25, 50, 75 or 100 percent."], ["The history", "Who did what, and when."], ["A note for the manager", "It replaces the status email."]], x, 1.5, w, 0.82);
-    note(s, EST, x, compare(s, [["Status emails", `≈ ${r.emailsT}`, "0"], ["Time per task", `≈ ${r.today} min`, `≈ ${r.system} min`], ["Team overview", "ask around", "one page"]], x, 4.0, w) + 0.12, w, 0.45);
-    s.addNotes(`My Tasks. Today tasks are given by email or in a meeting, and the manager finds out about progress by asking. Here a manager assigns a task with a due date and steps. One: the employee updates progress with one click. Two: the history on the right shows who created the task, who it was assigned to, each step ticked and each note, with dates. Three: a note box sends a message straight to the manager, which replaces the status email. Managers see their whole team's tasks on one page, with what is late or stuck. Staff time per task falls from about ${r.today} minutes to about ${r.system}.`);
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 4.05, w, h: 1.15, rectRadius: 0.08, fill: { color: C.accent6 }, line: { color: C.accent6, width: 0 }, objectName: "Tasks today card" });
+    s.addText([{ text: "Today: nothing like this. ", options: { bold: true, color: C.accent2 } }, { text: "Tasks are given by email or in a meeting, and progress is found out by asking.", options: { color: C.text1 } }], { x: x + 0.2, y: 4.1, w: w - 0.4, h: 1.05, fontSize: 14, margin: 0, valign: "middle", isTextBox: true, objectName: "Tasks today" });
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 5.35, w, h: 1.3, rectRadius: 0.08, fill: { color: C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: "Tasks benefit card" });
+    s.addText([{ text: "A streamlined workflow and more productive teams. ", options: { bold: true, color: C.accent1 } }, { text: "Everyone sees what is assigned, what is late and what is done.", options: { color: C.text1 } }], { x: x + 0.2, y: 5.4, w: w - 0.4, h: 1.2, fontSize: 14, margin: 0, valign: "middle", isTextBox: true, objectName: "Tasks benefit" });
+    s.addNotes("My Tasks. Today there is nothing like this: tasks are given by email or in a meeting, and the manager finds out about progress by asking. Here a manager assigns a task with a due date and steps. One: the employee updates progress with one click. Two: the history on the right shows who created the task, who it was assigned to, each step ticked and each note, with dates. Three: a note box sends a message straight to the manager, which replaces the status email. Managers see their whole team's tasks on one page, with what is late or stuck. This streamlines the workflow and helps teams get more done, because nobody has to ask where things stand.");
   }
 
   /* ================= 11. Chart ================= */
   pres.addSection({ title: "The numbers" });
   {
-    const s = content(`Staff time per item drops by about ${PCT}%`, "The numbers");
+    const s = content("Task time drops to about one third", "The numbers");
     const cats = MODEL.items.map((i) => i.key);
     const axis = { catAxisLabelColor: HEX.dk1, valAxisLabelColor: HEX.accent4, catAxisLabelFontSize: 14, valAxisLabelFontSize: 12, catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-lt" };
     s.addChart(pres.charts.BAR, [{ name: "Today", labels: cats, values: MODEL.items.map((i) => i.today) }, { name: "With the system", labels: cats, values: MODEL.items.map((i) => i.system) }], {
       x: 0.6, y: 1.4, w: 7.7, h: 5.2, barDir: "col", barGrouping: "clustered", barGapWidthPct: 60, chartColors: [HEX.accent2, HEX.accent1],
-      showTitle: true, title: "Minutes of staff time for one item", titleFontSize: 14, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
+      showTitle: true, title: "Minutes of task time for one item", titleFontSize: 14, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
       showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 14, dataLabelColor: HEX.dk1, dataLabelFontFace: "+mn-lt", dataLabelFontBold: true,
       showLegend: true, legendPos: "b", legendFontSize: 13, legendColor: HEX.dk1, legendFontFace: "+mn-lt",
       valGridLine: { color: "E3E8E4", size: 0.75 }, catGridLine: { style: "none" }, valAxisMinVal: 0, ...axis, objectName: "Minutes per item chart",
@@ -249,37 +272,14 @@ const HEX = THEME.colors;
     const x = 8.75, w = 4.0;
     s.addText("Where the time goes today", { x, y: 1.5, w, h: 0.4, fontSize: 18, bold: true, color: C.text1, margin: 0, isTextBox: true, objectName: "Commentary heading" });
     s.addText([
-      { text: "Filling in paper forms and taking them round for signatures.", options: { bullet: true, breakLine: true } },
+      { text: "Filling in paper forms or editing PDFs, and collecting signatures.", options: { bullet: true, breakLine: true } },
       { text: "Scanning and emailing the signed copy.", options: { bullet: true, breakLine: true } },
       { text: "Hunting for a form or PO that cannot be found.", options: { bullet: true, breakLine: true } },
       { text: "Counting overtime, banked time and leave by hand.", options: { bullet: true } },
     ], { x, y: 2.0, w, h: 3.0, fontSize: 15, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 10, isTextBox: true, objectName: "Commentary" });
     s.addText("The system removes these four. It does not remove the decision: a person still approves every item.", { x, y: 5.15, w, h: 1.0, fontSize: 15, bold: true, color: C.accent1, margin: 0, valign: "top", isTextBox: true, objectName: "Commentary close" });
     note(s, EST, 8.75, 6.5, 4.0, 0.45);
-    s.addNotes(`This chart puts the four side by side. The red bars are minutes of staff time today for one item; the green bars are the same item in the system. ${MODEL.items.map((i) => `A ${i.key.toLowerCase()} goes from about ${i.today} minutes to ${i.system}`).join(". ")}. Overall that is about ${PCT} percent less. The time does not come from people working faster. It comes from removing four things: filling in paper forms and taking them round for signatures, scanning and emailing, hunting for something that cannot be found, and counting overtime and leave by hand. People still make every approval decision.`);
-  }
-
-  /* ================= 12. Yearly saving ================= */
-  {
-    const s = content("In a year: time and cost for every 100 staff", "The numbers");
-    const head = (t, al) => ({ text: t, options: { bold: true, fontSize: 13, color: C.background1, fill: { color: HEX.dk2 }, align: al || "left", valign: "middle" } });
-    const cell = (t, al, bold, color) => ({ text: t, options: { fontSize: 15, bold: !!bold, color: color || C.text1, align: al || "left", valign: "middle" } });
-    const rows = MODEL.items.map((i) => [cell(i.plural), cell(fmt(i.perYear), "right"), cell(`${i.today - i.system} min`, "right"), cell(`${fmt(i.hours)} h`, "right", true, C.accent1)]);
-    s.addTable([[head("In a year"), head("How many", "right"), head("Saved on each", "right"), head("Hours saved", "right")], ...rows, [cell("Total", "left", true), cell("", "right"), cell("", "right"), cell(`${fmt(HOURS)} h`, "right", true, C.accent1)].map((c) => ({ text: c.text, options: { ...c.options, fill: { color: HEX.accent5 } } }))], { x: 0.6, y: 1.45, w: 7.2, colW: [2.5, 1.4, 1.6, 1.7], rowH: [0.42, 0.5, 0.5, 0.5, 0.5, 0.55], border: { type: "solid", color: "E3E8E4", pt: 1 }, margin: [0.02, 0.1, 0.02, 0.1], objectName: "Yearly saving table" });
-    [[`≈ $${fmt(Math.round(DOLLARS / 1000) * 1000)}`, `of staff time a year, at $${MODEL.hourly} an hour including benefits`, C.accent1, C.accent5], [`≈ ${fmt(round100(PAGES))} pages`, "of printed forms a year no longer needed", C.accent2, C.accent6]].forEach(([big, label, color, fill], i) => {
-      const y = 1.45 + i * 1.62;
-      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 8.25, y, w: 4.5, h: 1.42, rectRadius: 0.08, fill: { color: fill }, line: { color: fill, width: 0 }, objectName: `Year stat card ${i + 1}` });
-      s.addText(big, { x: 8.45, y: y + 0.12, w: 4.1, h: 0.65, fontSize: 32, bold: true, color, margin: 0, valign: "middle", isTextBox: true, objectName: `Year stat ${i + 1}` });
-      s.addText(label, { x: 8.45, y: y + 0.8, w: 4.1, h: 0.5, fontSize: 14, color: C.text1, margin: 0, valign: "top", isTextBox: true, objectName: `Year stat label ${i + 1}` });
-    });
-    s.addText("How these were estimated", { x: 0.6, y: 4.75, w: 7.2, h: 0.35, fontSize: 16, bold: true, color: C.text1, margin: 0, isTextBox: true, objectName: "Assumptions heading" });
-    s.addText([
-      { text: `An organization of ${MODEL.staff} staff, each sending a timesheet every two weeks.`, options: { bullet: true, breakLine: true } },
-      { text: "Each process walked through step by step, on paper and then in the prototype, and the hands-on minutes of staff and supervisors added up.", options: { bullet: true, breakLine: true } },
-      { text: "Yearly counts of requests, orders and tasks are assumptions. Replacing them with CHN’s own counts gives CHN’s figure.", options: { bullet: true } },
-    ], { x: 0.6, y: 5.15, w: 7.2, h: 1.7, fontSize: 14, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 5, isTextBox: true, objectName: "Assumptions" });
-    s.addText([{ text: "Not counted: ", options: { bold: true, color: C.text1 } }, { text: "subscriptions for separate apps that could be retired, and the cost to build and host the live system, which still has to be quoted.", options: { color: C.accent4 } }], { x: 8.25, y: 4.85, w: 4.5, h: 1.5, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Not counted" });
-    s.addNotes(`This is the yearly picture for every 100 staff. The table multiplies the minutes saved on each item by how many there are in a year. Timesheets are the biggest line because there are ${fmt(item("Timesheet").perYear)} of them. The total is about ${fmt(HOURS)} hours a year, close to one person's full working year, returned to real work. At $${MODEL.hourly} an hour that is about $${fmt(Math.round(DOLLARS / 1000) * 1000)}. It also removes roughly ${fmt(round100(PAGES))} printed pages. I want to be clear about what these numbers are: they are estimates. The minutes come from walking through each process step by step and counting the hands-on time of staff and supervisors; the yearly counts are assumptions for 100 staff. The next step is to replace them with our own counts. Two things are not included: savings from subscriptions we could stop paying, and the cost to build and host the live system, which has not been quoted yet.`);
+    s.addNotes(`This chart puts the three side by side. The red bars are minutes of task time today for one item; the green bars are the same item in the system. ${MODEL.items.map((i) => `A ${i.key.toLowerCase()} goes from about ${i.today} minutes to about ${i.system}`).join(". ")}. Each takes about one third of the time it takes today. The time does not come from people working faster. It comes from removing four things: filling in paper forms or editing PDFs and collecting signatures, scanning and emailing, hunting for something that cannot be found, and counting overtime and leave by hand. People still make every approval decision.`);
   }
 
   /* ================= 13. Audit trail ================= */
@@ -321,8 +321,8 @@ const HEX = THEME.colors;
     const s = pres.addSlide({ masterName: "Closing dark", sectionTitle: "Next steps" });
     s.addText("Where we are, and what happens next", { placeholder: "title" });
     s.addText([{ text: "Today: a working prototype", options: { bold: true, fontSize: 20, color: C.background1, breakLine: true } }, { text: "Every screen in this briefing is real and can be tried in a browser, with fictional people and figures. It is not yet connected to real staff accounts or email.", options: { fontSize: 15, color: C.accent5 } }], { x: 0.7, y: 1.75, w: 4.6, h: 2.3, margin: 0, valign: "top", isTextBox: true, objectName: "Where we are" });
-    s.addText([{ text: "Time to build the live system", options: { bold: true, fontSize: 20, color: C.background1, breakLine: true } }, { text: "About 4 to 6 months, in stages, with a small team. This is an early estimate, to be confirmed with IT.", options: { fontSize: 15, color: C.accent5 } }], { x: 0.7, y: 4.25, w: 4.6, h: 1.9, margin: 0, valign: "top", isTextBox: true, objectName: "Timeline" });
-    const steps = [["Confirm the numbers", "Replace the estimates with CHN’s own counts of requests, purchase orders and timesheets."], ["Choose a pilot department", "Start with purchase orders and timesheets, where paper causes the most trouble."], ["Decide hosting and sign-in with IT", "CHN’s own servers or a host in Canada; staff use their existing work accounts."], ["Build in stages and test with real users", "Go live only after the pilot department has used it for full pay periods."]];
+    s.addText([{ text: "Time to build the live system", options: { bold: true, fontSize: 20, color: C.background1, breakLine: true } }, { text: "About 1 to 2 months, in stages, with a small team. This is an early estimate, to be confirmed with IT.", options: { fontSize: 15, color: C.accent5 } }], { x: 0.7, y: 4.25, w: 4.6, h: 1.9, margin: 0, valign: "top", isTextBox: true, objectName: "Timeline" });
+    const steps = [["Confirm the numbers", "Replace the estimates with CHN’s own counts of requests, purchase orders and timesheets."], ["Pilot with one or two departments", "Start with purchase orders and timesheets, where paper causes the most trouble."], ["Decide hosting and sign-in with IT", "CHN’s own servers or a host in Canada; staff use their existing work accounts."], ["Build in stages and test with real users", "Go live after the pilot departments have used it for full pay periods."]];
     steps.forEach(([head, body], i) => {
       const y = 1.75 + i * 1.18;
       s.addShape(pres.shapes.OVAL, { x: 6.1, y: y + 0.03, w: 0.55, h: 0.55, fill: { color: C.accent3 }, line: { color: C.accent3, width: 0 }, objectName: `Next step circle ${i + 1}` });
@@ -330,7 +330,7 @@ const HEX = THEME.colors;
       s.addText([{ text: head, options: { bold: true, fontSize: 19, color: C.background1, breakLine: true } }, { text: body, options: { fontSize: 14, color: C.accent5 } }], { x: 6.9, y: y - 0.05, w: 5.8, h: 1.05, margin: 0, valign: "top", isTextBox: true, objectName: `Next step ${i + 1}` });
     });
     s.addText("Decision requested: approve steps 1 and 2.", { x: 0.7, y: 6.55, w: 8, h: 0.4, fontSize: 16, bold: true, color: C.accent3, margin: 0, isTextBox: true, objectName: "Decision" });
-    s.addNotes("To close. What exists today is a working prototype: every screen you saw is real and can be tried in a browser, but it uses fictional people and figures and is not yet connected to real staff accounts or email. Building the live system is estimated at four to six months in stages; that is an early estimate and needs to be confirmed with IT. The four next steps are on the right. First, replace the estimates with our own counts. Second, choose one department to pilot, starting with purchase orders and timesheets because that is where paper causes the most trouble. Third, decide with IT where it is hosted and how people sign in. Fourth, build in stages and only go live after the pilot department has used it for full pay periods. The decision requested today is approval for the first two steps. A demonstration of the prototype can be arranged for anyone who would like to try it.");
+    s.addNotes("To close. What exists today is a working prototype: every screen you saw is real and can be tried in a browser, but it uses fictional people and figures and is not yet connected to real staff accounts or email. Building the live system is estimated at one to two months in stages; that is an early estimate and needs to be confirmed with IT. The four next steps are on the right. First, replace the estimates with our own counts. Second, pilot with one or two departments, starting with purchase orders and timesheets because that is where paper causes the most trouble. Third, decide with IT where it is hosted and how people sign in. Fourth, build in stages and only go live after the pilot departments have used it for full pay periods. The decision requested today is approval for the first two steps. A demonstration of the prototype can be arranged for anyone who would like to try it.");
   }
 
   await pres.writeFile({ fileName: OUT });

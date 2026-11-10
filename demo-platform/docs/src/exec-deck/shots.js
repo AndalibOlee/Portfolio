@@ -72,5 +72,15 @@ const OUT = __dirname + "/shots/";
   // the built-in How-to guides
   await login("u1"); await page.setViewportSize({ width: 1100, height: 1700 }); await page.click("text=How-to"); await W(600); await ev(() => document.querySelectorAll(".guide")[2].classList.add("dk-g")); await ev(() => document.querySelector(".dk-g").scrollIntoView()); await W(300);
   await snap("howto", { top: [".dk-g"], bottom: [".dk-g"], padTop: 4, padBottom: 4 }, [[1, ".dk-g .gsteps", 0, 250, -34], [2, ".dk-g .gimg", 0, 12, 10], [3, ".dk-g .gbtn", 0, "R"]]);
+  // self-service: employment, pay, pension and benefits
+  const tagBy = (c, ...t) => ev(([c, t]) => { const el = [...document.querySelectorAll(".content .wrap *")].filter((x) => t.every((k) => x.textContent.includes(k))).pop(); if (el) el.classList.add(c); return !!el; }, [c, t]);
+  await login("u1"); await page.setViewportSize({ width: 1100, height: 1700 }); await ev(() => go("/me/profile")); await W(400);
+  await page.click('text="Employment"'); await W(500); await tagBy("dk-job", "Employment type", "Start date"); await tagBy("dk-pay", "Pay type", "Pay schedule");
+  await snap("employment", { top: [".content h1"], bottom: [".dk-pay"], padTop: 4, padBottom: 6 }, [[1, ".dk-job", 0, 92, 20], [2, ".dk-pay", 0, 92, 20]]);
+  await page.click('text="Pension & Benefits"'); await W(500); await tagBy("dk-ben", "Life & AD&D", "Covered since"); await tagBy("dk-adds", "Your employer adds", "$");
+  await snap("benefits", { top: [".content h1"], bottom: [".dk-ben"], padTop: 4, padBottom: 6 }, [[3, ".content h1", 0, 310, 2]]);
+  // certificates, as a manager sees them
+  await login("u2"); await page.setViewportSize({ width: 1250, height: 1700 }); await ev(() => go("/hr/certifications")); await W(500); await tagBy("dk-exp", "Expiring within 60", "book the renewal");
+  await snap("certs", { top: [".content h1"], bottom: [".content table tbody tr", 3], padTop: 4, padBottom: 2 }, [[1, ".dk-exp", 0, 150, 4], [2, ".content table thead th", 3, 78, 3], [3, ".content table thead th", 4, 70, 3]]);
   console.log("errors", errs); await b.close();
 })();

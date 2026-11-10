@@ -256,6 +256,33 @@ const HEX = THEME.colors;
     s.addNotes("My Tasks. Today there is nothing like this: tasks are given by email or in a meeting, and the manager finds out about progress by asking. Here a manager assigns a task with a due date and steps. One: the employee updates progress with one click. Two: the history on the right shows who created the task, who it was assigned to, each step ticked and each note, with dates. Three: a note box sends a message straight to the manager, which replaces the status email. Managers see their whole team's tasks on one page, with what is late or stuck. This streamlines the workflow and helps teams get more done, because nobody has to ask where things stand.");
   }
 
+  /* ================= Self-service ================= */
+  pres.addSection({ title: "Self-service and certificates" });
+  {
+    const s = content("Staff check their own pay, job details and benefits", "Self-service and certificates");
+    const f1 = await shot(s, "employment", 0.65, 1.5, 5.1, 2.6, "My Profile, Employment: the employee's job details and pay details");
+    const f2 = await shot(s, "benefits", 0.65, f1.y + f1.h + 0.25, 5.1, 2.6, "My Profile, Pension and Benefits: the plans the employee is in, what they pay and what the employer adds");
+    caption(s, "Screens: My Profile › Employment and Pension & Benefits, as an employee sees them.", 0.65, f2.y + f2.h + 0.1, 5.4);
+    const x = 6.2, w = 6.55;
+    points(s, [["Employment details", "Start date, position, location and who they report to."], ["Pay details", "Pay rate, pay schedule and every pay statement, the moment it is ready."], ["Pension and benefits", "The plans they are in, what comes off each pay and what the employer adds."]], x, 1.5, w, 0.95);
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 4.45, w, h: 1.0, rectRadius: 0.08, fill: { color: C.accent6 }, line: { color: C.accent6, width: 0 }, objectName: "Self-service today card" });
+    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "an email to Finance or HR, then a wait for someone to look it up and reply.", options: { color: C.text1 } }], { x: x + 0.2, y: 4.5, w: w - 0.4, h: 0.9, fontSize: 15, margin: 0, valign: "middle", isTextBox: true, objectName: "Self-service today" });
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 5.6, w, h: 1.05, rectRadius: 0.08, fill: { color: C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: "Self-service benefit card" });
+    s.addText([{ text: "With the system: the answer is instant. ", options: { bold: true, color: C.accent1 } }, { text: "Each person sees only their own record, and Finance and HR answer fewer routine questions.", options: { color: C.text1 } }], { x: x + 0.2, y: 5.65, w: w - 0.4, h: 0.95, fontSize: 15, margin: 0, valign: "middle", isTextBox: true, objectName: "Self-service benefit" });
+    s.addNotes("Self-service. Every employee has a My Profile and a My Pay page. One: employment details, such as start date, position, location and who they report to. Two: pay details: their pay rate, pay schedule and every pay statement as soon as it is ready. Three: pension and benefits: the plans they are enrolled in, what comes off each pay and what the employer adds on top. Today, to check any of these, a person emails Finance or HR and waits for someone to look it up and reply. In the system the answer is instant, at any time. Each person sees only their own record. It also means Finance and HR spend less time answering the same routine questions.");
+  }
+  {
+    const s = content("Certificates: expiry dates tracked for managers and HR", "Self-service and certificates");
+    const f = await shot(s, "certs", 0.65, 1.5, 7.3, 4.4, "Training and certificates: counts of expired and expiring certificates, and a list with each person's certificate, expiry date and status");
+    caption(s, "Screen: People › Certificates, as a manager sees it.", 0.65, f.y + f.h + 0.1, 7.3);
+    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "expiry dates sit in files and spreadsheets, and a lapsed certificate is often noticed only after it has expired.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.5, w: 7.3, h: 0.55, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Certificates today" });
+    const x = 8.4, w = 4.35;
+    points(s, [["What needs attention", "Expired, and expiring within 60 days."], ["The expiry date", "With the days left for each one."], ["A clear status", "Expired, expiring soon or current."]], x, 1.5, w, 0.82);
+    compare(s, [["Finding a date", "look it up", "one list"], ["Early warning", "none", "60 days"], ["Reminders", "by hand", "one click"]], x, 4.0, w);
+    s.addText("Managers see their own team. HR sees everyone, adds certificates and sends reminders.", { x, y: 5.98, w, h: 0.6, fontSize: 13, color: C.accent4, margin: 0, valign: "top", isTextBox: true, objectName: "Certificates who" });
+    s.addNotes("Certificates. This page lists the tickets, licences and training on file for each person, such as first aid or a forklift licence. One: the boxes at the top show what needs attention: how many have expired and how many expire within 60 days. Two: the list shows each expiry date and the days left. Three: a clear status: expired, expiring soon or current. Managers see the certificates of their own team. HR sees everyone, can add a certificate with the document itself, record a renewal and send a reminder with one click. Today these dates sit in files and spreadsheets, and a lapsed certificate is often noticed only after it has expired. Here nothing expires unnoticed, which matters for safety and for insurance.");
+  }
+
   /* ================= How-to guides ================= */
   pres.addSection({ title: "Training" });
   {

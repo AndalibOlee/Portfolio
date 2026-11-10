@@ -109,7 +109,7 @@ const HEX = THEME.colors;
     const s = content("The proposal in one minute", "Overview");
     const rq = item("Request"), po = item("Purchase order"), tsh = item("Timesheet");
     s.addText("Today requests, purchase orders and timesheets run on paper and PDF forms, signatures, scans and email, and there is no shared place for tasks. One central system would handle all four, with every approval recorded automatically.", { x: 0.6, y: 1.3, w: 12.1, h: 0.9, fontSize: 18, color: C.text1, margin: 0, valign: "top", isTextBox: true, objectName: "Summary statement" });
-    const cards = [["≈ 1/3", "of the task time: a request, purchase order or timesheet takes about one third of the time it takes today"], [`≈ ${fmt(round100(HOURS))} h`, "a year given back to real work, for every 100 staff"], [`≈ $${fmt(Math.round(DOLLARS / 1000) * 1000)}`, `a year in staff time, at $${MODEL.hourly} an hour`], ["One centralized software", "instead of multiple websites and software"]];
+    const cards = [["≈ 1/3", "of the admin task time: a request, purchase order or timesheet takes about one third of the time it takes today"], [`≈ ${fmt(round100(HOURS))} h`, "a year given back to real work, for every 100 staff"], [`≈ $${fmt(Math.round(DOLLARS / 1000) * 1000)}`, `a year in staff time, at $${MODEL.hourly} an hour`], ["One centralized software", "instead of multiple websites and software"]];
     cards.forEach(([big, label], i) => {
       const x = 0.6 + i * 3.08;
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 2.4, w: 2.86, h: 2.3, rectRadius: 0.08, fill: { color: C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: `Stat card ${i + 1}` });
@@ -119,10 +119,10 @@ const HEX = THEME.colors;
     s.addText("How these were estimated", { x: 0.6, y: 4.95, w: 12.1, h: 0.35, fontSize: 16, bold: true, color: C.text1, margin: 0, isTextBox: true, objectName: "Assumptions heading" });
     s.addText([
       { text: `An organization of ${MODEL.staff} staff at $${MODEL.hourly} an hour: ${fmt(tsh.perYear)} timesheets a year (one every two weeks each), about ${fmt(rq.perYear)} requests and ${fmt(po.perYear)} purchase orders.`, options: { bullet: true, breakLine: true } },
-      { text: `Task time today: ${rq.todayLabel} for a request or purchase order (filling in or editing the PDF, signatures, scanning, emailing, following up) and about ${tsh.today} minutes for a timesheet. In the system: about one third of that.`, options: { bullet: true, breakLine: true } },
+      { text: `Admin task time today: ${rq.todayLabel} for a request or purchase order (filling in or editing the PDF, signatures, scanning, emailing, following up) and about ${tsh.today} minutes for a timesheet. In the system: about one third of that.`, options: { bullet: true, breakLine: true } },
       { text: "The yearly counts are assumptions; CHN’s own counts would give CHN’s figure. The cost to build and host the live system is not counted.", options: { bullet: true } },
     ], { x: 0.6, y: 5.35, w: 12.1, h: 1.55, fontSize: 13, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 4, isTextBox: true, objectName: "Assumptions" });
-    s.addNotes(`The whole proposal on one page. Today requests, purchase orders and timesheets run on paper and PDF forms, signatures, scans and email, and there is nothing in place for tasks. In one system, each of these takes about one third of the task time it takes today, because nobody edits a PDF, walks a form round for signatures, scans it, emails it or goes looking for it. For every 100 staff that is roughly ${fmt(round100(HOURS))} hours a year, worth about $${fmt(Math.round(DOLLARS / 1000) * 1000)} at $${MODEL.hourly} an hour. The fourth box is not about time: it is one centralized software instead of multiple websites and software, so everything is in one place and nothing goes missing. The bottom of the slide says how the figures were estimated: 100 staff, ${fmt(tsh.perYear)} timesheets, about ${fmt(rq.perYear)} requests and ${fmt(po.perYear)} purchase orders a year; one to two hours today for a request or purchase order and about ${tsh.today} minutes for a timesheet. These are estimates, and our own counts can replace them.`);
+    s.addNotes(`The whole proposal on one page. Today requests, purchase orders and timesheets run on paper and PDF forms, signatures, scans and email, and there is nothing in place for tasks. In one system, each of these takes about one third of the admin task time it takes today, because nobody edits a PDF, walks a form round for signatures, scans it, emails it or goes looking for it. For every 100 staff that is roughly ${fmt(round100(HOURS))} hours a year, worth about $${fmt(Math.round(DOLLARS / 1000) * 1000)} at $${MODEL.hourly} an hour. The fourth box is not about time: it is one centralized software instead of multiple websites and software, so everything is in one place and nothing goes missing. The bottom of the slide says how the figures were estimated: 100 staff, ${fmt(tsh.perYear)} timesheets, about ${fmt(rq.perYear)} requests and ${fmt(po.perYear)} purchase orders a year; one to two hours today for a request or purchase order and about ${tsh.today} minutes for a timesheet. These are estimates, and our own counts can replace them.`);
   }
 
   /* ================= 8-9. Timesheets ================= */
@@ -316,12 +316,12 @@ const HEX = THEME.colors;
   /* ================= 11. Chart ================= */
   pres.addSection({ title: "The numbers" });
   {
-    const s = content("Task time drops to about one third", "The numbers");
+    const s = content("Administrative task time drops to about one third", "The numbers");
     const cats = MODEL.items.map((i) => i.key);
     const axis = { catAxisLabelColor: HEX.dk1, valAxisLabelColor: HEX.accent4, catAxisLabelFontSize: 14, valAxisLabelFontSize: 12, catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-lt" };
     s.addChart(pres.charts.BAR, [{ name: "Today", labels: cats, values: MODEL.items.map((i) => i.today) }, { name: "With the system", labels: cats, values: MODEL.items.map((i) => i.system) }], {
       x: 0.6, y: 1.4, w: 7.7, h: 5.2, barDir: "col", barGrouping: "clustered", barGapWidthPct: 60, chartColors: [HEX.accent2, HEX.accent1],
-      showTitle: true, title: "Minutes of task time for one item", titleFontSize: 14, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
+      showTitle: true, title: "Minutes of admin task time for one item", titleFontSize: 14, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
       showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 14, dataLabelColor: HEX.dk1, dataLabelFontFace: "+mn-lt", dataLabelFontBold: true,
       showLegend: true, legendPos: "b", legendFontSize: 13, legendColor: HEX.dk1, legendFontFace: "+mn-lt",
       valGridLine: { color: "E3E8E4", size: 0.75 }, catGridLine: { style: "none" }, valAxisMinVal: 0, ...axis, objectName: "Minutes per item chart",
@@ -336,7 +336,7 @@ const HEX = THEME.colors;
     ], { x, y: 2.0, w, h: 3.0, fontSize: 15, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 10, isTextBox: true, objectName: "Commentary" });
     s.addText("The system removes these four. It does not remove the decision: a person still approves every item.", { x, y: 5.15, w, h: 1.0, fontSize: 15, bold: true, color: C.accent1, margin: 0, valign: "top", isTextBox: true, objectName: "Commentary close" });
     note(s, EST, 8.75, 6.5, 4.0, 0.45);
-    s.addNotes(`This chart puts the three side by side. The red bars are minutes of task time today for one item; the green bars are the same item in the system. ${MODEL.items.map((i) => `A ${i.key.toLowerCase()} goes from about ${i.today} minutes to about ${i.system}`).join(". ")}. Each takes about one third of the time it takes today. The time does not come from people working faster. It comes from removing four things: filling in paper forms or editing PDFs and collecting signatures, scanning and emailing, hunting for something that cannot be found, and counting overtime and leave by hand. People still make every approval decision.`);
+    s.addNotes(`This chart puts the three side by side. The red bars are minutes of admin task time today for one item; the green bars are the same item in the system. ${MODEL.items.map((i) => `A ${i.key.toLowerCase()} goes from about ${i.today} minutes to about ${i.system}`).join(". ")}. Each takes about one third of the time it takes today. The time does not come from people working faster. It comes from removing four things: filling in paper forms or editing PDFs and collecting signatures, scanning and emailing, hunting for something that cannot be found, and counting overtime and leave by hand. People still make every approval decision.`);
   }
 
   /* ================= 13. Audit trail ================= */

@@ -54,7 +54,7 @@ function vWorkflows() {
 }
 function vAudit() {
   const list = [...S.audit].reverse();
-  return ph("Audit Log", "Append-only. Every sign-in, approval, posting and setting change — there is no edit or delete path.")
+  return ph("Audit Log", "Append-only. Every request, approval, posting and setting change — there is no edit or delete path.")
     + cardFlush("", table(["When", "Who", "Module", "Action", "What happened"], list.map((x) => `<tr><td style="white-space:nowrap">${esc(dTime(x.at))}</td><td>${esc(x.actorName)}</td><td><span class="badge tone-grey">${esc(x.module)}</span></td><td class="mono" style="font-size:11px">${esc(x.action)}</td><td>${esc(x.summary)}${x.companyId ? `<div class="hint">${esc(co(x.companyId)?.displayName || "")}</div>` : ""}</td></tr>`), "Nothing logged yet in this shared session. Act anywhere in the platform and it appears here."));
 }
 function vSettings() {

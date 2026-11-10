@@ -256,6 +256,22 @@ const HEX = THEME.colors;
     s.addNotes("My Tasks. Today there is nothing like this: tasks are given by email or in a meeting, and the manager finds out about progress by asking. Here a manager assigns a task with a due date and steps. One: the employee updates progress with one click. Two: the history on the right shows who created the task, who it was assigned to, each step ticked and each note, with dates. Three: a note box sends a message straight to the manager, which replaces the status email. Managers see their whole team's tasks on one page, with what is late or stuck. This streamlines the workflow and helps teams get more done, because nobody has to ask where things stand.");
   }
 
+  /* ================= Time off ================= */
+  pres.addSection({ title: "Time off" });
+  {
+    const s = content("Time off: one short form instead of a PDF and an email", "Time off");
+    const f = await shot(s, "timeoff", 0.65, 1.5, 2.8, 5.05, "The time-off request form: type, days, an optional attachment, the balance left afterwards and a Send button");
+    caption(s, "Screen: My Time Off.", 0.65, f.y + f.h + 0.1, 2.8);
+    const mx = f.x + f.w + 0.4, mw = 4.3;
+    const g = await shot(s, "timeoff-list", mx, 1.5, mw, 1.5, "The employee's time-off requests, each with its status");
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: mx - 0.05, y: g.y + g.h + 0.3, w: mw + 0.1, h: 1.05, rectRadius: 0.08, fill: { color: C.accent6 }, line: { color: C.accent6, width: 0 }, objectName: "Time off today card" });
+    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "a PDF form is filled in, signed and emailed, and the balance is checked by asking.", options: { color: C.text1 } }], { x: mx + 0.12, y: g.y + g.h + 0.33, w: mw - 0.24, h: 0.99, fontSize: 14, margin: 0, valign: "middle", isTextBox: true, objectName: "Time off today" });
+    compare(s, [["How it is asked", "PDF + email", "one form"], ["Balance left", "ask HR", "shown first"], ["On the timesheet", "typed again", "fills itself"]], mx - 0.05, g.y + g.h + 1.6, mw + 0.1);
+    const x = mx + mw + 0.45;
+    points(s, [["Pick the type and the days", "The hours are worked out for you."], ["See what is left first", "The balance after this request, before it is sent."], ["One button sends it", "It goes straight to the supervisor."], ["Follow the status", "Who has it, and when it is approved."]], x, 1.5, 12.75 - x, 1.2);
+    s.addNotes("Time off. Today a person fills in a PDF form, signs it and emails it, and to know how many days they have left they ask HR. In the system it is one short form. One: pick the type of leave and the first and last day, and the hours are worked out automatically, leaving out weekends and stat holidays. Two: before anything is sent, the green box shows the balance and what will be left after this request. Three: one button sends it straight to the supervisor, who approves it on screen. A doctor's note or booking can be attached. Four: the list shows each request and its status: who has it now, and when it is approved. Once approved, the hours fill in on the timesheet by themselves, so nothing is typed twice, and the team calendar shows who is away.");
+  }
+
   /* ================= Self-service ================= */
   pres.addSection({ title: "Self-service and certificates" });
   {

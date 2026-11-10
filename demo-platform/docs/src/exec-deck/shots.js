@@ -82,5 +82,13 @@ const OUT = __dirname + "/shots/";
   // certificates, as a manager sees them
   await login("u2"); await page.setViewportSize({ width: 1250, height: 1700 }); await ev(() => go("/hr/certifications")); await W(500); await tagBy("dk-exp", "Expiring within 60", "book the renewal");
   await snap("certs", { top: [".content h1"], bottom: [".content table tbody tr", 3], padTop: 4, padBottom: 2 }, [[1, ".dk-exp", 0, 150, 4], [2, ".content table thead th", 3, 78, 3], [3, ".content table thead th", 4, 70, 3]]);
+  // time off: the request form filled in, and the list of requests
+  await login("u1"); await page.setViewportSize({ width: 1100, height: 1900 }); await ev(() => go("/me/time-off")); await W(500);
+  for (const [id, v] of [["#lvStart", "2026-11-23"], ["#lvEnd", "2026-11-25"]]) { const i = await page.$(id); await i.fill(v); await i.dispatchEvent("change"); await W(250); }
+  await ev(() => document.activeElement?.blur()); await W(300); await tagBy("dk-left", "hours of Annual Vacation");
+  const fr = await ev(() => { const x = document.querySelector(".to-form").getBoundingClientRect(); return [x.left, x.right]; });
+  await snap("timeoff", { top: [".to-form"], bottom: ["#lvSend"], x0: fr[0] - 6, x1: fr[1] + 6, padTop: 6, padBottom: 10 }, [[1, "#lvStart", 0, 200, -34], [2, ".dk-left", 0, 250, -16], [3, "#lvSend", 0, "R"]]);
+  await ev(() => document.querySelector(".content table").classList.add("dk-tol")); 
+  await snap("timeoff-list", { top: [".dk-tol"], bottom: [".dk-tol tbody tr", 1], padBottom: 2 }, [[4, ".dk-tol thead th", 4, 90, 3]]);
   console.log("errors", errs); await b.close();
 })();

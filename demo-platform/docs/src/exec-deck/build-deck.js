@@ -125,31 +125,42 @@ const HEX = THEME.colors;
     s.addNotes(`The whole proposal on one page. Today requests, purchase orders and timesheets run on paper and PDF forms, signatures, scans and email, and there is nothing in place for tasks. In one system, each of these takes about one third of the task time it takes today, because nobody edits a PDF, walks a form round for signatures, scans it, emails it or goes looking for it. For every 100 staff that is roughly ${fmt(round100(HOURS))} hours a year, worth about $${fmt(Math.round(DOLLARS / 1000) * 1000)} at $${MODEL.hourly} an hour. The fourth box is not about time: it is one centralized software instead of multiple websites and software, so everything is in one place and nothing goes missing. The bottom of the slide says how the figures were estimated: 100 staff, ${fmt(tsh.perYear)} timesheets, about ${fmt(rq.perYear)} requests and ${fmt(po.perYear)} purchase orders a year; one to two hours today for a request or purchase order and about ${tsh.today} minutes for a timesheet. These are estimates, and our own counts can replace them.`);
   }
 
-  /* ================= 3. Today vs system flow ================= */
+  /* ================= 8-9. Timesheets ================= */
+  pres.addSection({ title: "Timesheets" });
   {
-    const r = item("Purchase order");
-    const s = content("Today a purchase order travels by paper, scanner and email", "Overview");
-    const row = (label, steps, y, fill, color, w, gap, h, fs = 14) => {
-      s.addText(label, { x: 0.6, y, w: 8, h: 0.35, fontSize: 14, bold: true, color, margin: 0, isTextBox: true, objectName: `${label} label` });
-      steps.forEach((t, i) => {
-        const x = 0.6 + i * (w + gap);
-        s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: y + 0.45, w, h, rectRadius: 0.06, fill: { color: fill }, line: { color: fill, width: 0 }, objectName: `${label} step ${i + 1}` });
-        s.addText([{ text: `${i + 1}  `, options: { bold: true, color } }, { text: t }], { x: x + 0.12, y: y + 0.45, w: w - 0.24, h, fontSize: fs, color: C.text1, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} step text ${i + 1}` });
-        if (i < steps.length - 1) s.addText("›", { x: x + w, y: y + 0.45, w: gap, h, fontSize: 18, bold: true, color, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `${label} arrow ${i + 1}` });
-      });
-    };
-    row("TODAY: paper, signatures, scanner and email", ["A paper PO form is filled in by hand", "It is taken round for signatures", "Someone scans it", "The scan is sent to Finance; the department keeps one copy", "Finance stores it on a computer", "Later it has to be hunted for. Sometimes it is missing"], 1.35, C.accent6, C.accent2, 1.82, 0.2, 1.3, 13);
-    row("WITH THE SYSTEM: one place", ["It is filled in online", "The supervisor approves with one click", "Director level approves if it is over $5,000", "The PO is numbered and stays on record"], 3.3, C.accent5, C.accent1, 2.82, 0.28, 0.9);
-    [["Pages printed", `about ${r.pages}`, "0"], ["Missing purchase orders", "sometimes", "none"]].forEach(([label, a, b], i) => {
-      const x = 0.6 + i * 2.75;
-      s.addText(label, { x, y: 5.0, w: 2.6, h: 0.3, fontSize: 13, color: C.accent4, margin: 0, isTextBox: true, objectName: `Flow stat label ${i + 1}` });
-      s.addText([{ text: a, options: { color: C.accent2, bold: true } }, { text: " → ", options: { color: C.accent4 } }, { text: b, options: { color: C.accent1, bold: true } }], { x, y: 5.35, w: 2.7, h: 0.7, fontSize: 20, margin: 0, valign: "middle", isTextBox: true, objectName: `Flow stat ${i + 1}` });
-    });
-    s.addText([{ text: "Nobody writes an email. ", options: { bold: true, color: C.text1 } }, { text: "The system sends the notices itself:", options: { color: C.accent4 } }], { x: 6.35, y: 5.0, w: 6.4, h: 0.3, fontSize: 13, margin: 0, isTextBox: true, objectName: "Notices heading" });
-    const m1 = await shot(s, "mail-approver", 6.4, 5.42, 3.05, 1.2, "The automatic notice a supervisor receives: Approval needed, with the purchase order number");
-    const m2 = await shot(s, "mail-staff", 9.7, 5.42, 3.05, 1.2, "The automatic notice the employee receives: Approved, with the purchase order number");
-    caption(s, "The supervisor receives this", m1.x, m1.y + m1.h + 0.08, 3.05); caption(s, "The employee receives this", m2.x, m2.y + m2.h + 0.08, 3.05);
-    s.addNotes("This is how a purchase order moves today. It is completely on paper. Someone fills in the form by hand and takes it round for signatures. Then someone scans it and sends the scan to Finance, and the department keeps one copy. Finance stores it on a computer. Later, when the order is needed, somebody has to hunt for it, and sometimes it cannot be found. A missing PO also means the proof of approval is missing. In the system it is filled in online, the supervisor approves with one click, director level approves if it is over $5,000, and the purchase order gets its number and stays on record. No printing, no scanning and no hunting. Nobody writes an email either: the two small pictures at the bottom right are the notices the system sends by itself, one telling the supervisor that an approval is needed and one telling the employee it was approved. The same pattern applies to the other requests and to timesheets, which the next slides show.");
+    const s = content("Timesheets: type the hours, the system does the math", "Timesheets");
+    const f = await shot(s, "time", 0.65, 1.5, 7.5, 4.5, "My Timesheet: hours typed for each day, overtime worked out and banked automatically");
+    caption(s, "Screen: My Timesheet, as an employee sees it.", 0.65, f.y + f.h + 0.1, 7.5);
+    points(s, [["Type the hours for each day", "Here a 10-hour Wednesday among 7-hour days."], ["Overtime is worked out for you", "Banked at 1.5 hours for every hour, or paid: the employee chooses. The balance updates at once."], ["One button sends it for approval", "The supervisor approves it on screen. No paper, no scan."]], 8.6, 1.55, 4.15, 1.4);
+    s.addText("Stat holidays and approved time off fill in by themselves.", { x: 8.6, y: 5.85, w: 4.15, h: 0.6, fontSize: 14, italic: true, color: C.accent1, margin: 0, valign: "top", isTextBox: true, objectName: "Timesheet extra" });
+    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "a paper or spreadsheet timesheet, signed, scanned and emailed. Overtime and banked time are counted by hand.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.5, w: 7.5, h: 0.55, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Timesheet today" });
+    s.addNotes("The timesheet. One: the employee types the hours worked each day. In this example Wednesday is a 10-hour day. Two: the system works out the overtime by itself and shows it at the top: two hours of overtime, banked at one and a half times, so the banked balance goes from 12 to 15 hours. The employee can choose to bank it or have it paid. Three: one button sends the timesheet to the supervisor, who approves it on screen. Stat holidays and approved time off are already filled in, so nobody has to remember them. Today this is a paper or spreadsheet timesheet that is signed, scanned and emailed, and overtime and banked time are counted by hand.");
+  }
+  {
+    const r = item("Timesheet");
+    const s = content("One page shows who has not sent a timesheet", "Timesheets");
+    const f = await shot(s, "ts-status", 0.65, 1.5, 6.3, 5.15, `Timesheet Status for one pay period: ${META.approved} of ${META.total} approved, with each person's status`);
+    caption(s, "Screen: Time & Attendance › By pay period.", 0.65, f.y + f.h + 0.1, 6.3);
+    const x = f.x + f.w + 0.45, w = 12.75 - x;
+    points(s, [["Progress for the pay period", "How many timesheets are approved."], ["One button reminds the rest", "No chasing by email or phone."], ["Each person’s status", "Not started, submitted or approved."]], x, 1.5, w, 0.82);
+    note(s, EST, x, compare(s, [["Steps people do", String(r.stepsT), String(r.stepsS)], ["Time per timesheet", `≈ ${r.today} min`, `≈ ${r.system} min`], ["Overtime, banked time", "by hand", "automatic"], ["Chasing late ones", "one by one", "one button"]], x, 4.0, w) + 0.12, w, 0.45);
+    s.addNotes(`This page is for the person who collects the timesheets each pay period. One: the bar shows how many are approved, here ${META.approved} of ${META.total}. Two: one button sends a reminder to everyone who has not sent theirs, instead of chasing people one by one. Three: the list shows each person's status: not started, submitted or approved. Per timesheet, the time goes from about ${r.today} minutes to about ${r.system}, because nothing is printed, signed, scanned or emailed, and overtime and banked time are worked out automatically. With ${fmt(r.perYear)} timesheets a year for 100 staff, the small saving on each one adds up.`);
+  }
+
+  /* ================= Time off ================= */
+  pres.addSection({ title: "Time off" });
+  {
+    const s = content("Time off: one short form instead of a PDF and an email", "Time off");
+    const f = await shot(s, "timeoff", 0.65, 1.5, 2.8, 5.05, "The time-off request form: type, days, an optional attachment, the balance left afterwards and a Send button");
+    caption(s, "Screen: My Time Off.", 0.65, f.y + f.h + 0.1, 2.8);
+    const mx = f.x + f.w + 0.4, mw = 4.3;
+    const g = await shot(s, "timeoff-list", mx, 1.5, mw, 1.5, "The employee's time-off requests, each with its status");
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: mx - 0.05, y: g.y + g.h + 0.3, w: mw + 0.1, h: 1.05, rectRadius: 0.08, fill: { color: C.accent6 }, line: { color: C.accent6, width: 0 }, objectName: "Time off today card" });
+    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "a PDF form is filled in, signed and emailed, and the balance is checked by asking.", options: { color: C.text1 } }], { x: mx + 0.12, y: g.y + g.h + 0.33, w: mw - 0.24, h: 0.99, fontSize: 14, margin: 0, valign: "middle", isTextBox: true, objectName: "Time off today" });
+    compare(s, [["How it is asked", "PDF + email", "one form"], ["Balance left", "ask HR", "shown first"], ["On the timesheet", "typed again", "fills itself"]], mx - 0.05, g.y + g.h + 1.6, mw + 0.1);
+    const x = mx + mw + 0.45;
+    points(s, [["Pick the type and the days", "The hours are worked out for you."], ["See what is left first", "The balance after this request, before it is sent."], ["One button sends it", "It goes straight to the supervisor."], ["Follow the status", "Who has it, and when it is approved."]], x, 1.5, 12.75 - x, 1.2);
+    s.addNotes("Time off. Today a person fills in a PDF form, signs it and emails it, and to know how many days they have left they ask HR. In the system it is one short form. One: pick the type of leave and the first and last day, and the hours are worked out automatically, leaving out weekends and stat holidays. Two: before anything is sent, the green box shows the balance and what will be left after this request. Three: one button sends it straight to the supervisor, who approves it on screen. A doctor's note or booking can be attached. Four: the list shows each request and its status: who has it now, and when it is approved. Once approved, the hours fill in on the timesheet by themselves, so nothing is typed twice, and the team calendar shows who is away.");
   }
 
   /* ================= 4-5. Requests ================= */
@@ -200,9 +211,37 @@ const HEX = THEME.colors;
     s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "to find a PO, someone searches paper files, scans and inboxes, and sometimes it is not there.", options: { color: C.text1 } }], { x: 8.6, y: 5.42, w: 3.95, h: 1.16, fontSize: 14, margin: 0, valign: "middle", isTextBox: true, objectName: "PO today" });
     s.addNotes("Purchase order tracking. Today the purchase order is a paper form. After it is signed and scanned, finding it again means searching paper files, scans and inboxes, and sometimes it is simply not there. Here every purchase order is in one list. One: choose Purchase order at the top and the list shows all of them, each with its own number. Two: the list shows who asked for it, what was ordered and the amount. Three: the Status column shows where each one stands: awaiting director level, PO ready, or closed. Nobody has to hunt, and nobody has to ask.");
   }
+  /* ================= 3. Today vs system flow ================= */
+  pres.addSection({ title: "Approval process" });
   {
     const r = item("Purchase order");
-    const s = content("Proper approval every time, and no missing POs", "Purchase orders");
+    const s = content("Today a purchase order travels by paper, scanner and email", "Approval process");
+    const row = (label, steps, y, fill, color, w, gap, h, fs = 14) => {
+      s.addText(label, { x: 0.6, y, w: 8, h: 0.35, fontSize: 14, bold: true, color, margin: 0, isTextBox: true, objectName: `${label} label` });
+      steps.forEach((t, i) => {
+        const x = 0.6 + i * (w + gap);
+        s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: y + 0.45, w, h, rectRadius: 0.06, fill: { color: fill }, line: { color: fill, width: 0 }, objectName: `${label} step ${i + 1}` });
+        s.addText([{ text: `${i + 1}  `, options: { bold: true, color } }, { text: t }], { x: x + 0.12, y: y + 0.45, w: w - 0.24, h, fontSize: fs, color: C.text1, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} step text ${i + 1}` });
+        if (i < steps.length - 1) s.addText("›", { x: x + w, y: y + 0.45, w: gap, h, fontSize: 18, bold: true, color, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `${label} arrow ${i + 1}` });
+      });
+    };
+    row("TODAY: paper, signatures, scanner and email", ["A paper PO form is filled in by hand", "It is taken round for signatures", "Someone scans it", "The scan is sent to Finance; the department keeps one copy", "Finance stores it on a computer", "Later it has to be hunted for. Sometimes it is missing"], 1.35, C.accent6, C.accent2, 1.82, 0.2, 1.3, 13);
+    row("WITH THE SYSTEM: one place", ["It is filled in online", "The supervisor approves with one click", "Director level approves if it is over $5,000", "The PO is numbered and stays on record"], 3.3, C.accent5, C.accent1, 2.82, 0.28, 0.9);
+    [["Pages printed", `about ${r.pages}`, "0"], ["Missing purchase orders", "sometimes", "none"]].forEach(([label, a, b], i) => {
+      const x = 0.6 + i * 2.75;
+      s.addText(label, { x, y: 5.0, w: 2.6, h: 0.3, fontSize: 13, color: C.accent4, margin: 0, isTextBox: true, objectName: `Flow stat label ${i + 1}` });
+      s.addText([{ text: a, options: { color: C.accent2, bold: true } }, { text: " → ", options: { color: C.accent4 } }, { text: b, options: { color: C.accent1, bold: true } }], { x, y: 5.35, w: 2.7, h: 0.7, fontSize: 20, margin: 0, valign: "middle", isTextBox: true, objectName: `Flow stat ${i + 1}` });
+    });
+    s.addText([{ text: "Nobody writes an email. ", options: { bold: true, color: C.text1 } }, { text: "The system sends the notices itself:", options: { color: C.accent4 } }], { x: 6.35, y: 5.0, w: 6.4, h: 0.3, fontSize: 13, margin: 0, isTextBox: true, objectName: "Notices heading" });
+    const m1 = await shot(s, "mail-approver", 6.4, 5.42, 3.05, 1.2, "The automatic notice a supervisor receives: Approval needed, with the purchase order number");
+    const m2 = await shot(s, "mail-staff", 9.7, 5.42, 3.05, 1.2, "The automatic notice the employee receives: Approved, with the purchase order number");
+    caption(s, "The supervisor receives this", m1.x, m1.y + m1.h + 0.08, 3.05); caption(s, "The employee receives this", m2.x, m2.y + m2.h + 0.08, 3.05);
+    s.addNotes("This is how a purchase order moves today. It is completely on paper. Someone fills in the form by hand and takes it round for signatures. Then someone scans it and sends the scan to Finance, and the department keeps one copy. Finance stores it on a computer. Later, when the order is needed, somebody has to hunt for it, and sometimes it cannot be found. A missing PO also means the proof of approval is missing. In the system it is filled in online, the supervisor approves with one click, director level approves if it is over $5,000, and the purchase order gets its number and stays on record. No printing, no scanning and no hunting. Nobody writes an email either: the two small pictures at the bottom right are the notices the system sends by itself, one telling the supervisor that an approval is needed and one telling the employee it was approved. The same pattern applies to the other requests.");
+  }
+
+  {
+    const r = item("Purchase order");
+    const s = content("Proper approval every time, and no missing POs", "Approval process");
     const f = await shot(s, "po-print", 0.65, 1.5, 6.9, 3.0, "The one-page purchase order the system produces after the last approval");
     caption(s, "Screen: the one-page purchase order, ready to print or download as a PDF.", 0.65, f.y + f.h + 0.1, 6.9);
     const steps = ["Employee asks", "Supervisor approves", "Director level if over $5,000", "PO is ready, with its number"];
@@ -219,28 +258,6 @@ const HEX = THEME.colors;
     s.addNotes(`How a purchase order is approved in the system. The row of boxes at the bottom is the path: the employee asks, the supervisor approves, and anything over $5,000 also needs director level. After the last approval the system produces the purchase order itself, with its number. The picture is that one-page order: the supplier, department, expense code, amount, and at the bottom the names of the people who approved it. Compare that with paper: about ${r.stepsT} steps become ${r.stepsS}, and the time for one order drops from one to two hours to about ${r.system} minutes. Two points matter most. First, a PO cannot go missing, because it only exists in the system. Second, the approval is always complete: nobody can approve their own order and no level can be skipped. The $5,000 limit is a setting an administrator can change.`);
   }
 
-  /* ================= 8-9. Timesheets ================= */
-  pres.addSection({ title: "Timesheets" });
-  {
-    const s = content("Timesheets: type the hours, the system does the math", "Timesheets");
-    const f = await shot(s, "time", 0.65, 1.5, 7.5, 4.5, "My Timesheet: hours typed for each day, overtime worked out and banked automatically");
-    caption(s, "Screen: My Timesheet, as an employee sees it.", 0.65, f.y + f.h + 0.1, 7.5);
-    points(s, [["Type the hours for each day", "Here a 10-hour Wednesday among 7-hour days."], ["Overtime is worked out for you", "Banked at 1.5 hours for every hour, or paid: the employee chooses. The balance updates at once."], ["One button sends it for approval", "The supervisor approves it on screen. No paper, no scan."]], 8.6, 1.55, 4.15, 1.4);
-    s.addText("Stat holidays and approved time off fill in by themselves.", { x: 8.6, y: 5.85, w: 4.15, h: 0.6, fontSize: 14, italic: true, color: C.accent1, margin: 0, valign: "top", isTextBox: true, objectName: "Timesheet extra" });
-    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "a paper or spreadsheet timesheet, signed, scanned and emailed. Overtime and banked time are counted by hand.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.5, w: 7.5, h: 0.55, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Timesheet today" });
-    s.addNotes("The timesheet. One: the employee types the hours worked each day. In this example Wednesday is a 10-hour day. Two: the system works out the overtime by itself and shows it at the top: two hours of overtime, banked at one and a half times, so the banked balance goes from 12 to 15 hours. The employee can choose to bank it or have it paid. Three: one button sends the timesheet to the supervisor, who approves it on screen. Stat holidays and approved time off are already filled in, so nobody has to remember them. Today this is a paper or spreadsheet timesheet that is signed, scanned and emailed, and overtime and banked time are counted by hand.");
-  }
-  {
-    const r = item("Timesheet");
-    const s = content("One page shows who has not sent a timesheet", "Timesheets");
-    const f = await shot(s, "ts-status", 0.65, 1.5, 6.3, 5.15, `Timesheet Status for one pay period: ${META.approved} of ${META.total} approved, with each person's status`);
-    caption(s, "Screen: Time & Attendance › By pay period.", 0.65, f.y + f.h + 0.1, 6.3);
-    const x = f.x + f.w + 0.45, w = 12.75 - x;
-    points(s, [["Progress for the pay period", "How many timesheets are approved."], ["One button reminds the rest", "No chasing by email or phone."], ["Each person’s status", "Not started, submitted or approved."]], x, 1.5, w, 0.82);
-    note(s, EST, x, compare(s, [["Steps people do", String(r.stepsT), String(r.stepsS)], ["Time per timesheet", `≈ ${r.today} min`, `≈ ${r.system} min`], ["Overtime, banked time", "by hand", "automatic"], ["Chasing late ones", "one by one", "one button"]], x, 4.0, w) + 0.12, w, 0.45);
-    s.addNotes(`This page is for the person who collects the timesheets each pay period. One: the bar shows how many are approved, here ${META.approved} of ${META.total}. Two: one button sends a reminder to everyone who has not sent theirs, instead of chasing people one by one. Three: the list shows each person's status: not started, submitted or approved. Per timesheet, the time goes from about ${r.today} minutes to about ${r.system}, because nothing is printed, signed, scanned or emailed, and overtime and banked time are worked out automatically. With ${fmt(r.perYear)} timesheets a year for 100 staff, the small saving on each one adds up.`);
-  }
-
   /* ================= My Tasks ================= */
   pres.addSection({ title: "My Tasks" });
   {
@@ -254,22 +271,6 @@ const HEX = THEME.colors;
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 5.35, w, h: 1.3, rectRadius: 0.08, fill: { color: C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: "Tasks benefit card" });
     s.addText([{ text: "A streamlined workflow and more productive teams. ", options: { bold: true, color: C.accent1 } }, { text: "Everyone sees what is assigned, what is late and what is done.", options: { color: C.text1 } }], { x: x + 0.2, y: 5.4, w: w - 0.4, h: 1.2, fontSize: 14, margin: 0, valign: "middle", isTextBox: true, objectName: "Tasks benefit" });
     s.addNotes("My Tasks. Today there is nothing like this: tasks are given by email or in a meeting, and the manager finds out about progress by asking. Here a manager assigns a task with a due date and steps. One: the employee updates progress with one click. Two: the history on the right shows who created the task, who it was assigned to, each step ticked and each note, with dates. Three: a note box sends a message straight to the manager, which replaces the status email. Managers see their whole team's tasks on one page, with what is late or stuck. This streamlines the workflow and helps teams get more done, because nobody has to ask where things stand.");
-  }
-
-  /* ================= Time off ================= */
-  pres.addSection({ title: "Time off" });
-  {
-    const s = content("Time off: one short form instead of a PDF and an email", "Time off");
-    const f = await shot(s, "timeoff", 0.65, 1.5, 2.8, 5.05, "The time-off request form: type, days, an optional attachment, the balance left afterwards and a Send button");
-    caption(s, "Screen: My Time Off.", 0.65, f.y + f.h + 0.1, 2.8);
-    const mx = f.x + f.w + 0.4, mw = 4.3;
-    const g = await shot(s, "timeoff-list", mx, 1.5, mw, 1.5, "The employee's time-off requests, each with its status");
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: mx - 0.05, y: g.y + g.h + 0.3, w: mw + 0.1, h: 1.05, rectRadius: 0.08, fill: { color: C.accent6 }, line: { color: C.accent6, width: 0 }, objectName: "Time off today card" });
-    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "a PDF form is filled in, signed and emailed, and the balance is checked by asking.", options: { color: C.text1 } }], { x: mx + 0.12, y: g.y + g.h + 0.33, w: mw - 0.24, h: 0.99, fontSize: 14, margin: 0, valign: "middle", isTextBox: true, objectName: "Time off today" });
-    compare(s, [["How it is asked", "PDF + email", "one form"], ["Balance left", "ask HR", "shown first"], ["On the timesheet", "typed again", "fills itself"]], mx - 0.05, g.y + g.h + 1.6, mw + 0.1);
-    const x = mx + mw + 0.45;
-    points(s, [["Pick the type and the days", "The hours are worked out for you."], ["See what is left first", "The balance after this request, before it is sent."], ["One button sends it", "It goes straight to the supervisor."], ["Follow the status", "Who has it, and when it is approved."]], x, 1.5, 12.75 - x, 1.2);
-    s.addNotes("Time off. Today a person fills in a PDF form, signs it and emails it, and to know how many days they have left they ask HR. In the system it is one short form. One: pick the type of leave and the first and last day, and the hours are worked out automatically, leaving out weekends and stat holidays. Two: before anything is sent, the green box shows the balance and what will be left after this request. Three: one button sends it straight to the supervisor, who approves it on screen. A doctor's note or booking can be attached. Four: the list shows each request and its status: who has it now, and when it is approved. Once approved, the hours fill in on the timesheet by themselves, so nothing is typed twice, and the team calendar shows who is away.");
   }
 
   /* ================= Self-service ================= */

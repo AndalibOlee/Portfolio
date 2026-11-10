@@ -69,5 +69,8 @@ const OUT = __dirname + "/shots/";
   // the automatic notices, as they arrive in a person's inbox
   const mail = async (name, u, re) => { await login(u); await ev(() => go("/mail/inbox")); await W(400); await cls(".ml-li", re, "dk-m"); await ev(() => { const v = document.querySelector(".dk-m .pv"); v.textContent = v.textContent.replace(/\s+\S*$/, "") + " …"; }); await page.addStyleTag({ content: ".dk-m .sj,.dk-m .pv{white-space:normal!important;overflow:visible!important;display:block!important;-webkit-line-clamp:unset!important;max-height:none!important}.dk-m{height:auto!important}" }); await W(150); const r = await ev(() => { const x = document.querySelector(".dk-m").getBoundingClientRect(); return [x.left, x.right]; }); await snap(name, { top: [".dk-m"], bottom: [".dk-m"], x0: r[0] + 8, x1: r[1] - 8, padTop: 0, padBottom: 0 }); };
   await mail("mail-approver", "u2", "Approval needed: PO-"); await mail("mail-staff", "u1", "Approved: PO-");
+  // the built-in How-to guides
+  await login("u1"); await page.setViewportSize({ width: 1100, height: 1700 }); await page.click("text=How-to"); await W(600); await ev(() => document.querySelectorAll(".guide")[2].classList.add("dk-g")); await ev(() => document.querySelector(".dk-g").scrollIntoView()); await W(300);
+  await snap("howto", { top: [".dk-g"], bottom: [".dk-g"], padTop: 4, padBottom: 4 }, [[1, ".dk-g .gsteps", 0, 250, -34], [2, ".dk-g .gimg", 0, 12, 10], [3, ".dk-g .gbtn", 0, "R"]]);
   console.log("errors", errs); await b.close();
 })();

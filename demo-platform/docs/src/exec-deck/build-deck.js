@@ -83,8 +83,8 @@ const HEX = THEME.colors;
     const hdr = (t, fill, color) => ({ text: t, options: { bold: true, fontSize: 12, color, fill: { color: fill }, align: "center", valign: "middle", margin: [0.02, 0.04, 0.02, 0.04] } });
     const body = rows.map(([label, a, b]) => [
       { text: label, options: { fontSize: 14, color: C.text1, valign: "middle", fill: { color: C.background2 } } },
-      { text: a, options: { fontSize: a.length > 10 ? 13 : 17, bold: true, color: C.accent2, align: "center", valign: "middle", fill: { color: C.accent6 }, margin: [0.02, 0.04, 0.02, 0.04] } },
-      { text: b, options: { fontSize: b.length > 10 ? 13 : 17, bold: true, color: C.accent1, align: "center", valign: "middle", fill: { color: C.accent5 }, margin: [0.02, 0.04, 0.02, 0.04] } },
+      { text: a, options: { fontSize: a.length > 9 ? 14 : 17, bold: true, color: C.accent2, align: "center", valign: "middle", fill: { color: C.accent6 }, margin: [0.02, 0.04, 0.02, 0.04] } },
+      { text: b, options: { fontSize: b.length > 9 ? 14 : 17, bold: true, color: C.accent1, align: "center", valign: "middle", fill: { color: C.accent5 }, margin: [0.02, 0.04, 0.02, 0.04] } },
     ]);
     s.addTable([[{ text: "", options: { fill: { color: C.background1 } } }, hdr("TODAY", HEX.accent2, C.background1), hdr("NEW SYSTEM", HEX.accent1, C.background1)], ...body], { x, y, w, colW: [w * 0.42, w * 0.28, w * 0.30], rowH: [0.36, ...rows.map(() => 0.5)], border: { type: "solid", color: HEX.lt1, pt: 2 }, margin: [0.02, 0.06, 0.02, 0.1], objectName: "Today vs system" });
     return y + 0.36 + rows.length * 0.5;
@@ -254,6 +254,19 @@ const HEX = THEME.colors;
     s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 5.35, w, h: 1.3, rectRadius: 0.08, fill: { color: C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: "Tasks benefit card" });
     s.addText([{ text: "A streamlined workflow and more productive teams. ", options: { bold: true, color: C.accent1 } }, { text: "Everyone sees what is assigned, what is late and what is done.", options: { color: C.text1 } }], { x: x + 0.2, y: 5.4, w: w - 0.4, h: 1.2, fontSize: 14, margin: 0, valign: "middle", isTextBox: true, objectName: "Tasks benefit" });
     s.addNotes("My Tasks. Today there is nothing like this: tasks are given by email or in a meeting, and the manager finds out about progress by asking. Here a manager assigns a task with a due date and steps. One: the employee updates progress with one click. Two: the history on the right shows who created the task, who it was assigned to, each step ticked and each note, with dates. Three: a note box sends a message straight to the manager, which replaces the status email. Managers see their whole team's tasks on one page, with what is late or stuck. This streamlines the workflow and helps teams get more done, because nobody has to ask where things stand.");
+  }
+
+  /* ================= How-to guides ================= */
+  pres.addSection({ title: "Training" });
+  {
+    const s = content("Built-in How-to guides: new staff ready in about 2 weeks", "Training");
+    const f = await shot(s, "howto", 0.65, 1.5, 7.3, 4.0, "A How-to guide inside the system: numbered steps on the left and a picture of the real screen on the right");
+    caption(s, "Screen: How-to guides. One guide, as a new employee sees it.", 0.65, f.y + f.h + 0.1, 7.3);
+    s.addText([{ text: "Today: ", options: { bold: true, color: C.accent2 } }, { text: "a new employee learns each form and process by asking colleagues, over 2 to 3 months.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.5, w: 7.3, h: 0.55, fontSize: 14, margin: 0, valign: "top", isTextBox: true, objectName: "Training today" });
+    const x = 8.4, w = 4.35;
+    points(s, [["The proper procedure, step by step", "Written in plain words, the same for everyone."], ["A picture of the real screen", "So people know what to look for."], ["One button opens the page", "Read the steps, then do the job."]], x, 1.5, w, 0.82);
+    note(s, "Training times are estimates.", x, compare(s, [["Training a new hire", "2–3 months", "≈ 2 weeks"], ["How people learn", "ask around", "follow guide"], ["Guides by role", "none", "built in"]], x, 4.0, w) + 0.12, w, 0.3);
+    s.addNotes("Training. The system has a How-to section built in. Each guide covers one job, such as asking for travel or a purchase, filling in a timesheet or approving a request. One: the proper procedure is written as numbered steps in plain words, so everyone follows the same steps. Two: beside the steps is a picture of the real screen, so a new person knows what to look for. Three: one button opens the page, so they can read the steps and then do the job. The guides are grouped by role: everyone, employee, manager and so on. Today a newly hired employee learns each form and process by asking colleagues, and it takes two to three months before they are comfortable. With one system and the guides inside it, we estimate that drops to about two weeks. It also takes less time from the colleagues who do the explaining today.");
   }
 
   /* ================= 11. Chart ================= */

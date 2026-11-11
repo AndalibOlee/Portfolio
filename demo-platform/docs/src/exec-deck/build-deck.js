@@ -376,35 +376,42 @@ const HEX = THEME.colors;
   pres.addSection({ title: "Pricing and timeline" });
   {
     const s = content("Pricing and timeline", "Pricing and timeline");
-    const col = (x, w, fill, color, label, rows) => {
-      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 1.4, w, h: 3.55, rectRadius: 0.06, fill: { color: fill }, line: { color: fill, width: 0 }, objectName: `${label} card` });
-      s.addText(label, { x: x + 0.3, y: 1.52, w: w - 0.6, h: 0.35, fontSize: 13, bold: true, color, margin: 0, isTextBox: true, objectName: `${label} label` });
+    const col = (x, w, fill, color, label, rows, total, totalNote) => {
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 1.3, w, h: 3.1, rectRadius: 0.05, fill: { color: fill }, line: { color: fill, width: 0 }, objectName: `${label} card` });
+      s.addText(label, { x: x + 0.3, y: 1.38, w: w - 0.6, h: 0.32, fontSize: 13, bold: true, color, margin: 0, isTextBox: true, objectName: `${label} label` });
       rows.forEach(([big, unit, head, body], i) => {
-        const y = 2.0 + i * 0.97;
-        if (i) s.addShape(pres.shapes.LINE, { x: x + 0.3, y: y - 0.04, w: w - 0.6, h: 0, line: { color: C.background1, width: 1.5 }, objectName: `${label} divider ${i}` });
-        s.addText([{ text: big, options: { fontSize: big.length > 9 ? 20 : 26, bold: true, color, breakLine: true } }, { text: unit, options: { fontSize: 12, color: C.accent4 } }], { x: x + 0.3, y, w: 2.15, h: 0.88, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} amount ${i + 1}` });
-        s.addText([{ text: head, options: { fontSize: 15, bold: true, color: C.text1, breakLine: true } }, { text: body, options: { fontSize: 13, color: C.accent4 } }], { x: x + 2.55, y, w: w - 2.85, h: 0.88, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} detail ${i + 1}` });
+        const y = 1.76 + i * 0.86;
+        if (i) s.addShape(pres.shapes.LINE, { x: x + 0.3, y: y - 0.02, w: w - 0.6, h: 0, line: { color: C.background1, width: 1.5 }, objectName: `${label} divider ${i}` });
+        s.addText([{ text: big, options: { fontSize: big.length > 9 ? 19 : 24, bold: true, color, breakLine: true } }, { text: unit, options: { fontSize: 12, color: C.accent4 } }], { x: x + 0.3, y, w: 2.1, h: 0.82, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} amount ${i + 1}` });
+        s.addText([{ text: head, options: { fontSize: 14, bold: true, color: C.text1, breakLine: true } }, { text: body, options: { fontSize: 12, color: C.accent4 } }], { x: x + 2.45, y, w: w - 2.7, h: 0.82, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} detail ${i + 1}` });
       });
+      s.addShape(pres.shapes.RECTANGLE, { x, y: 3.55, w, h: 0.85, fill: { color }, line: { color, width: 0 }, objectName: `${label} yearly total bar` });
+      s.addText([{ text: "YEARLY TOTAL", options: { fontSize: 11, bold: true, color: C.background1, breakLine: true } }, { text: total, options: { fontSize: 21, bold: true, color: C.background1 } }], { x: x + 0.3, y: 3.55, w: 2.9, h: 0.85, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} yearly total` });
+      s.addText(totalNote, { x: x + 3.25, y: 3.55, w: w - 3.45, h: 0.85, fontSize: 12, color: C.background1, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} yearly total note` });
     };
     col(0.6, 5.95, C.accent6, C.accent2, "TODAY: separate tools, average prices", [
       ["$2,000", "a month", "HR software for 100+ employees", "Rigid, and hard to make work with the existing system."],
-      ["$1,800–2,000", "a month", "Adobe for PDF forms", "About $20 per user each month."],
-      ["Extra cost", "ongoing", "External HR support", "An outside dependency and expense."],
-    ]);
+      ["$1,800–2,000", "a month", "Adobe, about $20 per user", "About 50% of these users can be removed: with the system, forms are no longer PDFs."],
+    ], "≈ $45,600–48,000", "$24,000 HR software + $21,600–24,000 Adobe. External HR is extra.");
     col(6.8, 5.95, C.accent5, C.accent1, "PROPOSED: one central system", [
       ["$10,000", "one time", "Setup", "Built and set up for CHN."],
-      ["$3,500", "a month", "The full system, with support", "Support requests answered within 48 hours."],
-      ["Customizable", "fully", "Shaped to how CHN works", "Changed as the leadership team and employees need."],
-    ]);
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 5.1, w: 12.15, h: 0.62, rectRadius: 0.06, fill: { color: C.background2 }, line: { color: C.background2, width: 0 }, objectName: "Local benefit band" });
-    s.addText([{ text: "Beyond the price: ", options: { bold: true, color: C.accent1 } }, { text: "less dependence on external HR and its expense, and new job positions can be created for local people on island, with proper training.", options: { color: C.text1 } }], { x: 0.85, y: 5.1, w: 11.65, h: 0.62, fontSize: 15, margin: 0, valign: "middle", isTextBox: true, objectName: "Local benefit" });
+      ["$3,500", "a month", "The full system", "Support within 48 hours. Fully customizable for the leadership team and employees."],
+    ], "$42,000", "+ $10,000 setup in the first year only. Adobe stays for about half the users (≈ $11,000–12,000).");
+    // external HR: its own block
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 4.55, w: 12.15, h: 1.25, rectRadius: 0.05, fill: { color: C.background2 }, line: { color: C.accent1, width: 1.5 }, objectName: "External HR card" });
+    s.addText([{ text: "External HR", options: { fontSize: 20, bold: true, color: C.accent1, breakLine: true } }, { text: "the cost not in the totals above", options: { fontSize: 12, color: C.accent4 } }], { x: 0.85, y: 4.55, w: 2.6, h: 1.25, margin: 0, valign: "middle", isTextBox: true, objectName: "External HR heading" });
+    [["Less dependence", "More HR work is done in-house, in the system."], ["Lower expense", "The outside HR cost can be decreased."], ["New local jobs", "Positions can be created for local people on island, with proper training."]].forEach(([head, body], i) => {
+      const x = 3.6 + i * 3.05;
+      s.addShape(pres.shapes.LINE, { x: x - 0.12, y: 4.75, w: 0, h: 0.85, line: { color: C.accent5, width: 1.5 }, objectName: `External HR divider ${i + 1}` });
+      s.addText([{ text: head, options: { fontSize: 15, bold: true, color: C.text1, breakLine: true } }, { text: body, options: { fontSize: 12, color: C.accent4 } }], { x, y: 4.6, w: 2.85, h: 1.15, margin: 0, valign: "middle", isTextBox: true, objectName: `External HR point ${i + 1}` });
+    });
     const steps = [["Months 1–2", "Build and set up; pilot with one or two departments"], ["Then", "Roll out to all staff, department by department"], ["Ongoing", "Monthly service: support within 48 hours, changes as needed"]];
     steps.forEach(([when, what], i) => {
       const w = 3.95, x = 0.6 + i * (w + 0.15);
-      s.addShape(i === 0 ? pres.shapes.PENTAGON : pres.shapes.CHEVRON, { x, y: 5.9, w, h: 0.95, fill: { color: i === 2 ? C.accent1 : C.text2 }, line: { color: C.background1, width: 0 }, objectName: `Timeline step ${i + 1}` });
-      s.addText([{ text: when, options: { fontSize: 14, bold: true, color: C.accent3, breakLine: true } }, { text: what, options: { fontSize: 12, color: C.background1 } }], { x: x + (i ? 0.55 : 0.25), y: 5.9, w: w - (i ? 1.0 : 0.7), h: 0.95, margin: 0, valign: "middle", isTextBox: true, objectName: `Timeline text ${i + 1}` });
+      s.addShape(i === 0 ? pres.shapes.PENTAGON : pres.shapes.CHEVRON, { x, y: 5.97, w, h: 0.88, fill: { color: i === 2 ? C.accent1 : C.text2 }, line: { color: C.background1, width: 0 }, objectName: `Timeline step ${i + 1}` });
+      s.addText([{ text: when, options: { fontSize: 14, bold: true, color: C.accent3, breakLine: true } }, { text: what, options: { fontSize: 12, color: C.background1 } }], { x: x + (i ? 0.55 : 0.25), y: 5.97, w: w - (i ? 1.0 : 0.7), h: 0.88, margin: 0, valign: "middle", isTextBox: true, objectName: `Timeline text ${i + 1}` });
     });
-    s.addNotes("Pricing and timeline. On the left is what an organization of this size typically pays today for separate tools; these are average prices. HR software for 100 or more employees averages about $2,000 a month. It is rigid and hard to make work with the existing system. Adobe for PDF forms is about $20 per user each month, which comes to about $1,800 to $2,000 a month. On top of that is external HR support, an outside dependency and an ongoing expense. On the right is the proposal: a one-time setup of $10,000, then $3,500 every month. That covers the full system, with support requests answered within 48 hours, and the software is fully customizable: it is changed as the leadership team and employees need, instead of the organization adapting to the software. Beyond the price, dependence on external HR and its cost can be reduced, and new job positions can be created for local people on island, with proper training. The timeline is at the bottom: about one to two months to build and set up, with a pilot in one or two departments, then a roll-out to all staff, followed by the monthly service. Every number on this slide can be edited in PowerPoint.");
+    s.addNotes("Pricing and timeline. On the left is what an organization of this size typically pays today for separate tools; these are average prices. HR software for 100 or more employees averages about $2,000 a month, and it is rigid and hard to make work with the existing system. Adobe is about $20 per user each month, about $1,800 to $2,000 a month. Together that is about $45,600 to $48,000 a year, and external HR support is extra. On the right is the proposal: a one-time setup of $10,000, then $3,500 every month, which is $42,000 a year. That covers the full system, with support within 48 hours, and the software is fully customizable for the leadership team and employees. Because forms are no longer PDFs, about half of the Adobe users can be removed; Adobe stays for the other half, about $11,000 to $12,000 a year. The block in the middle is external HR, which is not in the totals above and is where the larger change is: more HR work can be done in-house in the system, so the dependence on external HR and its expense can be decreased, and new job positions can be created for local people on island, with proper training. The timeline is at the bottom: about one to two months to build and set up, with a pilot in one or two departments, then a roll-out to all staff, followed by the monthly service. Every number on this slide can be edited in PowerPoint.");
   }
 
   /* ================= 15. Next steps ================= */

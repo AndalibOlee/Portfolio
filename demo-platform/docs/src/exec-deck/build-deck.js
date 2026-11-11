@@ -120,7 +120,7 @@ const HEX = THEME.colors;
     s.addText([
       { text: `An organization of ${MODEL.staff} staff at $${MODEL.hourly} an hour: ${fmt(tsh.perYear)} timesheets a year (one every two weeks each), about ${fmt(rq.perYear)} requests and ${fmt(po.perYear)} purchase orders.`, options: { bullet: true, breakLine: true } },
       { text: `Admin task time today: ${rq.todayLabel} for a request or purchase order (filling in or editing the PDF, signatures, scanning, emailing, following up) and about ${tsh.today} minutes for a timesheet. In the system: about one third of that.`, options: { bullet: true, breakLine: true } },
-      { text: "The yearly counts are assumptions; CHN’s own counts would give CHN’s figure. The cost to build and host the live system is not counted.", options: { bullet: true } },
+      { text: "The yearly counts are assumptions; CHN’s own counts would give CHN’s figure. The price of the system is on slide 19.", options: { bullet: true } },
     ], { x: 0.6, y: 5.35, w: 12.1, h: 1.55, fontSize: 13, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 4, isTextBox: true, objectName: "Assumptions" });
     s.addNotes(`The whole proposal on one page. Today requests, purchase orders and timesheets run on paper and PDF forms, signatures, scans and email, and there is nothing in place for tasks. In one system, each of these takes about one third of the admin task time it takes today, because nobody edits a PDF, walks a form round for signatures, scans it, emails it or goes looking for it. For every 100 staff that is roughly ${fmt(round100(HOURS))} hours a year, worth about $${fmt(Math.round(DOLLARS / 1000) * 1000)} at $${MODEL.hourly} an hour. The fourth box is not about time: it is one centralized software instead of multiple websites and software, so everything is in one place and nothing goes missing. The bottom of the slide says how the figures were estimated: 100 staff, ${fmt(tsh.perYear)} timesheets, about ${fmt(rq.perYear)} requests and ${fmt(po.perYear)} purchase orders a year; one to two hours today for a request or purchase order and about ${tsh.today} minutes for a timesheet. These are estimates, and our own counts can replace them.`);
   }
@@ -370,6 +370,41 @@ const HEX = THEME.colors;
       s.addText(body, { x: x + 1.4, y: y + 0.88, w: 4.35, h: 1.42, fontSize: 16, color: C.accent4, margin: 0, valign: "top", isTextBox: true, objectName: `Benefit text ${i + 1}` });
     }
     s.addNotes("Four benefits that are not about minutes. First, less dependence on outside apps: the four jobs sit in one system instead of several tools, spreadsheets and paper forms, so there are fewer subscriptions and logins. Second, no dependence on AI: the system follows fixed rules that people set, such as who approves what and the $5,000 limit. It does not need any AI service to run and does not send information to one. Third, our own data storage: all records sit in one central database that CHN owns and controls, and CHN decides where it is hosted, on its own servers or with a host in Canada. Fourth, less paperwork and less stress: no printing, signing and scanning, no hunting for a missing purchase order, and everyone can see where things stand.");
+  }
+
+  /* ================= Pricing and timeline ================= */
+  pres.addSection({ title: "Pricing and timeline" });
+  {
+    const s = content("Pricing and timeline", "Pricing and timeline");
+    const col = (x, w, fill, color, label, rows) => {
+      s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 1.4, w, h: 3.55, rectRadius: 0.06, fill: { color: fill }, line: { color: fill, width: 0 }, objectName: `${label} card` });
+      s.addText(label, { x: x + 0.3, y: 1.52, w: w - 0.6, h: 0.35, fontSize: 13, bold: true, color, margin: 0, isTextBox: true, objectName: `${label} label` });
+      rows.forEach(([big, unit, head, body], i) => {
+        const y = 2.0 + i * 0.97;
+        if (i) s.addShape(pres.shapes.LINE, { x: x + 0.3, y: y - 0.04, w: w - 0.6, h: 0, line: { color: C.background1, width: 1.5 }, objectName: `${label} divider ${i}` });
+        s.addText([{ text: big, options: { fontSize: big.length > 9 ? 20 : 26, bold: true, color, breakLine: true } }, { text: unit, options: { fontSize: 12, color: C.accent4 } }], { x: x + 0.3, y, w: 2.15, h: 0.88, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} amount ${i + 1}` });
+        s.addText([{ text: head, options: { fontSize: 15, bold: true, color: C.text1, breakLine: true } }, { text: body, options: { fontSize: 13, color: C.accent4 } }], { x: x + 2.55, y, w: w - 2.85, h: 0.88, margin: 0, valign: "middle", isTextBox: true, objectName: `${label} detail ${i + 1}` });
+      });
+    };
+    col(0.6, 5.95, C.accent6, C.accent2, "TODAY: separate tools, average prices", [
+      ["$2,000", "a month", "HR software for 100+ employees", "Rigid, and hard to make work with the existing system."],
+      ["$1,800–2,000", "a month", "Adobe for PDF forms", "About $20 per user each month."],
+      ["Extra cost", "ongoing", "External HR support", "An outside dependency and expense."],
+    ]);
+    col(6.8, 5.95, C.accent5, C.accent1, "PROPOSED: one central system", [
+      ["$10,000", "one time", "Setup", "Built and set up for CHN."],
+      ["$3,500", "a month", "The full system, with support", "Support requests answered within 48 hours."],
+      ["Customizable", "fully", "Shaped to how CHN works", "Changed as the leadership team and employees need."],
+    ]);
+    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 5.1, w: 12.15, h: 0.62, rectRadius: 0.06, fill: { color: C.background2 }, line: { color: C.background2, width: 0 }, objectName: "Local benefit band" });
+    s.addText([{ text: "Beyond the price: ", options: { bold: true, color: C.accent1 } }, { text: "less dependence on external HR and its expense, and new job positions can be created for local people on island, with proper training.", options: { color: C.text1 } }], { x: 0.85, y: 5.1, w: 11.65, h: 0.62, fontSize: 15, margin: 0, valign: "middle", isTextBox: true, objectName: "Local benefit" });
+    const steps = [["Months 1–2", "Build and set up; pilot with one or two departments"], ["Then", "Roll out to all staff, department by department"], ["Ongoing", "Monthly service: support within 48 hours, changes as needed"]];
+    steps.forEach(([when, what], i) => {
+      const w = 3.95, x = 0.6 + i * (w + 0.15);
+      s.addShape(i === 0 ? pres.shapes.PENTAGON : pres.shapes.CHEVRON, { x, y: 5.9, w, h: 0.95, fill: { color: i === 2 ? C.accent1 : C.text2 }, line: { color: C.background1, width: 0 }, objectName: `Timeline step ${i + 1}` });
+      s.addText([{ text: when, options: { fontSize: 14, bold: true, color: C.accent3, breakLine: true } }, { text: what, options: { fontSize: 12, color: C.background1 } }], { x: x + (i ? 0.55 : 0.25), y: 5.9, w: w - (i ? 1.0 : 0.7), h: 0.95, margin: 0, valign: "middle", isTextBox: true, objectName: `Timeline text ${i + 1}` });
+    });
+    s.addNotes("Pricing and timeline. On the left is what an organization of this size typically pays today for separate tools; these are average prices. HR software for 100 or more employees averages about $2,000 a month. It is rigid and hard to make work with the existing system. Adobe for PDF forms is about $20 per user each month, which comes to about $1,800 to $2,000 a month. On top of that is external HR support, an outside dependency and an ongoing expense. On the right is the proposal: a one-time setup of $10,000, then $3,500 every month. That covers the full system, with support requests answered within 48 hours, and the software is fully customizable: it is changed as the leadership team and employees need, instead of the organization adapting to the software. Beyond the price, dependence on external HR and its cost can be reduced, and new job positions can be created for local people on island, with proper training. The timeline is at the bottom: about one to two months to build and set up, with a pilot in one or two departments, then a roll-out to all staff, followed by the monthly service. Every number on this slide can be edited in PowerPoint.");
   }
 
   /* ================= 15. Next steps ================= */

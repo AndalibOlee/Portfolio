@@ -90,5 +90,9 @@ const OUT = __dirname + "/shots/";
   await snap("timeoff", { top: [".to-form"], bottom: ["#lvSend"], x0: fr[0] - 6, x1: fr[1] + 6, padTop: 6, padBottom: 10 }, [[1, "#lvStart", 0, 200, -34], [2, ".dk-left", 0, 250, -16], [3, "#lvSend", 0, "R"]]);
   await ev(() => document.querySelector(".content table").classList.add("dk-tol")); 
   await snap("timeoff-list", { top: [".dk-tol"], bottom: [".dk-tol tbody tr", 1], padBottom: 2 }, [[4, ".dk-tol thead th", 4, 90, 3]]);
+  // onboarding and offboarding
+  await login("u3"); await page.setViewportSize({ width: 1100, height: 1700 }); await ev(() => go("/hr/onboarding")); await W(500);
+  await ev(() => { const cards = [...document.querySelectorAll(".content .card")]; cards.forEach((c) => { if (/Onboarding/.test(c.textContent) && /starts/.test(c.textContent)) c.classList.add("dk-on"); if (/Leaving/.test(c.textContent)) c.classList.add("dk-off"); }); document.querySelector('form[data-f="offStart"]').classList.add("dk-form"); });
+  await snap("onboard", { top: [".content h1"], bottom: [".dk-off"], padTop: 4, padBottom: 6 }, [[1, ".dk-on .card-h", 0, 190, 4], [2, ".dk-form .btn", 0, -16, -30], [3, ".dk-off input[type=checkbox]", 0, -34], [4, ".dk-off [data-a=offFinish]", 0, -34]]);
   console.log("errors", errs); await b.close();
 })();

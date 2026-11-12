@@ -106,14 +106,14 @@ async function build(cl) {
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 2.35, w, h: 1.85, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2, width: 0 }, objectName: `Module card ${i + 1}` });
       s.addText([{ text: h, options: { fontSize: 19, bold: true, color: C.accent1, breakLine: true } }, { text: b, options: { fontSize: 13, color: C.text1 } }], { x: x + 0.18, y: 2.45, w: w - 0.36, h: 1.65, margin: 0, valign: "top", isTextBox: true, objectName: `Module ${i + 1}` });
     });
-    const stats = [[`≈ ${fmt(HOURS)} h`, `of admin time a year for ${cl.staffNote}, for everything on slide 14`], [`≈ ${Math.round(PER_PERSON_MONTH)} min`, "a month for each person, approvals included"], [money(cl.monthly), "a month, with support within 48 hours"], ["Own data", `kept in one database that ${cl.name} owns`]];
+    const stats = [[`≈ ${fmt(HOURS)} h`, `of admin time a year for ${cl.staffNote}, for everything on slide 15`], [`≈ ${Math.round(PER_PERSON_MONTH)} min`, "a month for each person, approvals included"], [money(cl.monthly), "a month, with support within 48 hours"], ["Own data", `kept in one database that ${cl.name} owns`]];
     stats.forEach(([big, label], i) => {
       const x = 0.6 + i * 3.08;
       s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 4.45, w: 2.86, h: 1.9, rectRadius: 0.08, fill: { color: C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: `Stat card ${i + 1}` });
       s.addText(big, { x: x + 0.2, y: 4.55, w: 2.46, h: 0.8, fontSize: i === 3 ? 30 : 34, bold: true, color: C.accent1, margin: 0, valign: "middle", isTextBox: true, objectName: `Stat ${i + 1}` });
       s.addText(label, { x: x + 0.2, y: 5.4, w: 2.46, h: 0.85, fontSize: 13, color: C.text1, margin: 0, valign: "top", isTextBox: true, objectName: `Stat label ${i + 1}` });
     });
-    s.addText(`Admin time is an estimate for ${cl.staffNote}; how it was worked out is on slide 14.`, { x: 0.6, y: 6.5, w: 12.1, h: 0.3, fontSize: 11, color: C.accent4, margin: 0, isTextBox: true, objectName: "Footnote" });
+    s.addText(`Admin time is an estimate for ${cl.staffNote}; how it was worked out is on slide 15.`, { x: 0.6, y: 6.5, w: 12.1, h: 0.3, fontSize: 11, color: C.accent4, margin: 0, isTextBox: true, objectName: "Footnote" });
     s.addNotes(`The whole system on one page. Staff fill in timesheets, ask for time off, send requests and claims, and track tasks in one place, and every approval is recorded automatically. There are five modules, and ${cl.name} chooses which ones it needs; Finance can be completely customized to the finance team. For ${cl.staffNote}, all of this needs about ${fmt(HOURS)} hours of admin time a year in the system, which is about ${Math.round(PER_PERSON_MONTH)} minutes a month for each person, approvals included. The price is ${money(cl.monthly)} a month with support within 48 hours, and the data is kept in one database that ${cl.name} owns.`);
   }
 
@@ -150,6 +150,18 @@ async function build(cl) {
     const x = mx + mw + 0.45;
     points(s, [["Pick the type and the days", "The hours are worked out for you."], ["See what is left first", "The balance after this request, before it is sent."], ["One button sends it", "It goes straight to the supervisor."], ["Follow the status", "Who has it, and when it is approved."]], x, 1.5, 12.75 - x, 1.2);
     s.addNotes("Time off. One: pick the type of leave and the days, and the hours are worked out, leaving out weekends and stat holidays. Two: before anything is sent, the green box shows what will be left. Three: one button sends it to the supervisor; a doctor's note can be attached. Four: the list shows each request and its status. Approved days fill the timesheet and the team calendar by themselves. About five minutes of admin time per request.");
+  }
+
+  /* ================= Onboarding and offboarding ================= */
+  pres.addSection({ title: "Onboarding and offboarding" });
+  {
+    const s = content("Onboarding and offboarding: every step, nothing missed", "Onboarding and offboarding");
+    const f = await shot(s, "onboard", 0.65, 1.5, 4.2, 5.15, "Onboarding and offboarding: a new starter's checklist, the form to start an offboarding, and a leaving employee's checklist");
+    caption(s, "Screen: People › Onboarding & offboarding.", 0.65, f.y + f.h + 0.1, 4.2);
+    const x = f.x + f.w + 0.5, w = 12.75 - x;
+    points(s, [["New starter checklist", "Agreement, tax forms, direct deposit and orientation, each with who does it and when."], ["Start an offboarding", "Pick the person, the last day and the reason. The checklist is assigned at once."], ["Leaving checklist", "Notice, exit interview, work handed over, keys and equipment back, access closed, final pay, benefits ended."], ["End employment in one step", "When every step is ticked, HR ends the employment and the Record of Employment is drafted for Payroll."]], x, 1.5, w, 1.02);
+    gain(s, "Nothing is missed when people join or leave.", "HR, managers, IT and Payroll each see their own steps.", x, 5.75, w, 0.95);
+    s.addNotes("Onboarding and offboarding. One: every new starter gets a checklist: signed agreement, TD1 tax forms, direct deposit and site orientation, each with who does it and by when. Ticking the last step makes them active. Two: when someone gives notice, HR picks the person, the last day and the reason, and the leaving checklist is assigned at once. Three: the checklist covers the notice on file, the exit interview, handing over work, returning keys, laptop and tools, closing email and system access, final pay including banked time and vacation, and ending benefits and pension. Four: when every step is ticked, HR ends the employment in one step and the Record of Employment is drafted for Payroll. Every tick is written to the audit log.");
   }
 
   /* ================= Requests ================= */

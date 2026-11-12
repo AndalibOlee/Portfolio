@@ -48,7 +48,7 @@ const penAnnualPay = (S0, empId) => { const c = S0.compensations.filter((x) => x
     hist.forEach(([employeeId, planId, action, coverage, effectiveDate, byName, at, note], i) => { const e = byId(S.employees, employeeId); if (e) S.benefitChanges.push({ id: `bc_seed${i + 1}`, employeeId, companyId: e.companyId, planId, action, coverage, effectiveDate, note, byName, at }); });
 
     // pension: one group defined-contribution plan; members join after three months
-    S.pensionPlans = [{ id: PEN_PLAN_ID, code: "ALD-DCPP", name: "Alderbrook Group Defined Contribution Pension Plan", provider: "Coastal Pension Trust", registration: "BC 1104382", type: "Defined contribution", maxMatchPct: 6, vestingMonths: 24, eligibilityMonths: 3, remitDay: 15, glExpense: "5175", glLiability: "2310" }];
+    S.pensionPlans = [{ id: PEN_PLAN_ID, code: "ALD-DCPP", name: "Alderbrook Nation Defined Contribution Pension Plan", provider: "Coastal Pension Trust", registration: "BC 1104382", type: "Defined contribution", maxMatchPct: 6, vestingMonths: 24, eligibilityMonths: 3, remitDay: 15, glExpense: "5175", glLiability: "2310" }];
     S.pensionMembers = []; S.pensionChanges = []; S.pensionRemittances = [];
     const BENEF = { e1: "Spouse — Daniel Bennett", e2: "Spouse — Joseph Holloway", e3: "Spouse — Marie Okafor", e4: "Estate", e5: "Spouse — Luc Marquez", e6: "Spouse — Carla Clarke", e7: "Spouse — Andrea Foster", e8: "Mother — Rose Collins", e9: "Father — Lyle Fischer", e11: "Spouse — Murphy Thompson", e12: "Estate", e13: "Spouse — Kim Ellis", e15: "Spouse — Leah Moreau", e16: "Mother — Joanne Castillo", e17: "Estate", e19: "Sister — Dana Dubois" };
     staff.forEach((e, i) => {

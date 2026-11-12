@@ -57,6 +57,17 @@
     const later = certs.filter((c) => c.expiryDate > today).sort((a, b) => a.expiryDate.localeCompare(b.expiryDate));
     if (later[3]) run("u3", "cert.renew", { id: later[3].id, expiryDate: addDays(later[3].expiryDate, 365 * 3), issuedDate: addDays(today, -4) }, at(addDays(today, -4)));
 
+    // ---- HR: someone leaving — offboarding started, a few steps done ----
+    if (R["offboarding.start"] && emp("e10") && run("u3", "offboarding.start", { employeeId: "e10", lastDay: addDays(today, 18), reasonCode: "E" }, at(addDays(today, -6)))) {
+      const o = S0.offboarding[S0.offboarding.length - 1];
+      run("u3", "offboarding.toggle", { id: o.id, key: "notice" }, at(addDays(today, -6), 0.5));
+      run("u3", "offboarding.toggle", { id: o.id, key: "exit" }, at(addDays(today, -3)));
+      run("u3", "offboarding.toggle", { id: o.id, key: "handover" }, at(addDays(today, -1)));
+    }
+
+    // ---- HR: the new starter's first onboarding steps ----
+    for (const t of S0.onboardingTasks.filter((x) => x.employeeId === "e14" && x.status !== "COMPLETE").sort((x, y) => x.sortOrder - y.sortOrder).slice(0, 2)) run("u3", "onboarding.toggle", { taskId: t.id }, at(addDays(today, -5)));
+
     // ---- Team: progress and notes on tasks ----
     const tk = (id) => byId(S0.tasks || [], id);
     if (tk("tk1")) { run("u1", "task.progress", { taskId: "tk1", percent: 75 }, at(addDays(today, -2))); run("u1", "task.note", { taskId: "tk1", note: "North boundary walked and flagged. South side left for Monday." }, at(addDays(today, -2), 0.5)); }

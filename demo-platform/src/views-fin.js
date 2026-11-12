@@ -245,7 +245,7 @@ function vAssets() {
 }
 function vBudgets() {
   const b = inScope(S.budgets)[0];
-  if (!b) return ph("Budgets") + card("", empty("No budget in scope", "Ridgeline Timber has the 2026 operating budget."));
+  if (!b) return ph("Budgets") + card("", empty("No budget in scope", "Alderbrook Development Corporation has the 2026 operating budget."));
   const { acct } = ledgerIdx();
   const lines = S.budgetLines.filter((l) => l.budgetId === b.id);
   const byAcct = new Map();

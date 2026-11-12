@@ -1,6 +1,6 @@
 /* ==========================================================================
    views-setup.js — one file, two demos. The first page asks how to show the
-   platform: as one company (Alderbrook Holdings with all eight departments,
+   platform: as one company (Alderbrook First Nation with all eight departments,
    the same people, managers and approval chains, one set of books) or as a
    group of four companies. The choice is kept in this browser and can be
    changed from the sign-in page or the demo banner. Each setup keeps its own
@@ -35,7 +35,7 @@ injectCss(`
 `);
 const SETUP_LABEL = { single: "One company", group: "Group of companies" };
 
-/* ---- the one-company data: the group folded into Alderbrook Holdings ---- */
+/* ---- the one-company data: the group folded into Alderbrook First Nation ---- */
 {
   const KEEP = "ALD", SHORT = { RDG: "Timber", SLL: "Lodges", NBS: "Seafoods" };
   const DEPT_CODES = { dep1: "100", dep2: "110", dep3: "200", dep4: "210", dep5: "300", dep6: "310", dep7: "400", dep8: "410" };
@@ -128,8 +128,8 @@ function vSetup() {
     <h1>How do you want to see the demo?</h1>
     <p class="lead">Both use the same people, departments and approvals. Pick the one that looks like your organization.</p>
     <div class="opts">
-      ${card("single", "One company", "Alderbrook Holdings · 8 departments · 19 people", ["One set of books, one bank feed per operation", "Managers approve their own team's requests", "Director level above $5,000, Finance processes and pays", "No company switching"])}
-      ${card("group", "Group of companies", "Alderbrook Group · 4 companies · 19 people", ["Each company keeps its own books and bank account", "Inter-company charges and group reports", "Switch between companies or see the whole group", "Same managers and approval chains"])}
+      ${card("single", "One company", "Alderbrook First Nation · 8 departments · 19 people", ["One set of books, one bank feed per operation", "Managers approve their own team's requests", "Director level above $5,000, Finance processes and pays", "No company switching"])}
+      ${card("group", "Group of companies", "Alderbrook Nation · 4 companies · 19 people", ["Each company keeps its own books and bank account", "Inter-company charges and group reports", "Switch between companies or see the whole group", "Same managers and approval chains"])}
     </div>
     ${cur ? `<p class="setup-note"><button type="button" class="btn" data-a="setupBack">Back</button></p>` : `<p class="setup-note">You can change this later from the sign-in page. All names, figures and identifiers are fictional.</p>`}
   </div></div>`;

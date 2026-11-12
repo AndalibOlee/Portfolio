@@ -136,8 +136,8 @@ injectCss(`
 .setup .need{color:var(--danger,#b3402a);font-size:13px;font-weight:600}
 `);
 const SETUP_POINTS = {
-  single: ["Alderbrook Holdings · 8 departments · 19 people", "One set of books, no company switching", "Managers approve their own team; director level above $5,000"],
-  group: ["Alderbrook Group · 4 companies · 19 people", "Each company keeps its own books", "Switch between companies or see the whole group"],
+  single: ["Alderbrook First Nation · 8 departments · 19 people", "One set of books, no company switching", "Managers approve their own team; director level above $5,000"],
+  group: ["Alderbrook Nation · the First Nation and 3 entities · 19 people", "Each company keeps its own books", "Switch between companies or see the whole group"],
 };
 vSetup = function () {
   const d = UI.setupDraft || (UI.setupDraft = { mode: DEMO_SETUP || (window.DEMO_LOCK || "single"), mods: (DEMO_MODULES || DEMO_MODULE_KEYS).slice() });

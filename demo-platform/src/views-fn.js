@@ -9,7 +9,14 @@
    ========================================================================== */
 const FN_DEPTS = { dep1: "Administration", dep2: "Finance & Human Resources", dep3: "Public Works", dep4: "Lands & Natural Resources", dep5: "Housing", dep6: "Health & Social Development", dep7: "Education", dep8: "Culture & Recreation" };
 const FN_TITLES = { e1: "Chief Executive Officer", e2: "Executive Director", e6: "Public Works Manager", e7: "Public Works Supervisor", e9: "Natural Resources Technician", e11: "Housing Manager", e12: "Health Programs Manager", e13: "Housing Officer", e15: "Director of Education", e16: "Education Coordinator", e17: "Education Assistant", e18: "Recreation Coordinator" };
-const FN_TEXT = [["Guest Services Manager", "Health Programs Manager"], ["Guest Services", "Health & Social Development"], ["Harvest Operations", "Public Works"], ["Silviculture", "Lands & Natural Resources"], ["Lodge Operations", "Housing"],
+const FN_COMPANIES = { ALD: ["Alderbrook First Nation", "Alderbrook First Nation", "First Nation government", "AFN"], RDG: ["Alderbrook Development Corporation", "Alderbrook Development Corporation LP", "Economic development, public works and lands", "ADC"],
+  SLL: ["Alderbrook Housing & Health Society", "Alderbrook Housing & Health Society", "Housing, health and social programs", "AHH"], NBS: ["Alderbrook Education Society", "Alderbrook Education Society", "Education, culture and recreation", "AES"] };
+const FN_TEXT = [["Alderbrook Holdings Inc.", "Alderbrook First Nation"], ["Alderbrook Holdings", "Alderbrook First Nation"], ["Ridgeline Timber LP", "Alderbrook Development Corporation LP"], ["Ridgeline Timber", "Alderbrook Development Corporation"],
+  ["Silver Lake Lodges LP", "Alderbrook Housing & Health Society"], ["Silver Lake Lodges", "Alderbrook Housing & Health Society"], ["Northbay Seafoods LP", "Alderbrook Education Society"], ["Northbay Seafoods", "Alderbrook Education Society"], ["Alderbrook Group", "Alderbrook Nation"],
+  ["Ridgeline Hourly", "Development Corp Hourly"], ["Ridgeline Salaried", "Development Corp Salaried"], ["Ridgeline hourly", "development corp hourly"], ["Timber Hourly", "Development Corp Hourly"], ["Timber Salaried", "Development Corp Salaried"], ["timber hourly", "development corp hourly"],
+  ["Timber Operating", "Development Corp Operating"], ["Lodges Operating", "Housing & Health Operating"], ["Seafoods Operating", "Education Operating"], ["— Timber", "— Development Corp"], ["— Lodges", "— Housing & Health"], ["— Seafoods", "— Education"],
+  ["Head office, timber, lodges & seafood", "First Nation government"],
+  ["Guest Services Manager", "Health Programs Manager"], ["Guest Services", "Health & Social Development"], ["Harvest Operations", "Public Works"], ["Silviculture", "Lands & Natural Resources"], ["Lodge Operations", "Housing"],
   ["Forestry Technician", "Natural Resources Technician"], ["Cultural Guide", "Housing Officer"], ["Fish Processor", "Education Assistant"], ["Line Lead", "Education Coordinator"], ["Quality Technician", "Recreation Coordinator"], ["Field Supervisor", "Public Works Supervisor"]];
 const FN_ACCOUNTS = { "5205": "Program Supplies", "5215": "Tools & Equipment", "5300": "Travel & Meals", "5320": "Honoraria (Elders & Guests)", "5330": "Training & Professional Development",
   "5410": "Building & Housing Maintenance", "5420": "Utilities", "5430": "Fuel & Vehicles", "5440": "Insurance", "5500": "Professional Fees", "5510": "Administration Fees", "5900": "Other Expenses" };
@@ -28,6 +35,7 @@ const FN_NEW_ACCOUNTS = [["5340", "Community Events & Gatherings"], ["5350", "Cu
     };
     for (const k of Object.keys(S0)) { const v = S0[k]; if (v && typeof v === "object") walk(v); }
     for (const d of S0.departments) if (FN_DEPTS[d.id]) d.name = FN_DEPTS[d.id];
+    for (const c of S0.companies) { const n = FN_COMPANIES[c.id]; if (!n) continue; if (S0.companies.length === 1) { c.displayName = c.legalName = n[0]; c.industry = n[2]; c.code = n[3]; } else { [c.displayName, c.legalName, c.industry, c.code] = n; } }
     for (const [eid, title] of Object.entries(FN_TITLES)) { const e = byId(S0.employees, eid), p = e && byId(S0.positions, e.positionId); if (p) p.title = title; }
     for (const a of S0.accounts) if (FN_ACCOUNTS[a.number]) a.name = FN_ACCOUNTS[a.number];
     // community expense codes, in every company that has the training code

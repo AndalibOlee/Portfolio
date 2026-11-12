@@ -9,7 +9,7 @@
    ========================================================================== */
 /** demo setup chosen on the first page: "single" (one company) or "group" (several companies); null until chosen */
 let DEMO_SETUP = (() => { try { const v = localStorage.getItem("demo-erp-setup"); return v === "single" || v === "group" ? v : null; } catch { return null; } })();
-const orgName = () => (DEMO_SETUP === "single" ? "Alderbrook Holdings" : "Alderbrook Group");
+const orgName = () => (DEMO_SETUP === "single" ? "Alderbrook First Nation" : "Alderbrook Nation");
 
 const SEED = JSON.parse(document.getElementById("seed").textContent);
 

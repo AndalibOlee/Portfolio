@@ -124,7 +124,7 @@ function vSetup() {
   const cur = DEMO_SETUP;
   const card = (k, title, who, points) => `<button type="button" class="opt ${cur === k ? "cur" : ""}" data-a="setupPick" data-v="${k}"><b>${title}</b><span class="who">${who}</span><ul>${points.map((p) => `<li>${p}</li>`).join("")}</ul><span class="btn pri go">${cur === k ? "Continue" : "Show this"}</span></button>`;
   return `<div class="setup"><div class="box">
-    <div class="wm" role="img" aria-label="DEMO Enterprise Platform"><b>DEMO</b><small>ENTERPRISE PLATFORM</small></div>
+    <div class="wm" role="img" aria-label="DEMO ERP"><b>DEMO ERP</b><small>ENTERPRISE RESOURCE PLANNING</small></div>
     <h1>How do you want to see the demo?</h1>
     <p class="lead">Both use the same people, departments and approvals. Pick the one that looks like your organization.</p>
     <div class="opts">

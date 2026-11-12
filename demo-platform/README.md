@@ -1,4 +1,4 @@
-# DEMO Enterprise Platform — browser edition (prototype)
+# DEMO ERP — enterprise resource planning software, browser edition (prototype)
 
 Single-file ERP demo: `python3 build.py` concatenates `src/head.html` + `seed.json` + `howto/*.jpg` + the `src/*.js` modules (in the order listed in `build.py`) into `demo-platform.html`. Open that file in a browser; nothing else is needed.
 

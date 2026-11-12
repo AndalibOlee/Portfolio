@@ -337,7 +337,7 @@ function sidebar(path) {
   const cur = sectionFor(path)?.key;
   const itemHtml = (i) => `<button class="item ${i.section === cur ? "on" : ""}" data-go="${esc(i.href)}" data-sec="${esc(i.section || "")}"${i.section === cur ? ' aria-current="page"' : ""}>${icon(i.icon)}<span>${esc(i.title)}</span>${i.badge ? `<span class="bdg">${i.badge}</span>` : ""}</button>`;
   const groups = buildNav().map((g) => g.flat ? `<div class="grp">${g.items.map(itemHtml).join("")}</div>` : `<div class="grp"><div class="grp-l">${esc(g.label)}</div>${g.items.map(itemHtml).join("")}</div>`).join("");
-  return `<aside class="side ${UI.sideOpen ? "open" : ""}" aria-label="Main menu"><div class="brand" style="display:flex;align-items:center;gap:10px"><div><b style="font-size:15px;letter-spacing:.06em">DEMO</b><small style="margin:0">ENTERPRISE PLATFORM</small></div></div><nav>${groups}</nav><div class="me"><span class="av">${esc(initials(A.user.displayName))}</span><div style="min-width:0"><b>${esc(A.user.displayName)}</b><small>${esc(A.roleNames.join(", ") || "User")}</small></div></div></aside>`;
+  return `<aside class="side ${UI.sideOpen ? "open" : ""}" aria-label="Main menu"><div class="brand" style="display:flex;align-items:center;gap:10px"><div><b style="font-size:15px;letter-spacing:.06em">DEMO ERP</b><small style="margin:0">ENTERPRISE RESOURCE PLANNING</small></div></div><nav>${groups}</nav><div class="me"><span class="av">${esc(initials(A.user.displayName))}</span><div style="min-width:0"><b>${esc(A.user.displayName)}</b><small>${esc(A.roleNames.join(", ") || "User")}</small></div></div></aside>`;
 }
 function topbar() {
   const cos = S.companies.filter((c) => canSee(A, c.id)).sort((a, b) => a.displayName.localeCompare(b.displayName));

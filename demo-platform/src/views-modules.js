@@ -146,7 +146,7 @@ vSetup = function () {
   const mod = (m) => { const on = d.mods.includes(m.k); return `<button type="button" class="mod ${on ? "on" : ""}" data-a="setupMod" data-v="${m.k}" aria-pressed="${on}"><span class="mh"><span aria-hidden="true">${m.icon}</span>${esc(m.name)}<span class="ck" aria-hidden="true">${on ? "✓" : ""}</span></span><ul>${m.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul></button>`; };
   const n = (s) => `<div class="step">${s}</div>`;
   return `<div class="setup"><div class="box" style="width:min(1040px,100%)">
-    <div class="wm" role="img" aria-label="DEMO Enterprise Platform"><b>DEMO</b><small>ENTERPRISE PLATFORM</small></div>
+    <div class="wm" role="img" aria-label="DEMO ERP"><b>DEMO ERP</b><small>ENTERPRISE RESOURCE PLANNING</small></div>
     <h1>Set up your demo</h1>
     <p class="lead">${locked ? "Choose the modules you want to see." : "Choose how your organization is set up, then the modules you want to see."} The same people, approvals and audit trail run through all of them.</p>
     ${locked ? "" : `${n("STEP 1 · YOUR ORGANIZATION")}<div class="opts">${opt("single", "One company")}${opt("group", "One or more companies")}</div>`}

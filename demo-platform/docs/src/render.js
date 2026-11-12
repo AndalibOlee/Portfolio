@@ -2,7 +2,7 @@
 const { chromium } = require("/opt/node-tools/node_modules/playwright");
 const path = require("path");
 (async () => {
-  const [, , inp, out, orient = "portrait", label = "DEMO Enterprise Platform"] = process.argv;
+  const [, , inp, out, orient = "portrait", label = "DEMO ERP"] = process.argv;
   const b = await chromium.launch(); const p = await b.newPage();
   await p.goto("file://" + path.resolve(inp)); await p.waitForTimeout(300);
   await p.pdf({ path: out, format: "Letter", landscape: orient === "landscape", printBackground: true,

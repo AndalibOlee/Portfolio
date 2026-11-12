@@ -16,7 +16,7 @@ function vLogin() {
   const demo = S.users.filter((u) => u.isDemoUser).sort((a, b) => a.demoLabel.localeCompare(b.demoLabel));
   const cos = [...S.companies].sort((a, b) => a.code.localeCompare(b.code));
   return `<div class="login light"><div class="brandp light">
-      <div class="brand-inner"><div class="wordmark" role="img" aria-label="DEMO Enterprise Platform"><b>DEMO</b><small>ENTERPRISE PLATFORM</small></div>
+      <div class="brand-inner"><div class="wordmark" role="img" aria-label="DEMO ERP"><b>DEMO ERP</b><small>ENTERPRISE RESOURCE PLANNING</small></div>
       <div class="cos">${cos.map((c) => `<div class="coi"><span class="sq" style="width:10px;height:10px;background:${esc(c.colorTag)}"></span><div><b>${esc(c.displayName)}</b><small>${esc(c.industry)}</small></div></div>`).join("")}</div></div>
       <div class="foot"><span class="tag">DEMO</span><span>All names, figures and identifiers are fictional.</span></div>${WAVE}
     </div>

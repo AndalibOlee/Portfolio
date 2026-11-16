@@ -110,7 +110,7 @@ async function build(org) {
     const s = pres.addSlide({ masterName: "Title dark", sectionTitle: "Overview" });
     s.addText("DIGITAL OPERATIONS PROPOSAL", { x: 0.75, y: 1.3, w: 6.4, h: 0.35, fontSize: 12, bold: true, color: C.accent3, charSpacing: 3, margin: 0, isTextBox: true, objectName: "Eyebrow" });
     s.addText("One place for requests, purchase orders, timesheets and tasks", { placeholder: "title" });
-    s.addText([{ text: "A working prototype and a phased digital operations proposal", options: { breakLine: true } }, { text: `Briefing for ${org.name === "CHN" ? "the CHN Executive Committee" : org.name} · November 2026`, options: { fontSize: 14 } }], { placeholder: "body" });
+    s.addText([{ text: SOFT ? "A fully customizable ERP, shaped to your organization" : "A working prototype and a phased digital operations proposal", options: { breakLine: true } }, { text: `Briefing for ${org.name === "CHN" ? "the CHN Executive Committee" : org.name} · November 2026`, options: { fontSize: 14 } }], { placeholder: "body" });
     s.addShape(pres.shapes.LINE, { x: 0.75, y: 6.2, w: 2.2, h: 0, line: { color: C.accent3, width: 1 }, objectName: "Title rule" });
     s.addText("Prepared by Andalib Olee", { x: 0.75, y: 6.32, w: 6, h: 0.3, fontSize: 12, color: C.accent5, margin: 0, isTextBox: true, objectName: "Prepared by" });
     await shot(s, "home-top", 7.75, 1.7, 4.95, 4.0, "The prototype's Home page: an employee's summary, things that need attention and what is coming up");
@@ -238,20 +238,20 @@ async function build(org) {
         if (i < steps.length - 1) s.addText("›", { x: x + w, y: y + 0.38, w: gap, h, fontSize: 18, bold: true, color, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `${label} arrow ${i + 1}` });
       });
     };
-    row("WITH THE SYSTEM: FOUR STEPS, ONE PLACE", ["It is filled in online, with the quote attached", "The supervisor approves with one click", "Director level approves if it is over $5,000", "The PO is numbered and stays on record"], Y, C.accent5, C.accent1, 2.82, 0.28, 1.25, 14);
+    row("WITH THE SYSTEM: FOUR STEPS, ONE PLACE", ["It is filled in online, with the quote attached", "The supervisor approves with one click", SOFT ? `Director level approves when ${O} policy requires it` : "Director level approves if it is over $5,000", "The PO is numbered and stays on record"], Y, C.accent5, C.accent1, 2.82, 0.28, 1.25, 14);
     panel(s, "Every purchase order has a number, a status and its full approval history.", "Anyone involved can find it in seconds, and nothing is printed, signed by hand or scanned.", 0.6, Y + 1.95, 12.15, 0.9);
-    s.addText([{ text: "Approval routes", options: { bold: true, fontSize: 15, color: C.text1, breakLine: true } }, { text: "The supervisor approves first. Anything over $5,000 also needs director level. Nobody approves their own order, and the limit is a setting an administrator can change.", options: { fontSize: 12.5, color: C.accent4 } }], { x: 0.6, y: 5.0, w: 5.5, h: 1.5, margin: 0, valign: "top", isTextBox: true, objectName: "Approval routes" });
+    s.addText([{ text: "Approval routes", options: { bold: true, fontSize: 15, color: C.text1, breakLine: true } }, { text: SOFT ? `The supervisor approves first. Director level also approves when ${O} approval policy requires it. Nobody approves their own order, and the rules are set to match ${OP} policy.` : "The supervisor approves first. Anything over $5,000 also needs director level. Nobody approves their own order, and the limit is a setting an administrator can change.", options: { fontSize: 12.5, color: C.accent4 } }], { x: 0.6, y: 5.0, w: 5.5, h: 1.5, margin: 0, valign: "top", isTextBox: true, objectName: "Approval routes" });
     s.addText([{ text: "Nobody writes an email. ", options: { bold: true, color: C.text1 } }, { text: "The system sends the notices itself:", options: { color: C.accent4 } }], { x: 6.4, y: 5.0, w: 6.4, h: 0.3, fontSize: 12, margin: 0, isTextBox: true, objectName: "Notices heading" });
     const m1 = await shot(s, "mail-approver", 6.45, 5.4, 3.0, 1.1, "The automatic notice a supervisor receives");
     const m2 = await shot(s, "mail-staff", 9.7, 5.4, 3.0, 1.1, "The automatic notice the employee receives");
     caption(s, "The supervisor receives this", m1.x, m1.y + m1.h + 0.06, 3.0); caption(s, "The employee receives this", m2.x, m2.y + m2.h + 0.06, 3.0);
-    s.addNotes("How a purchase order moves in the system: it is filled in online with the quote attached, the supervisor approves with one click, director level approves anything over $5,000, and the PO is numbered and stays on record with its full approval history. The system sends the notices itself, so nobody writes an email.");
+    s.addNotes(`How a purchase order moves in the system: it is filled in online with the quote attached, the supervisor approves with one click, ${SOFT ? `director level approves when ${O} policy requires it` : "director level approves anything over $5,000"}, and the PO is numbered and stays on record with its full approval history. The system sends the notices itself, so nobody writes an email.`);
   }
   {
     const s = content("Purchase order approvals: controlled and traceable");
     const f = await shot(s, "po-print", 0.65, Y, 6.9, 2.95, "The one-page purchase order the system produces after the last approval");
     caption(s, "Screen: the one-page purchase order, ready to print or download as a PDF.", 0.65, f.y + f.h + 0.1, 6.9);
-    ["Employee asks", "Supervisor approves", "Director level if over $5,000", "PO is ready, with its number"].forEach((t, i) => {
+    ["Employee asks", "Supervisor approves", SOFT ? `Director level, per ${O} policy` : "Director level if over $5,000", "PO is ready, with its number"].forEach((t, i) => {
       const w = 1.65, x = 0.65 + i * (w + 0.1), y = 5.25;
       s.addShape(pres.shapes.RECTANGLE, { x, y, w, h: 1.15, fill: { color: i === 3 ? C.accent1 : C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: `PO step ${i + 1}` });
       s.addText(t, { x: x + 0.06, y, w: w - 0.12, h: 1.15, fontSize: 13, bold: i === 3, color: i === 3 ? C.background1 : C.text1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `PO step text ${i + 1}` });
@@ -259,7 +259,7 @@ async function build(org) {
     const x = 8.0, w = 4.75;
     points(s, [["Every PO has a number", "One list shows where each one stands."], ["The approval history is on the PO", "Who approved it, and when."], ["About 30 minutes of admin time", "For one purchase order, all steps included."]], x, Y, w, 0.95);
     panel(s, "The workflow can enforce the configured approval sequence.", "Self-approval should be blocked, and approved delegation and exception rules must be defined, tested and recorded. The PO should show its approval history.", x, Y + 3.0, w, 1.55);
-    s.addNotes("The approval path: employee, supervisor, director level above $5,000, then the PO with its number. The workflow can enforce the configured sequence; self-approval should be blocked and delegation and exception rules defined, tested and recorded.");
+    s.addNotes(`The approval path: employee, supervisor, ${SOFT ? `director level per ${O} policy` : "director level above $5,000"}, then the PO with its number. The workflow can enforce the configured sequence; self-approval should be blocked and delegation and exception rules defined, tested and recorded.`);
   }
 
   /* ================= Tasks, self-service, training ================= */

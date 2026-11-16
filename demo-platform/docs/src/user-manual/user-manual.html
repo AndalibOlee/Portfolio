@@ -1,103 +1,100 @@
-<!doctype html><html><head><meta charset="utf-8"><title>DEMO User Manual</title>
-<link rel="stylesheet" href="../base.css">
+<!doctype html><html><head><meta charset="utf-8"><title>DEMO ERP User Guide</title>
 <style>
-.top{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--rule);padding-bottom:8px;margin-bottom:12px}
-.top .brand{font-size:9pt;letter-spacing:.18em;font-weight:700;color:var(--muted)}
-.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}
-.steps3 div{background:var(--sand);border-radius:8px;padding:7px 10px;font-size:9pt}
-.steps3 b{display:block;font-size:10.5pt;margin-bottom:2px}
-.flow{display:grid;grid-template-columns:repeat(2,1fr);column-gap:34px;row-gap:9px;position:relative;margin:4px 0 8px}
-.p{position:relative;display:grid;grid-template-columns:30px 1fr;gap:8px;align-items:start;border:1.5px solid var(--line);border-radius:10px;background:var(--card);padding:6px 10px;break-inside:avoid}
-.p .num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:11pt}
-.p b{font-size:10.5pt}.p .role{color:var(--muted);font-size:8.5pt;margin-left:4px}
-.p ul{margin:2px 0 0;padding-left:15px;font-size:8.7pt;line-height:1.35}.p li{margin:0}
-.p .mod{display:inline-block;font-size:7pt;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:1px 5px;margin-left:4px;color:#fff;vertical-align:1px}
-.arrow{position:absolute;color:var(--rule);font-weight:700;font-size:16pt;line-height:1}
-.arrow.ar{right:-27px;top:50%;transform:translateY(-50%)}
-.arrow.al{left:-27px;top:50%;transform:translateY(-50%)}
-.arrow.ad{left:50%;bottom:-17px;font-size:13pt}
-.end{text-align:center;font-size:9pt;color:var(--muted);margin-top:6px}
-.HR{background:var(--teal)}.REQ{background:var(--green)}.TEAM{background:var(--ochre)}.OPS{background:var(--navy)}.FIN{background:var(--red)}.ALL{background:var(--slate)}
-.mods{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.m{border:1px solid var(--line);border-radius:8px;padding:9px 11px;background:var(--card);break-inside:avoid}
-.m h3{display:flex;align-items:center;gap:8px;font-family:inherit;font-size:11pt}
-.m h3 .tag{width:12px;height:12px;border-radius:3px;display:inline-block}
-.m ul{margin:4px 0 0;padding-left:16px;font-size:9pt}.m li{margin:1px 0}
-.m .who{font-size:8.5pt;color:var(--muted);margin:2px 0 0}
-.tip{background:var(--sand);border-left:3px solid var(--rule);padding:7px 10px;font-size:9pt;margin-top:10px}
+:root{--ink:#26332f;--muted:#5f6e6a;--teal:#2f7a72;--teal-soft:#e5efeb;--sand:#f6f2ea;--line:#dfe7e3;--gold:#c9a45c}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--ink);font:10.5pt/1.45 "Carlito","Calibri","Liberation Sans",Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.brand{font-size:8.5pt;letter-spacing:.2em;font-weight:700;color:var(--teal);margin:0 0 4px}
+h1{font-size:23pt;line-height:1.1;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 14px;font-size:11pt}
+.rule{width:60px;height:3px;background:var(--gold);margin:6px 0 14px}
+h2{font-size:13pt;margin:0 0 8px}
+/* three starting steps */
+.start{display:flex;align-items:stretch;gap:8px;margin:0 0 16px}
+.start .s{flex:1;background:var(--teal-soft);border-radius:10px;padding:10px 12px}
+.start .s b{display:block;font-size:12pt;color:var(--teal);margin-bottom:2px}
+.start .arr{align-self:center;color:var(--teal);font-size:18pt;font-weight:700}
+/* the sign-in path: one column, top to bottom */
+.path{position:relative;margin:0;padding:0;list-style:none}
+.path:before{content:"";position:absolute;left:15px;top:14px;bottom:14px;width:2px;background:var(--line)}
+.path li{position:relative;display:grid;grid-template-columns:32px 1fr;gap:12px;padding:5px 0}
+.path .n{width:32px;height:32px;border-radius:50%;background:var(--teal);color:#fff;font-weight:700;display:grid;place-items:center;font-size:11.5pt;z-index:1}
+.path .who{font-size:11.5pt;font-weight:700}
+.path .who span{font-weight:400;color:var(--muted);font-size:10pt;margin-left:6px}
+.path .do{font-size:10pt;color:var(--ink);margin-top:1px}
+.tag{display:inline-block;font-size:7pt;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:1px 6px;margin-left:5px;vertical-align:1px;background:var(--sand);color:var(--muted)}
+.end{margin-top:8px;background:var(--sand);border-radius:8px;padding:8px 12px;font-size:10pt}
+/* page 2 */
+.mods{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.m{border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+.m h3{margin:0 0 4px;font-size:12pt;color:var(--teal)}
+.m p{margin:0 0 5px;font-size:9.5pt;color:var(--muted)}
+.m ul{margin:0;padding-left:16px;font-size:10pt}
+.m li{margin:2px 0}
+.tips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tips div{background:var(--teal-soft);border-radius:8px;padding:9px 12px;font-size:10pt}
+.tips b{color:var(--teal)}
 </style></head><body>
 
 <div class="page">
-  <div class="top"><div><div class="brand">DEMO ERP · ENTERPRISE RESOURCE PLANNING SOFTWARE</div><h1>User manual: how to try the demo</h1></div><div class="small">About 30 minutes · works in any browser</div></div>
+  <div class="brand">DEMO ERP · FULLY CUSTOMIZABLE ENTERPRISE RESOURCE PLANNING</div>
+  <h1>How to try the demo</h1>
+  <p class="sub">About 30 minutes. Works in any web browser. All people and figures are made up.</p>
+  <div class="rule"></div>
 
-  <div class="steps3">
-    <div><b>1. Open the link</b>The first page asks how your organization is set up (one company, or one or more companies) and which modules you want to see.</div>
-    <div><b>2. Pick your modules</b>HR, Requests, Team, Operations and Finance. Only what you pick appears. Home, Approvals, Email, Calendar, Reports and the audit log are always there.</div>
-    <div><b>3. Sign in as each person</b>Choose a name under “Who are you?” and press OK. To switch person, press <i>Switch role</i> at the top. Follow the order below.</div>
+  <h2>Start here</h2>
+  <div class="start">
+    <div class="s"><b>1 · Open the link</b>The first page shows the modules you can try.</div>
+    <div class="arr">›</div>
+    <div class="s"><b>2 · Pick your modules</b>Tick the ones you want, then press <i>Open the demo</i>.</div>
+    <div class="arr">›</div>
+    <div class="s"><b>3 · Sign in</b>Choose a name under <i>Who are you?</i> and press <i>OK</i>.</div>
   </div>
 
-  <h2>Who signs in, in what order</h2>
-  <p class="small" style="margin-top:-4px">Each box is one person. Do what is listed, then switch to the next person. Skip any line for a module you did not pick. The coloured label shows the module.</p>
-
-  <div class="flow">
-    <div class="p"><span class="num ALL">1</span><div><b>Maya Collins</b><span class="role">Employee</span>
-      <ul><li>My Time: type the hours and press Send <span class="mod HR">HR</span></li><li>My Time Off: ask for a day off <span class="mod HR">HR</span></li><li>Requests: send an expense claim and attach the receipt <span class="mod REQ">Requests</span></li><li>My Tasks: move a task to 75% and add a note <span class="mod TEAM">Team</span></li></ul></div><span class="arrow ar">→</span></div>
-    <div class="p"><span class="num ALL">2</span><div><b>Liam Foster</b><span class="role">Manager</span>
-      <ul><li>Approvals: approve Maya’s requests and timesheet, or send one back with a reason</li><li>My Team: who is in, who is away, team tasks <span class="mod TEAM">Team</span></li></ul></div><span class="arrow ad">↓</span></div>
-    <div class="p"><span class="num ALL">4</span><div><b>Daniel Okafor</b><span class="role">Finance Manager</span>
-      <ul><li>Approvals: approve a supplier bill <span class="mod FIN">Finance</span></li><li>Accounting, Banking and Budgets overview <span class="mod FIN">Finance</span></li></ul></div><span class="arrow ad">↓</span></div>
-    <div class="p"><span class="num ALL">3</span><div><b>Sofia Marquez</b><span class="role">Accountant</span>
-      <ul><li>Requests › Finance queue: process an approved claim <span class="mod REQ">Requests</span></li><li>Accounting: look at the month-end journal entry <span class="mod FIN">Finance</span></li></ul></div><span class="arrow al">←</span></div>
-    <div class="p"><span class="num ALL">5</span><div><b>Priya Raman</b><span class="role">HR Manager</span>
-      <ul><li>People › Certificates: what has expired or expires soon <span class="mod HR">HR</span></li><li>Onboarding &amp; offboarding: tick a step for the new starter; finish a leaving checklist <span class="mod HR">HR</span></li><li>Reviews, Benefits &amp; Pension <span class="mod HR">HR</span></li></ul></div><span class="arrow ar">→</span></div>
-    <div class="p"><span class="num ALL">6</span><div><b>Rachel Dubois</b><span class="role">Payroll Administrator</span>
-      <ul><li>Time &amp; Attendance › By pay period: who has not sent a timesheet; remind them <span class="mod HR">HR</span></li><li>Payroll: open the pay run <span class="mod HR">HR</span></li></ul></div><span class="arrow ad">↓</span></div>
-    <div class="p"><span class="num ALL">8</span><div><b>Grace Holloway</b><span class="role">Executive Director</span>
-      <ul><li>Approvals: approve a purchase over $5,000 (director level) <span class="mod REQ">Requests</span></li></ul></div><span class="arrow ad">↓</span></div>
-    <div class="p"><span class="num ALL">7</span><div><b>Ethan Clarke</b><span class="role">Company Administrator</span>
-      <ul><li>Purchasing, Sales &amp; Stock, Projects <span class="mod OPS">Operations</span></li><li>Administration › Approval rules: who approves what</li></ul></div><span class="arrow al">←</span></div>
-    <div class="p"><span class="num ALL">9</span><div><b>Olivia Bennett</b><span class="role">CEO</span>
-      <ul><li>Approvals: her own decisions</li><li>Reports: everything in one click, downloads for Excel</li></ul></div><span class="arrow ar">→</span></div>
-    <div class="p"><span class="num ALL">10</span><div><b>System Administrator</b>
-      <ul><li>Administration › Audit log: every step above, with who, when and what</li><li>Users &amp; access</li></ul></div></div>
-  </div>
-  <p class="end">Follow the arrows from 1 to 10. The last step, the audit log, shows everything the other nine people did.</p>
+  <h2>Then sign in as each person, in this order</h2>
+  <ol class="path">
+    <li><span class="n">1</span><div><div class="who">Maya Collins<span>Employee</span></div><div class="do">Fill in <b>My Time</b> and send it <span class="tag">HR</span> · ask for a day off <span class="tag">HR</span> · send an expense claim with a receipt <span class="tag">Requests</span></div></div></li>
+    <li><span class="n">2</span><div><div class="who">Liam Foster<span>Manager</span></div><div class="do">Open <b>Approvals</b>: approve Maya’s items, or send one back with a note · check <b>My Team</b> <span class="tag">Team</span></div></div></li>
+    <li><span class="n">3</span><div><div class="who">Sofia Marquez<span>Accountant</span></div><div class="do">Process an approved claim in <b>Requests › Finance queue</b> <span class="tag">Requests</span></div></div></li>
+    <li><span class="n">4</span><div><div class="who">Daniel Okafor<span>Finance Manager</span></div><div class="do">Approve a supplier bill in <b>Approvals</b> <span class="tag">Finance</span></div></div></li>
+    <li><span class="n">5</span><div><div class="who">Priya Raman<span>HR Manager</span></div><div class="do">See <b>Certificates</b> that expire soon · tick a step in <b>Onboarding &amp; offboarding</b> <span class="tag">HR</span></div></div></li>
+    <li><span class="n">6</span><div><div class="who">Rachel Dubois<span>Payroll Administrator</span></div><div class="do">See who has not sent a timesheet and press <b>Remind</b> <span class="tag">HR</span></div></div></li>
+    <li><span class="n">7</span><div><div class="who">Ethan Clarke<span>Company Administrator</span></div><div class="do">Look at <b>Purchasing</b> and <b>Projects</b> <span class="tag">Operations</span> · see <b>Approval rules</b></div></div></li>
+    <li><span class="n">8</span><div><div class="who">Grace Holloway<span>Executive Director</span></div><div class="do">Approve a purchase that needs director level <span class="tag">Requests</span></div></div></li>
+    <li><span class="n">9</span><div><div class="who">Olivia Bennett<span>CEO</span></div><div class="do">Open <b>Reports</b> and download one for Excel</div></div></li>
+    <li><span class="n">10</span><div><div class="who">System Administrator</div><div class="do">Open <b>Audit log</b>: every step above, with who did it and when</div></div></li>
+  </ol>
+  <div class="end"><b>Tip:</b> to change person, press <b>Switch role</b> at the top of the screen. Skip any step for a module you did not pick.</div>
 </div>
 
 <div class="page">
-  <div class="top"><div><div class="brand">DEMO ERP · ENTERPRISE RESOURCE PLANNING SOFTWARE</div><h1>What to check in each module</h1></div><div class="small">Only the modules you picked are shown</div></div>
+  <div class="brand">DEMO ERP · FULLY CUSTOMIZABLE ENTERPRISE RESOURCE PLANNING</div>
+  <h1>What to look at</h1>
+  <p class="sub">Each module in a few lines. You only see the modules you picked.</p>
+  <div class="rule"></div>
 
   <div class="mods">
-    <div class="m"><h3><span class="tag HR"></span>HR</h3><p class="who">Maya, Liam, Priya, Rachel</p><ul>
-      <li><b>Timesheets:</b> type hours; overtime and banked time are worked out for you. The manager approves or sends back with a reason.</li>
-      <li><b>Time off:</b> see the balance before sending; approved days fill the timesheet by themselves.</li>
-      <li><b>Payroll:</b> pay runs and pay statements; staff see their own under My Pay.</li>
-      <li><b>Onboarding &amp; offboarding:</b> a checklist for each new starter and each person leaving, from the exit interview and equipment return to final pay and the Record of Employment.</li>
-      <li><b>Reviews, certificates, benefits and pension:</b> expiry warnings 60 days ahead; each person sees their own plans.</li></ul></div>
-    <div class="m"><h3><span class="tag REQ"></span>Requests</h3><p class="who">Maya, Liam, Sofia, Grace</p><ul>
-      <li><b>Five request types:</b> travel request, credit card purchase, travel claim, expense claim and purchase order.</li>
-      <li><b>Attachments:</b> receipts and quotes are added while filling in the form and stay with it.</li>
-      <li><b>Approval route:</b> supervisor first; director level when over $5,000; then processed.</li>
-      <li><b>History:</b> each request shows who did what and when. Nothing can be edited or removed.</li></ul></div>
-    <div class="m"><h3><span class="tag TEAM"></span>Team</h3><p class="who">Maya, Liam</p><ul>
-      <li><b>My Team:</b> the manager’s page for the team’s people, time off, timesheets and requests.</li>
-      <li><b>Tasks:</b> a manager assigns a task with steps and a due date; the employee updates progress with one click and adds notes.</li>
-      <li>Late or stuck tasks are flagged for the manager.</li></ul></div>
-    <div class="m"><h3><span class="tag OPS"></span>Operations</h3><p class="who">Ethan</p><ul>
-      <li><b>Purchasing:</b> purchase requests, purchase orders, receiving and matching to the bill.</li>
-      <li><b>Sales &amp; Stock:</b> sales orders, shipments and stock levels.</li>
-      <li><b>Projects and contracts:</b> new projects go for approval before work starts.</li></ul></div>
-    <div class="m"><h3><span class="tag FIN"></span>Finance</h3><p class="who">Sofia, Daniel</p><ul>
-      <li><b>Accounting:</b> journal entries, month-end, budgets and the chart of accounts.</li>
-      <li><b>Bills, invoices and banking:</b> approve and pay bills; match the bank feed.</li>
-      <li>Can be completely customized to your finance team’s needs.</li></ul></div>
-    <div class="m"><h3><span class="tag ALL"></span>Always included</h3><p class="who">Everyone</p><ul>
-      <li><b>Approvals:</b> one page with everything waiting on you, from the modules you picked.</li>
-      <li><b>Reports:</b> on screen or downloaded for Excel; only reports for your modules.</li>
-      <li><b>Audit log</b> (System Administrator): every action, with the person, the date and time, and what happened.</li>
-      <li><b>Email, Calendar and How-to guides</b> with pictures of each screen.</li></ul></div>
+    <div class="m"><h3>HR</h3><p>Timesheets, time off, payroll, reviews, certificates, benefits and pension</p><ul>
+      <li>Type hours; overtime is worked out for you</li><li>See your time-off balance before you ask</li><li>Checklists for people joining and leaving</li><li>Warnings before a certificate expires</li></ul></div>
+    <div class="m"><h3>Requests</h3><p>Travel, credit card purchases, travel and expense claims, purchase orders</p><ul>
+      <li>One short form for each request</li><li>Attach receipts and quotes as you go</li><li>See who has it now and who is next</li><li>Every step is kept in its history</li></ul></div>
+    <div class="m"><h3>Team</h3><p>For managers and their teams</p><ul>
+      <li>Who is in, who is away</li><li>Give a task, follow its progress</li><li>Team timesheets and requests in one place</li></ul></div>
+    <div class="m"><h3>Operations</h3><p>Purchasing, stock, projects and contracts</p><ul>
+      <li>Purchase orders, receiving and matching</li><li>Sales orders and stock levels</li><li>New projects go for approval first</li></ul></div>
+    <div class="m"><h3>Finance</h3><p>Shaped to your finance team’s needs</p><ul>
+      <li>Accounting, month-end and budgets</li><li>Bills, invoices and banking</li></ul></div>
+    <div class="m"><h3>Always included</h3><p>For everyone</p><ul>
+      <li><b>Approvals:</b> everything waiting for you</li><li><b>Reports:</b> on screen or for Excel</li><li><b>Audit log:</b> who did what, and when</li><li><b>How-to guides</b> with pictures</li></ul></div>
   </div>
 
-  <div class="tip"><b>Good to know.</b> Everything you do is saved in your own browser only, so you can try anything. To start again with clean data, clear this site’s data in your browser. To change modules or the company setup, press <i>Change</i> on the sign-in page. All people, companies and figures are fictional.</div>
+  <h2>Good to know</h2>
+  <div class="tips">
+    <div><b>Try anything.</b> What you do is saved only in your own browser.</div>
+    <div><b>Start over.</b> Clear this website’s data in your browser.</div>
+    <div><b>Change modules.</b> Press <i>Change</i> on the sign-in page.</div>
+    <div><b>Need help?</b> Press <i>How-to</i> at the top of any page.</div>
+  </div>
 </div>
 </body></html>

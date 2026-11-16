@@ -12,9 +12,9 @@ const { applyTheme } = require(path.join(process.argv[2], "scripts/apply_theme.j
 const SHOT = (n) => path.join(__dirname, "../exec-deck/shots", n + ".png");
 const ORGS = [
   { file: "CHN", name: "CHN", short: "CHN", poss: "CHN’s", monthly: 3000, setup: 10000, current: true },
-  { file: "Old_Massett_Village_Council", name: "Old Massett Village Council", short: "OMVC", poss: "OMVC’s", monthly: 2000 },
-  { file: "Nisla_Naay", name: "Nisla Naay", short: "Nisla Naay", poss: "Nisla Naay’s", monthly: 1000 },
-  { file: "Haida_Child_and_Family", name: "Haida Child and Family", short: "Haida Child and Family", poss: "Haida Child and Family’s", monthly: 1500 },
+  { file: "Old_Massett_Village_Council", name: "Old Massett Village Council", short: "OMVC", poss: "OMVC’s", monthly: 1500 },
+  { file: "Niislaa_Naay_Healing_House", name: "Niislaa Naay Healing House", short: "Niislaa Naay", poss: "Niislaa Naay’s", monthly: 1000 },
+  { file: "Haida_Child_and_Family", name: "Haida Child and Family", short: "Haida Child and Family", poss: "Haida Child and Family’s", monthly: 1000 },
 ];
 const fmt = (n) => Math.round(n).toLocaleString("en-CA");
 const money = (n) => "$" + fmt(n);
@@ -152,7 +152,6 @@ async function build(org) {
     const s = content("Timesheets: type the hours, the system does the math", "Timesheets, time off and people");
     const f = await shot(s, "time", 0.65, Y, 7.4, 4.25, "My Timesheet: hours typed for each day, overtime worked out and banked automatically");
     caption(s, "Screen: My Timesheet, as an employee sees it.", 0.65, f.y + f.h + 0.1, 7.4);
-    today(s, "a paper or spreadsheet timesheet, signed, scanned and emailed. Overtime and banked time are counted by hand.", 0.65, f.y + f.h + 0.45, 7.4);
     points(s, [["Type the hours for each day", "Here a 10-hour Wednesday among 7-hour days."], ["Overtime is worked out for you", `Overtime uses ${O}-approved rules. The banked-time balance updates automatically.`], ["One button sends it for approval", "The supervisor approves it on screen. No paper, no scan."]], 8.5, Y, 4.25, 1.2);
     panel(s, "", `Overtime thresholds, multipliers and leave calculations must be configured to approved ${O} policy and tested before launch.`, 8.5, 5.4, 4.25, 1.15);
     s.addNotes(`The timesheet. One: the employee types the hours each day. Two: overtime is worked out using ${O}-approved rules and the banked balance updates automatically. Three: one button sends it to the supervisor. Overtime and leave rules must be configured to approved ${O} policy and tested before launch.`);
@@ -163,17 +162,17 @@ async function build(org) {
     caption(s, "Screen: Time & Attendance › By pay period.", 0.65, f.y + f.h + 0.1, 6.2);
     const x = f.x + f.w + 0.5, w = 12.75 - x;
     points(s, [["Progress for the pay period", "How many timesheets are approved."], ["One button reminds the rest", "No chasing by email or phone."], ["Each person’s status", "Not started, submitted or approved."]], x, Y, w, 0.85);
-    note(s, EST, x, compare(s, [["Steps people do", "5", "2"], ["Time per timesheet", "≈ 20 min", "≈ 7 min"], ["Overtime, banked time", "by hand", "automatic"], ["Chasing late ones", "one by one", "one button"]], x, Y + 2.65, w) + 0.12, w, 0.45);
+    panel(s, "Ready for payroll on time.", "Approved hours, overtime and banked time go straight to the pay run. About 7 minutes of admin time per timesheet, approval included.", x, Y + 2.85, w, 1.4);
     s.addNotes("This page is for whoever collects timesheets each pay period: progress, one button to remind everyone who has not sent theirs, and each person's status.");
   }
   {
-    const s = content("Time off: one short form instead of a PDF and an email");
+    const s = content("Time off: one short form, approved in one click");
     const f = await shot(s, "timeoff", 0.65, Y, 2.75, 4.95, "The time-off request form with the balance left afterwards");
     caption(s, "Screen: My Time Off.", 0.65, f.y + f.h + 0.1, 2.75);
     const mx = f.x + f.w + 0.4, mw = 4.3;
     const g = await shot(s, "timeoff-list", mx, Y, mw, 1.45, "The employee's time-off requests, each with its status");
-    panel(s, "Today:", "a PDF form is filled in, signed and emailed, and the balance is checked by asking.", mx - 0.04, g.y + g.h + 0.3, mw + 0.08, 0.95, "red");
-    compare(s, [["How it is asked", "PDF + email", "one form"], ["Balance left", "ask HR", "shown first"], ["On the timesheet", "typed again", "fills itself"]], mx - 0.04, g.y + g.h + 1.5, mw + 0.08);
+    panel(s, "Balances are always right.", "Approved days fill the timesheet and the team calendar by themselves.", mx - 0.04, g.y + g.h + 0.3, mw + 0.08, 1.15);
+    panel(s, "Files can be attached.", "A doctor's note or a booking goes with the request, and the approver sees it.", mx - 0.04, g.y + g.h + 1.6, mw + 0.08, 1.15);
     const x = mx + mw + 0.45;
     points(s, [["Pick the type and the days", "The hours are worked out for you."], ["See what is left first", "The balance after this request, before it is sent."], ["One button sends it", "It goes straight to the supervisor."], ["Follow the status", "Who has it, and when it is approved."]], x, Y, 12.75 - x, 1.2);
     s.addNotes("Time off. Pick the type and days, see the balance left before sending, send it to the supervisor with one button, and follow the status. Approved hours fill the timesheet automatically.");
@@ -184,7 +183,7 @@ async function build(org) {
     caption(s, "Screen: People › Onboarding & offboarding.", 0.65, f.y + f.h + 0.1, 4.1);
     const x = f.x + f.w + 0.5, w = 12.75 - x;
     points(s, [["New starter checklist", "Agreement, tax forms, direct deposit and orientation, each with who does it and when."], ["Start an offboarding", "Pick the person, the last day and the reason. The checklist is assigned at once."], ["Leaving checklist", "Notice, exit interview, work handed over, keys and equipment back, access closed, final pay, benefits ended."], ["Close the checklist", "When every step is complete, HR reviews and closes the checklist. Payroll prepares and validates the Record of Employment through the approved process."]], x, Y, w, 0.98);
-    today(s, "paper checklists and emails between HR, the manager, IT and Payroll, and steps such as returning keys or closing access are easy to miss.", x, 5.75, w, 0.7);
+    panel(s, "Nothing is missed when people join or leave.", "HR, managers, IT and Payroll each see their own steps, and every tick is written to the audit log.", x, 5.7, w, 0.85);
     s.addNotes("Onboarding and offboarding. New starters get a checklist with owners and dates. When someone leaves, HR starts an offboarding and the leaving checklist is assigned at once. When every step is complete, HR reviews and closes the checklist, and Payroll prepares and validates the Record of Employment through the approved process.");
   }
 
@@ -194,7 +193,6 @@ async function build(org) {
     const s = content("Requests: every type in one place, with its status", "Requests and purchase orders");
     const f = await shot(s, "req-list", 0.65, Y, 7.2, 4.4, "My requests: a searchable list of an employee's requests, each with a status");
     caption(s, "Screen: My requests, as an employee sees it.", 0.65, f.y + f.h + 0.1, 7.2);
-    today(s, "a paper or PDF form for each type, saved and passed on as an email attachment. To know where one is, you ask around.", 0.65, f.y + f.h + 0.45, 7.2, 0.6);
     points(s, [["Find any request in seconds", "Search by number, person, department or what it was for."], ["See where it stands right now", "Awaiting approval, awaiting director level, returned to you, or ready."], ["A searchable record", "Each request stays on a numbered list with its status and history, reducing the risk of forms being lost in inboxes or filing trays."]], 8.35, Y, 4.4, 1.2);
     panel(s, "Five request types, one short form each:", "travel, credit card purchase, travel claim, expense claim and purchase order.", 8.35, 5.55, 4.4, 0.95);
     s.addNotes("Requests. One searchable list with a plain-words status for every request, kept on a numbered record so forms are not lost in inboxes or filing trays.");
@@ -219,11 +217,11 @@ async function build(org) {
     caption(s, "Screen: one request opened. The bar shows the route.", 0.65, f.y + f.h + 0.1, 6.2);
     const x = f.x + f.w + 0.5, w = 12.75 - x;
     points(s, [["The route", "Who has approved and who is next."], ["The history", "Each step with name, date and comment."], ["The details", "Department and expense code are required."]], x, Y, w, 0.85);
-    note(s, EST, x, compare(s, [["Steps people do", "6", "2"], ["Emails written", "≈ 3", "0"], ["Time per request", "1–2 hours", "≈ 30 min"], ["Signatures", "hand or e-sign", "one click"]], x, Y + 2.65, w) + 0.12, w, 0.45);
-    s.addNotes("One request opened: the route across the top, the history with names, dates and comments, and the required details. About six steps on paper become two.");
+    panel(s, "Nobody has to ask where a request is.", "The requester, the approvers and the people who process it all see the same page. About 30 minutes of admin time per request, all steps included.", x, Y + 2.85, w, 1.5);
+    s.addNotes("One request opened: the route across the top, the history with names, dates and comments, and the required details.");
   }
   {
-    const s = content("Today a purchase order travels by paper, scanner and email");
+    const s = content("A purchase order moves through one place");
     const row = (label, steps, y, fill, color, w, gap, h, fs) => {
       s.addText(label, { x: 0.6, y, w: 8, h: 0.3, fontSize: 11, bold: true, color, charSpacing: 1, margin: 0, isTextBox: true, objectName: `${label} label` });
       steps.forEach((t, i) => {
@@ -233,18 +231,14 @@ async function build(org) {
         if (i < steps.length - 1) s.addText("›", { x: x + w, y: y + 0.38, w: gap, h, fontSize: 18, bold: true, color, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `${label} arrow ${i + 1}` });
       });
     };
-    row("TODAY: PAPER, SIGNATURES, SCANNER AND EMAIL", ["A paper PO form is filled in by hand", "It is taken round for signatures", "Someone scans it", "The scan is sent to Finance; the department keeps one copy", "Finance stores it on a computer", "Later it has to be hunted for. Sometimes it is missing"], Y, C.accent6, C.accent2, 1.82, 0.2, 1.2, 12.5);
-    row("WITH THE SYSTEM: ONE PLACE", ["It is filled in online", "The supervisor approves with one click", "Director level approves if it is over $5,000", "The PO is numbered and stays on record"], Y + 1.85, C.accent5, C.accent1, 2.82, 0.28, 0.85, 13);
-    [["Pages printed", "about 3", "0"], ["Missing purchase orders", "sometimes", "risk reduced"]].forEach(([label, a, b], i) => {
-      const x = 0.6 + i * 2.85;
-      s.addText(label, { x, y: 5.0, w: 2.7, h: 0.3, fontSize: 12, color: C.accent4, margin: 0, isTextBox: true, objectName: `Flow stat label ${i + 1}` });
-      s.addText([{ text: a, options: { color: C.accent2, bold: true, breakLine: true } }, { text: "→ " + b, options: { color: C.accent1, bold: true } }], { x, y: 5.32, w: 2.75, h: 0.9, fontSize: 18, margin: 0, valign: "top", isTextBox: true, objectName: `Flow stat ${i + 1}` });
-    });
+    row("WITH THE SYSTEM: FOUR STEPS, ONE PLACE", ["It is filled in online, with the quote attached", "The supervisor approves with one click", "Director level approves if it is over $5,000", "The PO is numbered and stays on record"], Y, C.accent5, C.accent1, 2.82, 0.28, 1.25, 14);
+    panel(s, "Every purchase order has a number, a status and its full approval history.", "Anyone involved can find it in seconds, and nothing is printed, signed by hand or scanned.", 0.6, Y + 1.95, 12.15, 0.9);
+    s.addText([{ text: "Approval routes", options: { bold: true, fontSize: 15, color: C.text1, breakLine: true } }, { text: "The supervisor approves first. Anything over $5,000 also needs director level. Nobody approves their own order, and the limit is a setting an administrator can change.", options: { fontSize: 12.5, color: C.accent4 } }], { x: 0.6, y: 5.0, w: 5.5, h: 1.5, margin: 0, valign: "top", isTextBox: true, objectName: "Approval routes" });
     s.addText([{ text: "Nobody writes an email. ", options: { bold: true, color: C.text1 } }, { text: "The system sends the notices itself:", options: { color: C.accent4 } }], { x: 6.4, y: 5.0, w: 6.4, h: 0.3, fontSize: 12, margin: 0, isTextBox: true, objectName: "Notices heading" });
     const m1 = await shot(s, "mail-approver", 6.45, 5.4, 3.0, 1.1, "The automatic notice a supervisor receives");
     const m2 = await shot(s, "mail-staff", 9.7, 5.4, 3.0, 1.1, "The automatic notice the employee receives");
     caption(s, "The supervisor receives this", m1.x, m1.y + m1.h + 0.06, 3.0); caption(s, "The employee receives this", m2.x, m2.y + m2.h + 0.06, 3.0);
-    s.addNotes("How a purchase order moves today: paper form, signatures, scan, email to Finance, stored on a computer, and later hunted for. In the system it is filled in online, approved with one click, director level above $5,000, and numbered on record. The system sends the notices itself.");
+    s.addNotes("How a purchase order moves in the system: it is filled in online with the quote attached, the supervisor approves with one click, director level approves anything over $5,000, and the PO is numbered and stays on record with its full approval history. The system sends the notices itself, so nobody writes an email.");
   }
   {
     const s = content("Purchase order approvals: controlled and traceable");
@@ -256,10 +250,8 @@ async function build(org) {
       s.addText(t, { x: x + 0.06, y, w: w - 0.12, h: 1.15, fontSize: 13, bold: i === 3, color: i === 3 ? C.background1 : C.text1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `PO step text ${i + 1}` });
     });
     const x = 8.0, w = 4.75;
-    s.addText("What changes for one purchase order", { x, y: Y, w, h: 0.35, fontSize: 15, bold: true, color: C.text1, margin: 0, isTextBox: true, objectName: "Compare heading" });
-    const end = compare(s, [["Steps people do", "8", "3"], ["Time per order", "1–2 hours", "≈ 30 min"], ["Pages printed", "≈ 3", "0 to 1"], ["PO location", "scattered", "centralized"]], x, Y + 0.45, w);
-    panel(s, "The workflow can enforce the configured approval sequence.", "Self-approval should be blocked, and approved delegation and exception rules must be defined, tested and recorded. The PO should show its approval history.", x, end + 0.25, w, 1.45);
-    note(s, EST, x, 6.5, w, 0.4);
+    points(s, [["Every PO has a number", "One list shows where each one stands."], ["The approval history is on the PO", "Who approved it, and when."], ["About 30 minutes of admin time", "For one purchase order, all steps included."]], x, Y, w, 0.95);
+    panel(s, "The workflow can enforce the configured approval sequence.", "Self-approval should be blocked, and approved delegation and exception rules must be defined, tested and recorded. The PO should show its approval history.", x, Y + 3.0, w, 1.55);
     s.addNotes("The approval path: employee, supervisor, director level above $5,000, then the PO with its number. The workflow can enforce the configured sequence; self-approval should be blocked and delegation and exception rules defined, tested and recorded.");
   }
 
@@ -271,8 +263,7 @@ async function build(org) {
     caption(s, "Screen: My Tasks. One task a manager assigned to an employee.", 0.65, f.y + f.h + 0.1, 7.2);
     const x = 8.35, w = 4.4;
     points(s, [["Progress with one click", "25, 50, 75 or 100 percent."], ["The history", "Who did what, and when."], ["A note for the manager", "It replaces the status email."]], x, Y, w, 0.85);
-    panel(s, "Today: nothing like this.", "Tasks are given by email or in a meeting, and progress is found out by asking.", x, 4.35, w, 1.0, "red");
-    panel(s, "A streamlined workflow and more productive teams.", "Everyone sees what is assigned, what is late and what is done.", x, 5.5, w, 1.0);
+    panel(s, "A streamlined workflow and more productive teams.", "Everyone sees what is assigned, what is late and what is done. Managers see the whole team's tasks on one page.", x, 4.35, w, 1.4);
     s.addNotes("My Tasks: progress with one click, the history of who did what, and a note for the manager that replaces the status email.");
   }
   {
@@ -282,28 +273,25 @@ async function build(org) {
     caption(s, "Screens: My Profile › Employment and Pension & Benefits, as an employee sees them.", 0.65, f2.y + f2.h + 0.08, 6.0);
     const x = 6.2, w = 6.55;
     points(s, [["Employment details", "Start date, position, location and who they report to."], ["Pay details", "Pay rate, pay schedule and every pay statement, the moment it is ready."], ["Pension and benefits", "The plans they are in, what comes off each pay and what the employer adds."]], x, Y, w, 0.92);
-    panel(s, "Today:", "an email to Finance or HR, then a wait for someone to look it up and reply.", x, 4.5, w, 0.8, "red");
-    panel(s, "With the system:", "employees can view the records permitted by their role once access rules and payroll/benefits data connections have been configured and tested.", x, 5.45, w, 1.05);
+    panel(s, "The answer is instant.", "Employees can view the records permitted by their role once access rules and payroll/benefits data connections have been configured and tested.", x, 4.65, w, 1.25);
     s.addNotes("Self-service: employment details, pay details and pension and benefits. Employees can view the records permitted by their role once access rules and payroll and benefits data connections have been configured and tested.");
   }
   {
     const s = content("Certificates: expiry dates tracked for managers and HR");
     const f = await shot(s, "certs", 0.65, Y, 7.2, 4.3, "Training and certificates with expiry dates and status");
     caption(s, "Screen: People › Certificates, as a manager sees it.", 0.65, f.y + f.h + 0.1, 7.2);
-    today(s, "expiry dates sit in files and spreadsheets, and a lapsed certificate is often noticed only after it has expired.", 0.65, f.y + f.h + 0.45, 7.2);
     const x = 8.35, w = 4.4;
     points(s, [["What needs attention", "Expired, and expiring within 60 days."], ["The expiry date", "With the days left for each one."], ["A clear status", "Expired, expiring soon or current."]], x, Y, w, 0.85);
-    note(s, "Managers see their own team. HR sees everyone, adds certificates and sends reminders.", x, compare(s, [["Finding a date", "look it up", "one list"], ["Early warning", "none", "60 days"], ["Reminders", "by hand", "one click"]], x, Y + 2.65, w) + 0.12, w, 0.5);
+    panel(s, "Nothing expires unnoticed.", "A warning 60 days ahead. Managers see their own team; HR sees everyone, adds certificates and sends reminders with one click.", x, Y + 2.85, w, 1.5);
     s.addNotes("Certificates: what needs attention, each expiry date and a clear status. Managers see their own team; HR sees everyone and sends reminders.");
   }
   {
     const s = content("Built-in How-to guides: target faster staff onboarding");
     const f = await shot(s, "howto", 0.65, Y, 7.2, 3.9, "A How-to guide with steps and a picture of the screen");
     caption(s, "Screen: How-to guides. One guide, as a new employee sees it.", 0.65, f.y + f.h + 0.1, 7.2);
-    today(s, "a new employee often learns forms and processes by asking colleagues; the current 2–3 month estimate should be validated with managers.", 0.65, f.y + f.h + 0.45, 7.2, 0.6);
     const x = 8.35, w = 4.4;
     points(s, [["The proper procedure, step by step", "Written in plain words, the same for everyone."], ["A picture of the real screen", "So people know what to look for."], ["One button opens the page", "Read the steps, then do the job."]], x, Y, w, 0.85);
-    note(s, "Training times are planning estimates; the two-week figure is a target to test during the pilot.", x, compare(s, [["Training a new hire", "2–3 months", "2-week target"], ["How people learn", "ask around", "follow guide"], ["Guides by role", "none", "built in"]], x, Y + 2.65, w) + 0.12, w, 0.5);
+    panel(s, "Target: new staff ready in about 2 weeks.", "A planning target to test during the pilot. Guides are grouped by role: employee, manager, HR and more.", x, Y + 2.85, w, 1.5);
     s.addNotes("How-to guides: the procedure step by step, a picture of the real screen, and a button that opens the page. The two-week training figure is a target to test during the pilot.");
   }
 
@@ -335,7 +323,7 @@ async function build(org) {
     const s = content("A proper audit trail, kept automatically");
     const f = await shot(s, "audit", 0.65, Y, 7.2, 3.95, "The audit log: when, who and what happened for every action");
     caption(s, "Screen: Administration › Audit log. One purchase order, step by step.", 0.65, f.y + f.h + 0.1, 7.2);
-    today(s, "the trail is paper forms, scans and emails spread across folders and inboxes. If a PO is missing, so is the proof of its approval.  ", 0.65, f.y + f.h + 0.45, 7.2, 0.8, [{ text: "With the system: ", options: { bold: true, color: C.accent1 } }, { text: "one searchable record, ready for auditors and funders.", options: { color: C.text1 } }]);
+    s.addText([{ text: "One searchable record, ", options: { bold: true, color: C.accent1 } }, { text: "ready for auditors and funders.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.45, w: 7.2, h: 0.4, fontSize: 13, margin: 0, valign: "top", isTextBox: true, objectName: "Audit record" });
     points(s, [["When", "The date and time of every action, written the moment it happens."], ["Who", "The person who did it, by name."], ["What happened", "In plain words, with the request number, the step and any comment."]], 8.35, Y, 4.4, 1.05);
     panel(s, "Audit history should retain submitted events.", `Permitted corrections must use controlled actions that create a traceable entry; retention, access and export rules are set with ${O}.`, 8.35, 5.0, 4.4, 1.5);
     s.addNotes(`The audit trail records when, who and what happened for every action. Submitted events are retained; permitted corrections use controlled actions that create a traceable entry; retention, access and export rules are set with ${O}.`);
@@ -379,7 +367,7 @@ async function build(org) {
   const timeline = (s, y) => {
     s.addText(org.current ? "PROPOSED PATH TO A PILOT" : "PROPOSED PATH TO GO-LIVE: 4–6 WEEKS", { x: 0.6, y, w: 6, h: 0.28, fontSize: 11, bold: true, color: C.text1, charSpacing: 1, margin: 0, isTextBox: true, objectName: "Path heading" });
     (org.current ? [["WEEKS 1–2", "Requirements, baseline and IT/privacy review"], ["WEEKS 3–6", "Configuration and implementation"], ["WEEKS 7–8", "Controlled pilot in one or two departments"], ["GO / NO-GO", "Evaluate results before production rollout"]]
-      : [["WEEK 1", "Requirements, baseline and IT/privacy review"], ["WEEKS 2–4", "Configuration and implementation"], ["WEEKS 4–6", "Short pilot with one or two departments"], ["LIVE", "Whole organization; monthly payments start"]]).forEach(([w1, t], i) => {
+      : [["WEEK 1", "Requirements, baseline and IT/privacy review"], ["WEEKS 2–4", "Configuration and implementation"], ["WEEKS 4–6", "Short pilot with one or two departments"], ["LIVE", "The whole organization goes live"]]).forEach(([w1, t], i) => {
       const w = 3.0, x = 0.6 + i * (w + 0.033);
       s.addShape(i === 0 ? pres.shapes.PENTAGON : pres.shapes.CHEVRON, { x, y: y + 0.33, w, h: 0.8, fill: { color: i === 3 ? C.accent1 : C.text2 }, line: { color: C.background1, width: 1 }, objectName: `Timeline step ${i + 1}` });
       s.addText([{ text: w1, options: { fontSize: 11.5, bold: true, color: C.accent3, breakLine: true } }, { text: t, options: { fontSize: 10.5, color: C.background1 } }], { x: x + (i ? 0.5 : 0.18), y: y + 0.33, w: w - (i ? 0.95 : 0.6), h: 0.8, margin: 0, valign: "middle", isTextBox: true, objectName: `Timeline text ${i + 1}` });
@@ -419,16 +407,16 @@ async function build(org) {
     const s = s0 = content("Software estimate and timeline", "Pricing, timeline and next steps");
     s.addText("Planning estimate; confirm final implementation scope and terms before any commitment.", { x: 0.6, y: Y - 0.1, w: 12.1, h: 0.3, fontSize: 12, color: C.accent4, margin: 0, isTextBox: true, objectName: "Pricing intro" });
     s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: Y + 0.35, w: 12.1, h: 3.05, fill: { color: C.text2 }, line: { color: C.text2, width: 0 }, objectName: "Monthly card" });
-    s.addText([{ text: "PROPOSED SYSTEM · MONTHLY", options: { fontSize: 12, bold: true, color: C.accent3, charSpacing: 1, breakLine: true } }, { text: `CAD ${money(m)}`, options: { fontSize: 60, bold: true, color: C.background1, breakLine: true } }, { text: "a month, starting after go-live", options: { fontSize: 16, color: C.accent5, breakLine: true } }, { text: " ", options: { fontSize: 8, breakLine: true } }, { text: "48-hour support target subject to contract; configured to the leadership team and employees.", options: { fontSize: 13, color: C.accent5 } }], { x: 0.95, y: Y + 0.6, w: 6.2, h: 2.9, margin: 0, valign: "top", isTextBox: true, objectName: "Monthly" });
+    s.addText([{ text: "PROPOSED SYSTEM · MONTHLY", options: { fontSize: 12, bold: true, color: C.accent3, charSpacing: 1, breakLine: true } }, { text: `CAD ${money(m)}`, options: { fontSize: 60, bold: true, color: C.background1, breakLine: true } }, { text: "a month", options: { fontSize: 16, color: C.accent5, breakLine: true } }, { text: " ", options: { fontSize: 8, breakLine: true } }, { text: "48-hour support target subject to contract; configured to the leadership team and employees.", options: { fontSize: 13, color: C.accent5 } }], { x: 0.95, y: Y + 0.6, w: 6.2, h: 2.9, margin: 0, valign: "top", isTextBox: true, objectName: "Monthly" });
     s.addShape(pres.shapes.LINE, { x: 7.5, y: Y + 0.75, w: 0, h: 2.5, line: { color: "3A5A52", width: 1 }, objectName: "Price divider" });
-    s.addText([{ text: "A YEAR, ONCE LIVE", options: { fontSize: 12, bold: true, color: C.accent3, charSpacing: 1, breakLine: true } }, { text: `CAD ${money(y2)}`, options: { fontSize: 40, bold: true, color: C.background1, breakLine: true } }, { text: `12 × ${money(m)}`, options: { fontSize: 15, color: C.accent5 } }], { x: 7.9, y: Y + 0.6, w: 4.6, h: 2.9, margin: 0, valign: "top", isTextBox: true, objectName: "Yearly" });
+    s.addText([{ text: "A YEAR", options: { fontSize: 12, bold: true, color: C.accent3, charSpacing: 1, breakLine: true } }, { text: `CAD ${money(y2)}`, options: { fontSize: 40, bold: true, color: C.background1, breakLine: true } }, { text: `12 × ${money(m)}`, options: { fontSize: 15, color: C.accent5 } }], { x: 7.9, y: Y + 0.6, w: 4.6, h: 2.9, margin: 0, valign: "top", isTextBox: true, objectName: "Yearly" });
     const big = (label, value, body, x, y) => {
       s.addShape(pres.shapes.RECTANGLE, { x, y, w: 3.35, h: 1.55, fill: { color: C.background2 }, line: { color: C.background2, width: 0 }, objectName: `${label} card` });
       s.addText([{ text: label, options: { fontSize: 11, bold: true, color: C.accent4, charSpacing: 1, breakLine: true } }, { text: value, options: { fontSize: 30, bold: true, color: C.text1, breakLine: true } }, { text: body, options: { fontSize: 12, color: C.accent4 } }], { x: x + 0.25, y: y + 0.14, w: 2.95, h: 1.45, margin: 0, valign: "top", isTextBox: true, objectName: `${label} text` });
     };
     s.addText([{ text: "Also worth noting: ", options: { bold: true, color: C.accent1 } }, { text: "with forms completed in the system instead of as PDFs, Adobe licence costs could be reduced by about half.", options: { color: C.accent4 } }], { x: 0.6, y: Y + 3.55, w: 12.1, h: 0.3, fontSize: 12, margin: 0, isTextBox: true, objectName: "Adobe note" });
     timeline(s, 5.75);
-    s.addNotes(`Software estimate and timeline. The proposed system is ${money(m)} a month, starting only after go-live, which is planned within four to six weeks. That is ${money(y2)} a year once live. It includes a 48-hour support target, subject to contract, and configuration to the leadership team and employees. As forms are completed in the system instead of as PDFs, Adobe licence costs could be reduced by about half. The path: week 1 requirements and IT and privacy review; weeks 2–4 configuration; weeks 4–6 a short pilot; then go-live.`);
+    s.addNotes(`Software estimate and timeline. The proposed system is ${money(m)} a month, which is ${money(y2)} a year. Go-live is planned within four to six weeks. It includes a 48-hour support target, subject to contract, and configuration to the leadership team and employees. As forms are completed in the system instead of as PDFs, Adobe licence costs could be reduced by about half. The path: week 1 requirements and IT and privacy review; weeks 2–4 configuration; weeks 4–6 a short pilot; then go-live.`);
   }
 
   /* ================= Next steps ================= */

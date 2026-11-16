@@ -51,16 +51,19 @@ async function build(org) {
     { rect: { x: 0, y: 0, w: 0.18, h: 7.5, fill: { color: C.accent3 } } },
     { placeholder: { options: { name: "title", type: "title", x: 0.75, y: 1.85, w: 6.4, h: 2.6, fontSize: 38, bold: true, color: C.background1, align: "left", valign: "top", margin: 0 }, text: "" } },
     { placeholder: { options: { name: "body", type: "body", x: 0.75, y: 4.65, w: 6.4, h: 1.1, fontSize: 17, color: C.accent5, align: "left", valign: "top", margin: 0 }, text: "" } },
+    { text: { text: "© 2026 HG Web. All rights reserved.", options: { x: 0.75, y: 7.04, w: 6, h: 0.28, fontSize: 9, color: C.accent5, margin: 0 } } },
   ] });
   pres.defineSlideMaster({ title: "Content", background: { color: C.background1 }, margin: [0.5, 0.6, 0.7, 0.6], objects: [
     { placeholder: { options: { name: "title", type: "title", x: 0.6, y: 0.55, w: 12.1, h: 0.75, fontSize: 28, bold: true, color: C.text1, align: "left", valign: "middle", margin: 0 }, text: "" } },
     { rect: { x: 0.6, y: 1.36, w: 0.9, h: 0.045, fill: { color: C.accent3 } } },
     { line: { x: 0.6, y: 6.98, w: 12.15, h: 0, line: { color: RULE, width: 0.75 } } },
-    { text: { text: FOOT, options: { x: 0.6, y: 7.04, w: 10.8, h: 0.28, fontSize: 9, color: C.accent4, margin: 0 } } },
+    { text: { text: FOOT, options: { x: 0.6, y: 7.04, w: 8.6, h: 0.28, fontSize: 9, color: C.accent4, margin: 0 } } },
+    { text: { text: "© 2026 HG Web. All rights reserved.", options: { x: 9.2, y: 7.04, w: 2.9, h: 0.28, fontSize: 9, color: C.accent4, align: "right", margin: 0 } } },
   ], slideNumber: { x: 12.2, y: 7.04, w: 0.55, h: 0.28, fontSize: 9, color: C.accent4, align: "right" } });
   pres.defineSlideMaster({ title: "Closing dark", background: { color: C.text2 }, objects: [
     { rect: { x: 0, y: 0, w: 0.18, h: 7.5, fill: { color: C.accent3 } } },
     { placeholder: { options: { name: "title", type: "title", x: 0.75, y: 0.6, w: 11.9, h: 0.9, fontSize: 32, bold: true, color: C.background1, align: "left", valign: "middle", margin: 0 }, text: "" } },
+      { text: { text: "© 2026 HG Web. All rights reserved.", options: { x: 0.75, y: 7.04, w: 6, h: 0.28, fontSize: 9, color: C.accent5, margin: 0 } } },
   ], slideNumber: { x: 12.2, y: 7.04, w: 0.55, h: 0.28, fontSize: 9, color: C.accent5, align: "right" } });
 
   /* ---------------- helpers ---------------- */
@@ -105,7 +108,7 @@ async function build(org) {
   };
   const Y = 1.65; // where content starts
   // slide numbers referred to in the text
-  const N = { estimate: 3, pricing: 21 };
+  const N = { estimate: 3, pricing: 22 };
   const EST = `Estimates for an illustrative organization of 100 staff; how they were estimated is on slide ${N.estimate}.`;
 
   /* ================= 1. Title ================= */
@@ -124,8 +127,8 @@ async function build(org) {
   /* ================= 2. Agenda ================= */
   {
     const s = content("This briefing", "Overview");
-    const items = [["The proposal in one minute", "What changes and the estimated effect", "3"], ["Timesheets, time off and people", "Timesheets, time off, onboarding and offboarding", "4–7"], ["Requests and purchase orders", "Five request types, approval routes and POs", "8–12"],
-      ["Tasks, self-service and training", "My Tasks, staff self-service, certificates, How-to guides", "13–16"], ["Control and governance", "Admin time, audit trail, independence, security", "17–20"], ["Pricing, timeline and next steps", org.current ? "Costs, the path to a pilot and the decision" : "Software estimate, the path to a pilot and next steps", "21–22"]];
+    const items = [["The proposal in one minute", "What changes and the estimated effect", "3"], ["Timesheets, time off and people", "Timesheets, time off, onboarding and offboarding", "4–7"], ["Requests and purchase orders", "Five request types, approval routes, POs and email updates", "8–13"],
+      ["Tasks, self-service and training", "My Tasks, staff self-service, certificates, How-to guides", "14–17"], ["Control and governance", "Admin time, audit trail, independence, security", "18–21"], ["Pricing, timeline and next steps", org.current ? "Costs, the path to a pilot and the decision" : "Software estimate, the path to a pilot and next steps", "22–23"]];
     items.forEach(([h, b, pg], i) => {
       const col = i % 2, row = Math.floor(i / 2), x = 0.6 + col * 6.15, y = Y + 0.05 + row * 1.68;
       s.addShape(pres.shapes.LINE, { x, y, w: 5.9, h: 0, line: { color: RULE, width: 0.75 }, objectName: `Agenda rule ${i + 1}` });
@@ -266,6 +269,15 @@ async function build(org) {
     s.addNotes(`The approval path: employee, supervisor, ${SOFT ? `director level per ${O} policy` : "director level above $5,000"}, then the PO with its number. The workflow can enforce the configured sequence; self-approval should be blocked and delegation and exception rules defined, tested and recorded.`);
   }
 
+  {
+    const s = content("Try it in the demo: follow your request by email");
+    const f = await shot(s, "mail-panel-full", 0.65, Y, ...BIG(7.2, 4.3), "The demo inbox: every email a request sends, newest first");
+    caption(s, "Screen: the Email button in the footer opens the demo inbox.", 0.65, f.y + f.h + 0.1, f.w);
+    const x = RX(8.35), w = RW(4.4);
+    points(s, [["Send a request", "For example a purchase order, as an employee."], ["Press Email at the bottom", "The demo inbox shows each email in order."], ["Switch the inbox", "See the manager's \u201capproval needed\u201d and the reply."]], x, Y, w, 0.95);
+    panel(s, "For demo purposes only.", "In the demo, emails stay in this inbox. In real use they go to each person through Microsoft 365, with the same attachments.", x, Y + 3.0, w, 1.5);
+    s.addNotes("In the demo you can follow a request through its whole email chain. Send a request, then press the Email button in the footer. The inbox shows received, sent for approval, approved and the finished purchase order. Use the inbox list to see what the manager received. In real use these emails go out through Microsoft 365.");
+  }
   /* ================= Tasks, self-service, training ================= */
   pres.addSection({ title: "Tasks, self-service and training" });
   {

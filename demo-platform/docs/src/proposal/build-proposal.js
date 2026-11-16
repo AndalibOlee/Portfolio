@@ -23,15 +23,22 @@ const THEME = {
   name: "Digital Operations", headFontFace: "Calibri", bodyFontFace: "Calibri",
   colors: { dk1: "1E2A2C", lt1: "FFFFFF", dk2: "14342F", lt2: "F2F5F3", accent1: "2F6B4F", accent2: "B3402A", accent3: "C98A1B", accent4: "5E6B6E", accent5: "DCE8E0", accent6: "F6E3DD", hlink: "2F6B4F", folHlink: "5E6B6E" },
 };
-const HEX = THEME.colors;
-const RULE = "DCE2DE";
+const HEX0 = THEME.colors;
+/** a calmer look for the organizations other than CHN: soft teal and sage, no heavy shadows */
+const THEME_SOFT = {
+  name: "Digital Operations Soft", headFontFace: "Calibri", bodyFontFace: "Calibri",
+  colors: { dk1: "26332F", lt1: "FFFFFF", dk2: "1E3B37", lt2: "F3F6F4", accent1: "2F7A72", accent2: "2F7A72", accent3: "C9A45C", accent4: "66736F", accent5: "E5EFEB", accent6: "F3EEE6", hlink: "2F7A72", folHlink: "66736F" },
+};
 
 async function build(org) {
+  const SOFT = !org.current, T = SOFT ? THEME_SOFT : THEME, HEX = T.colors;
+  const SHOT = (n) => path.join(__dirname, "../exec-deck", SOFT ? "shots-soft" : "shots", n + ".png");
+  const RULE = SOFT ? "E2E9E5" : "DCE2DE";
   const OUT = path.resolve(__dirname, `../../${org.file}_Executive_Digital_Operations_Proposal.pptx`);
   const O = org.short, OP = org.poss;
   const pres = new pptxgen();
   pres.layout = "LAYOUT_WIDE";
-  pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
+  pres.theme = { headFontFace: T.headFontFace, bodyFontFace: T.bodyFontFace };
   pres.author = "Andalib Olee"; pres.company = "HG Web"; pres.title = `${org.name}: Digital Operations Proposal`; pres.subject = "DEMO ERP: enterprise resource planning software";
   const C = pres.SchemeColor;
   const FOOT = `${org.name}  ·  Digital Operations Proposal  ·  working prototype, fictional demo data, figures are estimates`;
@@ -57,7 +64,7 @@ async function build(org) {
   const dims = async (n) => { const m = await sharp(SHOT(n)).metadata(); return [m.width, m.height]; };
   const shot = async (s, name, x, y, maxW, maxH, alt) => {
     const [pw, ph] = await dims(name); const k = Math.min(maxW / pw, maxH / ph), w = pw * k, h = ph * k;
-    s.addShape(pres.shapes.RECTANGLE, { x: x - 0.04, y: y - 0.04, w: w + 0.08, h: h + 0.08, fill: { color: C.background1 }, line: { color: RULE, width: 0.75 }, shadow: { type: "outer", color: HEX.dk1, opacity: 0.14, blur: 10, offset: 2, angle: 90 }, objectName: `Frame ${name}` });
+    s.addShape(pres.shapes.RECTANGLE, { x: x - 0.04, y: y - 0.04, w: w + 0.08, h: h + 0.08, fill: { color: C.background1 }, line: { color: RULE, width: 0.75 }, ...(SOFT ? {} : { shadow: { type: "outer", color: HEX.dk1, opacity: 0.14, blur: 10, offset: 2, angle: 90 } }), objectName: `Frame ${name}` });
     s.addImage({ path: SHOT(name), x, y, w, h, altText: alt, objectName: `Screenshot ${name}` });
     return { x, y, w, h };
   };
@@ -301,7 +308,7 @@ async function build(org) {
     const s = content("Illustrative administrative-time estimate: about one third", "Control and governance");
     const cats = ["Request", "Purchase order", "Timesheet"];
     s.addChart(pres.charts.BAR, [{ name: "Today", labels: cats, values: [90, 90, 20] }, { name: "With the system", labels: cats, values: [30, 30, 7] }], {
-      x: 0.6, y: Y - 0.05, w: 7.6, h: 5.15, barDir: "col", barGrouping: "clustered", barGapWidthPct: 60, chartColors: [HEX.accent2, HEX.accent1],
+      x: 0.6, y: Y - 0.05, w: 7.6, h: 5.15, barDir: "col", barGrouping: "clustered", barGapWidthPct: 60, chartColors: SOFT ? ["CDBF9F", HEX.accent1] : [HEX.accent2, HEX.accent1],
       showTitle: true, title: "Minutes of admin task time for one item", titleFontSize: 13, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
       showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 13, dataLabelColor: HEX.dk1, dataLabelFontFace: "+mn-lt", dataLabelFontBold: true,
       showLegend: true, legendPos: "b", legendFontSize: 12, legendColor: HEX.dk1, legendFontFace: "+mn-lt",
@@ -438,8 +445,8 @@ async function build(org) {
   }
 
   await pres.writeFile({ fileName: OUT });
-  await applyTheme(OUT, THEME);
+  await applyTheme(OUT, T);
   console.log("wrote", OUT);
 }
 
-(async () => { for (const o of ORGS) await build(o); })();
+(async () => { const only = process.argv[3]; for (const o of ORGS) if (!only || (only === "others" ? !o.current : o.file === only)) await build(o); })();

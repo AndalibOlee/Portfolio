@@ -1,6 +1,7 @@
 // final screenshots for the deck: one-company setup, numbered markers, cropped to the part being explained
 const { open } = require("./app.js");
-const OUT = __dirname + "/shots/";
+const OUT = __dirname + "/" + (process.env.SHOT_DIR || "shots") + "/";
+const MARK = process.env.MARK || "#B3402A";
 (async () => {
   const { b, page, errs, W, login, ev } = await open({ setup: "single", viewport: { width: 1010, height: 1700 }, dsf: 2 });
   const st = await ev(() => {
@@ -25,9 +26,9 @@ const OUT = __dirname + "/shots/";
     return { out, ec: ec.id, po: po.id, ready: S.rcRequests.find((r) => r.kind === "po" && r.status === "ready")?.id, ps, ts: tsRows.reduce((m, s) => (m[s] = (m[s] || 0) + 1, m), {}) };
   });
   console.log(JSON.stringify(st)); require("fs").writeFileSync(OUT + "meta.json", JSON.stringify({ approved: st.ts.APPROVED || 0, total: 19 }));
-  const mark = (list) => ev((list) => { document.querySelectorAll(".dk-mark").forEach((x) => x.remove());
+  const mark = (list) => ev(([list, MARK]) => { document.querySelectorAll(".dk-mark").forEach((x) => x.remove());
     for (const [n, sel, idx, dx, dy] of list) { const els = [...document.querySelectorAll(sel)]; const el = els[idx || 0]; if (!el) { console.log("no", sel); continue; } const r = el.getBoundingClientRect();
-      const m = document.createElement("div"); m.className = "dk-mark"; m.textContent = n; m.style.cssText = `position:absolute;left:${r.left + scrollX + (dx === "R" ? r.width + 8 : dx ?? -30)}px;top:${r.top + scrollY + (dy ?? r.height / 2 - 14)}px;width:28px;height:28px;border-radius:50%;background:#B3402A;color:#fff;font:700 15px Arial,sans-serif;display:grid;place-items:center;z-index:99999;box-shadow:0 0 0 2.5px #fff,0 2px 6px rgba(0,0,0,.35)`; document.body.appendChild(m); } }, list);
+      const m = document.createElement("div"); m.className = "dk-mark"; m.textContent = n; m.style.cssText = `position:absolute;left:${r.left + scrollX + (dx === "R" ? r.width + 8 : dx ?? -30)}px;top:${r.top + scrollY + (dy ?? r.height / 2 - 14)}px;width:28px;height:28px;border-radius:50%;background:${MARK};color:#fff;font:700 15px Arial,sans-serif;display:grid;place-items:center;z-index:99999;box-shadow:0 0 0 2.5px #fff,0 2px 6px rgba(0,0,0,.35)`; document.body.appendChild(m); } }, [list, MARK]);
   const clip = (spec) => ev((spec) => { const q = (s, i) => [...document.querySelectorAll(s)][i || 0]?.getBoundingClientRect(); const a = q(spec.top[0], spec.top[1]), z = q(spec.bottom[0], spec.bottom[1]), w = document.querySelector(".content .wrap").getBoundingClientRect();
     const x = (spec.x0 ?? w.left) - 8, y = a.top - (spec.padTop ?? 8); return { x, y, width: (spec.x1 ?? w.right) - x + 8, height: z.bottom - y + (spec.padBottom ?? 8) }; }, spec);
   const snap = async (name, spec, marks = []) => { await page.mouse.move(600, 4); await W(250); await mark(marks); const c = await clip(spec); await page.screenshot({ path: OUT + name + ".png", clip: c }); await mark([]); console.log(name, Math.round(c.width), "x", Math.round(c.height)); };

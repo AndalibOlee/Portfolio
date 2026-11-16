@@ -34,6 +34,10 @@ async function build(org) {
   const SOFT = !org.current, T = SOFT ? THEME_SOFT : THEME, HEX = T.colors;
   const SHOT = (n) => path.join(__dirname, "../exec-deck", SOFT ? "shots-soft" : "shots", n + ".png");
   const RULE = SOFT ? "E2E9E5" : "DCE2DE";
+  // SOFT: bigger screenshots, a narrower text column on the right with slightly smaller text
+  const BIG = (w, h) => (SOFT ? [8.5, Math.max(h, 4.95)] : [w, h]);
+  const RX = (x) => (SOFT ? 9.35 : x), RW = (w) => (SOFT ? 3.4 : w);
+  const PH = SOFT ? 14 : 16, PB = SOFT ? 11.5 : 13, PANEL_FS = SOFT ? 12 : 13.5;
   const OUT = path.resolve(__dirname, `../../${org.file}_Executive_Digital_Operations_Proposal.pptx`);
   const O = org.short, OP = org.poss;
   const pres = new pptxgen();
@@ -73,7 +77,7 @@ async function build(org) {
     const yy = y + i * gap;
     s.addShape(pres.shapes.OVAL, { x, y: yy + 0.02, w: 0.38, h: 0.38, fill: { color: C.accent2 }, line: { color: C.accent2, width: 0 }, objectName: `Marker ${i + 1}` });
     s.addText(String(i + 1), { x, y: yy + 0.02, w: 0.38, h: 0.38, fontSize: 13, bold: true, color: C.background1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `Marker number ${i + 1}` });
-    s.addText([{ text: head, options: { bold: true, fontSize: 16, color: C.text1, breakLine: true } }, { text: body, options: { fontSize: 13, color: C.accent4 } }], { x: x + 0.55, y: yy - 0.03, w: w - 0.55, h: gap - 0.08, valign: "top", margin: 0, isTextBox: true, objectName: `Point ${i + 1}` });
+    s.addText([{ text: head, options: { bold: true, fontSize: PH, color: C.text1, breakLine: true } }, { text: body, options: { fontSize: PB, color: C.accent4 } }], { x: x + 0.55, y: yy - 0.03, w: w - 0.55, h: gap - 0.08, valign: "top", margin: 0, isTextBox: true, objectName: `Point ${i + 1}` });
   });
   /** Today vs New system, as an editable table */
   const compare = (s, rows, x, y, w) => {
@@ -89,7 +93,7 @@ async function build(org) {
     const fill = tone === "red" ? C.accent6 : C.accent5, color = tone === "red" ? C.accent2 : C.accent1;
     s.addShape(pres.shapes.RECTANGLE, { x, y, w, h, fill: { color: fill }, line: { color: fill, width: 0 }, objectName: "Panel" });
     s.addShape(pres.shapes.RECTANGLE, { x, y, w: 0.06, h, fill: { color }, line: { color, width: 0 }, objectName: "Panel edge" });
-    s.addText([...(head ? [{ text: head + " ", options: { bold: true, color } }] : []), { text: body, options: { color: C.text1 } }], { x: x + 0.25, y: y + 0.05, w: w - 0.4, h: h - 0.1, fontSize: 13.5, margin: 0, valign: "middle", isTextBox: true, objectName: "Panel text" });
+    s.addText([...(head ? [{ text: head + " ", options: { bold: true, color } }] : []), { text: body, options: { color: C.text1 } }], { x: x + 0.25, y: y + 0.05, w: w - 0.4, h: h - 0.1, fontSize: PANEL_FS, margin: 0, valign: "middle", isTextBox: true, objectName: "Panel text" });
   };
   let SEC = "";
   const content = (title, section) => {
@@ -157,10 +161,10 @@ async function build(org) {
   pres.addSection({ title: "Timesheets, time off and people" });
   {
     const s = content("Timesheets: type the hours, the system does the math", "Timesheets, time off and people");
-    const f = await shot(s, "time", 0.65, Y, 7.4, 4.25, "My Timesheet: hours typed for each day, overtime worked out and banked automatically");
-    caption(s, "Screen: My Timesheet, as an employee sees it.", 0.65, f.y + f.h + 0.1, 7.4);
-    points(s, [["Type the hours for each day", "Here a 10-hour Wednesday among 7-hour days."], ["Overtime is worked out for you", `Overtime uses ${O}-approved rules. The banked-time balance updates automatically.`], ["One button sends it for approval", "The supervisor approves it on screen. No paper, no scan."]], 8.5, Y, 4.25, 1.2);
-    panel(s, "", `Overtime thresholds, multipliers and leave calculations must be configured to approved ${O} policy and tested before launch.`, 8.5, 5.4, 4.25, 1.15);
+    const f = await shot(s, "time", 0.65, Y, ...BIG(7.4, 4.25), "My Timesheet: hours typed for each day, overtime worked out and banked automatically");
+    caption(s, "Screen: My Timesheet, as an employee sees it.", 0.65, f.y + f.h + 0.1, f.w);
+    points(s, [["Type the hours for each day", "Here a 10-hour Wednesday among 7-hour days."], ["Overtime is worked out for you", `Overtime uses ${O}-approved rules. The banked-time balance updates automatically.`], ["One button sends it for approval", "The supervisor approves it on screen. No paper, no scan."]], RX(8.5), Y, RW(4.25), 1.2);
+    panel(s, "", `Overtime thresholds, multipliers and leave calculations must be configured to approved ${O} policy and tested before launch.`, RX(8.5), 5.3, RW(4.25), 1.3);
     s.addNotes(`The timesheet. One: the employee types the hours each day. Two: overtime is worked out using ${O}-approved rules and the banked balance updates automatically. Three: one button sends it to the supervisor. Overtime and leave rules must be configured to approved ${O} policy and tested before launch.`);
   }
   {
@@ -198,10 +202,10 @@ async function build(org) {
   pres.addSection({ title: "Requests and purchase orders" });
   {
     const s = content("Requests: every type in one place, with its status", "Requests and purchase orders");
-    const f = await shot(s, "req-list", 0.65, Y, 7.2, 4.4, "My requests: a searchable list of an employee's requests, each with a status");
-    caption(s, "Screen: My requests, as an employee sees it.", 0.65, f.y + f.h + 0.1, 7.2);
-    points(s, [["Find any request in seconds", "Search by number, person, department or what it was for."], ["See where it stands right now", "Awaiting approval, awaiting director level, returned to you, or ready."], ["A searchable record", "Each request stays on a numbered list with its status and history, reducing the risk of forms being lost in inboxes or filing trays."]], 8.35, Y, 4.4, 1.2);
-    panel(s, "Five request types, one short form each:", "travel, credit card purchase, travel claim, expense claim and purchase order.", 8.35, 5.55, 4.4, 0.95);
+    const f = await shot(s, "req-list", 0.65, Y, ...BIG(7.2, 4.4), "My requests: a searchable list of an employee's requests, each with a status");
+    caption(s, "Screen: My requests, as an employee sees it.", 0.65, f.y + f.h + 0.1, f.w);
+    points(s, [["Find any request in seconds", "Search by number, person, department or what it was for."], ["See where it stands right now", "Awaiting approval, awaiting director level, returned to you, or ready."], ["A searchable record", "Each request stays on a numbered list with its status and history, reducing the risk of forms being lost in inboxes or filing trays."]], RX(8.35), Y, RW(4.4), SOFT ? 1.25 : 1.2);
+    panel(s, "Five request types, one short form each:", "travel, credit card purchase, travel claim, expense claim and purchase order.", RX(8.35), 5.5, RW(4.4), 1.05);
     s.addNotes("Requests. One searchable list with a plain-words status for every request, kept on a numbered record so forms are not lost in inboxes or filing trays.");
   }
   {
@@ -249,14 +253,14 @@ async function build(org) {
   }
   {
     const s = content("Purchase order approvals: controlled and traceable");
-    const f = await shot(s, "po-print", 0.65, Y, 6.9, 2.95, "The one-page purchase order the system produces after the last approval");
-    caption(s, "Screen: the one-page purchase order, ready to print or download as a PDF.", 0.65, f.y + f.h + 0.1, 6.9);
+    const f = await shot(s, "po-print", 0.65, Y, SOFT ? 8.35 : 6.9, SOFT ? 3.4 : 2.95, "The one-page purchase order the system produces after the last approval");
+    caption(s, "Screen: the one-page purchase order, ready to print or download as a PDF.", 0.65, f.y + f.h + 0.1, f.w);
     ["Employee asks", "Supervisor approves", SOFT ? `Director level, per ${O} policy` : "Director level if over $5,000", "PO is ready, with its number"].forEach((t, i) => {
-      const w = 1.65, x = 0.65 + i * (w + 0.1), y = 5.25;
-      s.addShape(pres.shapes.RECTANGLE, { x, y, w, h: 1.15, fill: { color: i === 3 ? C.accent1 : C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: `PO step ${i + 1}` });
-      s.addText(t, { x: x + 0.06, y, w: w - 0.12, h: 1.15, fontSize: 13, bold: i === 3, color: i === 3 ? C.background1 : C.text1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `PO step text ${i + 1}` });
+      const w = SOFT ? 2.0 : 1.65, x = 0.65 + i * (w + 0.1), y = SOFT ? 5.55 : 5.25;
+      s.addShape(pres.shapes.RECTANGLE, { x, y, w, h: SOFT ? 0.95 : 1.15, fill: { color: i === 3 ? C.accent1 : C.accent5 }, line: { color: C.accent5, width: 0 }, objectName: `PO step ${i + 1}` });
+      s.addText(t, { x: x + 0.06, y, w: w - 0.12, h: SOFT ? 0.95 : 1.15, fontSize: SOFT ? 12 : 13, bold: i === 3, color: i === 3 ? C.background1 : C.text1, align: "center", valign: "middle", margin: 0, isTextBox: true, objectName: `PO step text ${i + 1}` });
     });
-    const x = 8.0, w = 4.75;
+    const x = RX(8.0), w = RW(4.75);
     points(s, [["Every PO has a number", "One list shows where each one stands."], ["The approval history is on the PO", "Who approved it, and when."], ["About 30 minutes of admin time", "For one purchase order, all steps included."]], x, Y, w, 0.95);
     panel(s, "The workflow can enforce the configured approval sequence.", "Self-approval should be blocked, and approved delegation and exception rules must be defined, tested and recorded. The PO should show its approval history.", x, Y + 3.0, w, 1.55);
     s.addNotes(`The approval path: employee, supervisor, ${SOFT ? `director level per ${O} policy` : "director level above $5,000"}, then the PO with its number. The workflow can enforce the configured sequence; self-approval should be blocked and delegation and exception rules defined, tested and recorded.`);
@@ -266,9 +270,9 @@ async function build(org) {
   pres.addSection({ title: "Tasks, self-service and training" });
   {
     const s = content("My Tasks: assigned, tracked and reported in one place", "Tasks, self-service and training");
-    const f = await shot(s, "tasks", 0.65, Y, 7.2, 4.35, "A task card with progress buttons and history");
-    caption(s, "Screen: My Tasks. One task a manager assigned to an employee.", 0.65, f.y + f.h + 0.1, 7.2);
-    const x = 8.35, w = 4.4;
+    const f = await shot(s, "tasks", 0.65, Y, ...BIG(7.2, 4.35), "A task card with progress buttons and history");
+    caption(s, "Screen: My Tasks. One task a manager assigned to an employee.", 0.65, f.y + f.h + 0.1, f.w);
+    const x = RX(8.35), w = RW(4.4);
     points(s, [["Progress with one click", "25, 50, 75 or 100 percent."], ["The history", "Who did what, and when."], ["A note for the manager", "It replaces the status email."]], x, Y, w, 0.85);
     panel(s, "A streamlined workflow and more productive teams.", "Everyone sees what is assigned, what is late and what is done. Managers see the whole team's tasks on one page.", x, 4.35, w, 1.4);
     s.addNotes("My Tasks: progress with one click, the history of who did what, and a note for the manager that replaces the status email.");
@@ -285,18 +289,18 @@ async function build(org) {
   }
   {
     const s = content("Certificates: expiry dates tracked for managers and HR");
-    const f = await shot(s, "certs", 0.65, Y, 7.2, 4.3, "Training and certificates with expiry dates and status");
-    caption(s, "Screen: People › Certificates, as a manager sees it.", 0.65, f.y + f.h + 0.1, 7.2);
-    const x = 8.35, w = 4.4;
+    const f = await shot(s, "certs", 0.65, Y, ...BIG(7.2, 4.3), "Training and certificates with expiry dates and status");
+    caption(s, "Screen: People › Certificates, as a manager sees it.", 0.65, f.y + f.h + 0.1, f.w);
+    const x = RX(8.35), w = RW(4.4);
     points(s, [["What needs attention", "Expired, and expiring within 60 days."], ["The expiry date", "With the days left for each one."], ["A clear status", "Expired, expiring soon or current."]], x, Y, w, 0.85);
     panel(s, "Nothing expires unnoticed.", "A warning 60 days ahead. Managers see their own team; HR sees everyone, adds certificates and sends reminders with one click.", x, Y + 2.85, w, 1.5);
     s.addNotes("Certificates: what needs attention, each expiry date and a clear status. Managers see their own team; HR sees everyone and sends reminders.");
   }
   {
     const s = content("Built-in How-to guides: target faster staff onboarding");
-    const f = await shot(s, "howto", 0.65, Y, 7.2, 3.9, "A How-to guide with steps and a picture of the screen");
-    caption(s, "Screen: How-to guides. One guide, as a new employee sees it.", 0.65, f.y + f.h + 0.1, 7.2);
-    const x = 8.35, w = 4.4;
+    const f = await shot(s, "howto", 0.65, Y, ...BIG(7.2, 3.9), "A How-to guide with steps and a picture of the screen");
+    caption(s, "Screen: How-to guides. One guide, as a new employee sees it.", 0.65, f.y + f.h + 0.1, f.w);
+    const x = RX(8.35), w = RW(4.4);
     points(s, [["The proper procedure, step by step", "Written in plain words, the same for everyone."], ["A picture of the real screen", "So people know what to look for."], ["One button opens the page", "Read the steps, then do the job."]], x, Y, w, 0.85);
     panel(s, "Target: new staff ready in about 2 weeks.", "A planning target to test during the pilot. Guides are grouped by role: employee, manager, HR and more.", x, Y + 2.85, w, 1.5);
     s.addNotes("How-to guides: the procedure step by step, a picture of the real screen, and a button that opens the page. The two-week training figure is a target to test during the pilot.");
@@ -328,11 +332,11 @@ async function build(org) {
   }
   {
     const s = content("A proper audit trail, kept automatically");
-    const f = await shot(s, "audit", 0.65, Y, 7.2, 3.95, "The audit log: when, who and what happened for every action");
-    caption(s, "Screen: Administration › Audit log. One purchase order, step by step.", 0.65, f.y + f.h + 0.1, 7.2);
+    const f = await shot(s, "audit", 0.65, Y, SOFT ? 8.5 : 7.2, SOFT ? 4.5 : 3.95, "The audit log: when, who and what happened for every action");
+    caption(s, "Screen: Administration › Audit log. One purchase order, step by step.", 0.65, f.y + f.h + 0.1, f.w);
     s.addText([{ text: "One searchable record, ", options: { bold: true, color: C.accent1 } }, { text: "ready for auditors and funders.", options: { color: C.text1 } }], { x: 0.65, y: f.y + f.h + 0.45, w: 7.2, h: 0.4, fontSize: 13, margin: 0, valign: "top", isTextBox: true, objectName: "Audit record" });
-    points(s, [["When", "The date and time of every action, written the moment it happens."], ["Who", "The person who did it, by name."], ["What happened", "In plain words, with the request number, the step and any comment."]], 8.35, Y, 4.4, 1.05);
-    panel(s, "Audit history should retain submitted events.", `Permitted corrections must use controlled actions that create a traceable entry; retention, access and export rules are set with ${O}.`, 8.35, 5.0, 4.4, 1.5);
+    points(s, [["When", "The date and time of every action, written the moment it happens."], ["Who", "The person who did it, by name."], ["What happened", "In plain words, with the request number, the step and any comment."]], RX(8.35), Y, RW(4.4), 1.05);
+    panel(s, "Audit history should retain submitted events.", `Permitted corrections must use controlled actions that create a traceable entry; retention, access and export rules are set with ${O}.`, RX(8.35), SOFT ? 4.9 : 5.0, RW(4.4), SOFT ? 1.7 : 1.5);
     s.addNotes(`The audit trail records when, who and what happened for every action. Submitted events are retained; permitted corrections use controlled actions that create a traceable entry; retention, access and export rules are set with ${O}.`);
   }
   {

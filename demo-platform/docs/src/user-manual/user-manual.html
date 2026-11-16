@@ -35,37 +35,48 @@ h2{font-size:13pt;margin:0 0 8px}
 .tips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .tips div{background:var(--teal-soft);border-radius:8px;padding:9px 12px;font-size:10pt}
 .tips b{color:var(--teal)}
+
+/* page 1 */
+.hero{background:linear-gradient(120deg,#1e3b37,#2f7a72);color:#fff;border-radius:14px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.hero .k{font-size:8pt;letter-spacing:.2em;font-weight:700;color:#e4c98f}
+.hero h1{color:#fff;font-size:24pt;margin:4px 0 2px}
+.hero p{margin:0;color:#d7e8e3;font-size:10.5pt}
+.hero .clock{background:rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;text-align:center;min-width:92px}
+.hero .clock b{display:block;font-size:20pt;line-height:1}
+.hero .clock span{font-size:8.5pt;color:#d7e8e3}
+.steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.step{border:1px solid var(--line);border-radius:12px;padding:13px 12px 12px;display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;position:relative}
+.step .ic{width:40px;height:40px;border-radius:50%;background:var(--teal-soft);display:grid;place-items:center}
+.step .ic svg{width:21px;height:21px;stroke:#2f7a72;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.step b{display:block;font-size:11pt}
+.step small{display:block;color:var(--muted);font-size:9pt;line-height:1.3}
+.step .no{position:absolute;top:-8px;left:12px;background:#c9a45c;color:#fff;font-size:8pt;font-weight:700;border-radius:99px;padding:1px 8px}
+.h2b{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 8px}
+.h2b h2{margin:0}
+.h2b span{font-size:9pt;color:var(--muted)}
+.stage{display:grid;grid-template-columns:118px 1fr;gap:10px;margin-bottom:7px}
+.stage .lab{border-radius:10px;padding:8px 10px;font-size:9.5pt;font-weight:700;color:#fff;display:flex;flex-direction:column;justify-content:center}
+.stage .lab small{font-weight:400;font-size:8pt;opacity:.85}
+.stage .ppl{display:grid;gap:6px}
+.pp{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:center;background:#fafbfa;border:1px solid var(--line);border-radius:9px;padding:6px 10px}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:9pt;font-weight:700;color:#fff;position:relative}
+.av i{position:absolute;right:-5px;bottom:-4px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:99px;font-style:normal;font-size:7pt;padding:0 4px}
+.pp .nm{font-size:10.5pt;font-weight:700}
+.pp .nm span{font-weight:400;color:var(--muted);font-size:9pt;margin-left:5px}
+.pp .act{font-size:9.5pt}
+.t{display:inline-block;font-size:6.8pt;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:1px;color:#fff}
+.t.hr{background:#2f7a72}.t.rq{background:#4a6fa5}.t.tm{background:#b8893a}.t.fi{background:#8a5a83}.t.op{background:#5b6b73}
+.s1{background:#2f7a72}.s2{background:#4a6fa5}.s3{background:#8a5a83}.s4{background:#3e8a7f}.s5{background:#5b6b73}.s6{background:#b8893a}
+.foot1{display:flex;gap:8px;margin-top:10px}
+.foot1 div{flex:1;background:var(--sand);border-radius:9px;padding:8px 11px;font-size:9.5pt}
 </style></head><body>
 
 <div class="page">
-  <div class="brand">DEMO ERP · FULLY CUSTOMIZABLE ENTERPRISE RESOURCE PLANNING</div>
-  <h1>How to try the demo</h1>
-  <p class="sub">About 30 minutes. Works in any web browser. All people and figures are made up.</p>
-  <div class="rule"></div>
-
-  <h2>Start here</h2>
-  <div class="start">
-    <div class="s"><b>1 · Open the link</b>The first page shows the modules you can try.</div>
-    <div class="arr">›</div>
-    <div class="s"><b>2 · Pick your modules</b>Tick the ones you want, then press <i>Open the demo</i>.</div>
-    <div class="arr">›</div>
-    <div class="s"><b>3 · Sign in</b>Choose a name under <i>Who are you?</i> and press <i>OK</i>.</div>
-  </div>
-
-  <h2>Then sign in as each person, in this order</h2>
-  <ol class="path">
-    <li><span class="n">1</span><div><div class="who">Maya Collins<span>Employee</span></div><div class="do">Fill in <b>My Time</b> and send it <span class="tag">HR</span> · ask for a day off <span class="tag">HR</span> · send an expense claim with a receipt <span class="tag">Requests</span></div></div></li>
-    <li><span class="n">2</span><div><div class="who">Liam Foster<span>Manager</span></div><div class="do">Open <b>Approvals</b>: approve Maya’s items, or send one back with a note · check <b>My Team</b> <span class="tag">Team</span></div></div></li>
-    <li><span class="n">3</span><div><div class="who">Sofia Marquez<span>Accountant</span></div><div class="do">Process an approved claim in <b>Requests › Finance queue</b> <span class="tag">Requests</span></div></div></li>
-    <li><span class="n">4</span><div><div class="who">Daniel Okafor<span>Finance Manager</span></div><div class="do">Approve a supplier bill in <b>Approvals</b> <span class="tag">Finance</span></div></div></li>
-    <li><span class="n">5</span><div><div class="who">Priya Raman<span>HR Manager</span></div><div class="do">See <b>Certificates</b> that expire soon · tick a step in <b>Onboarding &amp; offboarding</b> <span class="tag">HR</span></div></div></li>
-    <li><span class="n">6</span><div><div class="who">Rachel Dubois<span>Payroll Administrator</span></div><div class="do">See who has not sent a timesheet and press <b>Remind</b> <span class="tag">HR</span></div></div></li>
-    <li><span class="n">7</span><div><div class="who">Ethan Clarke<span>Company Administrator</span></div><div class="do">Look at <b>Purchasing</b> and <b>Projects</b> <span class="tag">Operations</span> · see <b>Approval rules</b></div></div></li>
-    <li><span class="n">8</span><div><div class="who">Grace Holloway<span>Executive Director</span></div><div class="do">Approve a purchase that needs director level <span class="tag">Requests</span></div></div></li>
-    <li><span class="n">9</span><div><div class="who">Olivia Bennett<span>CEO</span></div><div class="do">Open <b>Reports</b> and download one for Excel</div></div></li>
-    <li><span class="n">10</span><div><div class="who">System Administrator</div><div class="do">Open <b>Audit log</b>: every step above, with who did it and when</div></div></li>
-  </ol>
-  <div class="end"><b>Tip:</b> to change person, press <b>Switch role</b> at the top of the screen. Skip any step for a module you did not pick.</div>
+  <div class="hero"><div><div class="k">DEMO ERP · FULLY CUSTOMIZABLE</div><h1>Try the demo, step by step</h1><p>Works in any web browser. Every person and figure is made up.</p></div><div class="clock"><b>30</b><span>minutes</span></div></div>
+  <div class="steps"><div class="step"><span class="no">1</span><div class="ic"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></div><div><b>Open the link</b><small>The first page shows the modules.</small></div></div><div class="step"><span class="no">2</span><div class="ic"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="m8 12 3 3 5-6"/></svg></div><div><b>Pick your modules</b><small>Tick them, press <i>Open the demo</i>.</small></div></div><div class="step"><span class="no">3</span><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></div><div><b>Sign in</b><small>Pick a name in <i>Who are you?</i>, press <i>OK</i>.</small></div></div></div>
+  <div class="h2b"><h2>Then sign in as each person, top to bottom</h2><span>Coloured tags show the module</span></div>
+  <div class="stage"><div class="lab s1">Staff send things<small>Step 1</small></div><div class="ppl"><div class="pp"><div class="av s1">MC<i>1</i></div><div><div class="nm">Maya Collins<span>Employee</span></div><div class="act">Send <b>My Time</b> <span class="t hr">HR</span> · ask for a day off <span class="t hr">HR</span> · send an expense claim <span class="t rq">Requests</span></div></div></div></div></div><div class="stage"><div class="lab s2">Managers approve<small>Step 2</small></div><div class="ppl"><div class="pp"><div class="av s2">LF<i>2</i></div><div><div class="nm">Liam Foster<span>Manager</span></div><div class="act"><b>Approvals</b>: approve, or send back with a note · <b>My Team</b> <span class="t tm">Team</span></div></div></div></div></div><div class="stage"><div class="lab s3">Finance processes<small>Steps 3–4</small></div><div class="ppl"><div class="pp"><div class="av s3">SM<i>3</i></div><div><div class="nm">Sofia Marquez<span>Accountant</span></div><div class="act">Process a claim in <b>Finance queue</b> <span class="t rq">Requests</span></div></div></div><div class="pp"><div class="av s3">DO<i>4</i></div><div><div class="nm">Daniel Okafor<span>Finance Manager</span></div><div class="act">Approve a supplier bill <span class="t fi">Finance</span></div></div></div></div></div><div class="stage"><div class="lab s4">HR and Payroll<small>Steps 5–6</small></div><div class="ppl"><div class="pp"><div class="av s4">PR<i>5</i></div><div><div class="nm">Priya Raman<span>HR Manager</span></div><div class="act"><b>Certificates</b> · <b>Onboarding &amp; offboarding</b> <span class="t hr">HR</span></div></div></div><div class="pp"><div class="av s4">RD<i>6</i></div><div><div class="nm">Rachel Dubois<span>Payroll Administrator</span></div><div class="act">Who hasn’t sent a timesheet? Press <b>Remind</b> <span class="t hr">HR</span></div></div></div></div></div><div class="stage"><div class="lab s6">Leaders<small>Steps 7–8</small></div><div class="ppl"><div class="pp"><div class="av s6">GH<i>7</i></div><div><div class="nm">Grace Holloway<span>Executive Director</span></div><div class="act">Approve a director-level purchase <span class="t rq">Requests</span></div></div></div><div class="pp"><div class="av s6">OB<i>8</i></div><div><div class="nm">Olivia Bennett<span>CEO</span></div><div class="act">Open <b>Reports</b>, download one for Excel</div></div></div></div></div>
+  <div class="foot1"><div><b>Switch person:</b> press <b>Switch role</b> at the top.</div><div><b>Didn’t pick a module?</b> Skip that line.</div></div>
 </div>
 
 <div class="page">

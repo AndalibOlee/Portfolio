@@ -12,8 +12,8 @@ const { applyTheme } = require(path.join(process.argv[2], "scripts/apply_theme.j
 const SHOT = (n) => path.join(__dirname, "../exec-deck/shots", n + ".png");
 const ORGS = [
   { file: "CHN", name: "CHN", short: "CHN", poss: "CHN’s", monthly: 3000, setup: 10000, current: true },
-  { file: "Old_Massett_Village_Council", name: "Old Massett Village Council", short: "OMVC", poss: "OMVC’s", monthly: 1500 },
-  { file: "Niislaa_Naay_Healing_House", name: "Niislaa Naay Healing House", short: "Niislaa Naay", poss: "Niislaa Naay’s", monthly: 1000 },
+  { file: "Old_Massett_Village_Council", name: "Old Massett Village Council", short: "OMVC", poss: "OMVC’s", monthly: 2000, setup: 10000 },
+  { file: "Niislaa_Naay_Healing_House", name: "Niislaa Naay Healing House", short: "Niislaa Naay", poss: "Niislaa Naay’s", monthly: 1000, setup: 5000 },
   { file: "Haida_Child_and_Family", name: "Haida Child and Family", short: "Haida Child and Family", poss: "Haida Child and Family’s", monthly: 1000 },
 ];
 const fmt = (n) => Math.round(n).toLocaleString("en-CA");
@@ -432,6 +432,11 @@ async function build(org) {
     s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: Y + 0.35, w: 12.1, h: 3.05, fill: { color: C.text2 }, line: { color: C.text2, width: 0 }, objectName: "Monthly card" });
     s.addText([{ text: "PROPOSED SYSTEM · MONTHLY", options: { fontSize: 12, bold: true, color: C.accent3, charSpacing: 1, breakLine: true } }, { text: `CAD ${money(m)}`, options: { fontSize: 60, bold: true, color: C.background1, breakLine: true } }, { text: "a month", options: { fontSize: 16, color: C.accent5, breakLine: true } }, { text: " ", options: { fontSize: 8, breakLine: true } }, { text: "48-hour support target subject to contract; configured to the leadership team and employees.", options: { fontSize: 13, color: C.accent5 } }], { x: 0.95, y: Y + 0.6, w: 6.2, h: 2.9, margin: 0, valign: "top", isTextBox: true, objectName: "Monthly" });
     s.addShape(pres.shapes.LINE, { x: 7.5, y: Y + 0.75, w: 0, h: 2.5, line: { color: "3A5A52", width: 1 }, objectName: "Price divider" });
+    if (org.setup) {
+      s.addText([{ text: "ONE-TIME SETUP", options: { fontSize: 12, bold: true, color: C.accent3, charSpacing: 1, breakLine: true } }, { text: `CAD ${money(org.setup)}`, options: { fontSize: 36, bold: true, color: C.background1, breakLine: true } }, { text: "Requirements, configuration, pilot and training", options: { fontSize: 13, color: C.accent5 } }], { x: 7.9, y: Y + 0.55, w: 4.6, h: 1.35, margin: 0, valign: "top", isTextBox: true, objectName: "Setup" });
+      s.addShape(pres.shapes.LINE, { x: 7.9, y: Y + 1.98, w: 4.4, h: 0, line: { color: "3A5A52", width: 0.75 }, objectName: "Setup divider" });
+      s.addText([{ text: "A YEAR, MONTHLY FEE", options: { fontSize: 12, bold: true, color: C.accent3, charSpacing: 1, breakLine: true } }, { text: `CAD ${money(y2)}`, options: { fontSize: 36, bold: true, color: C.background1, breakLine: true } }, { text: `12 × ${money(m)}, starting after go-live`, options: { fontSize: 13, color: C.accent5 } }], { x: 7.9, y: Y + 2.08, w: 4.6, h: 1.3, margin: 0, valign: "top", isTextBox: true, objectName: "Yearly" });
+    } else
     s.addText([{ text: "A YEAR", options: { fontSize: 12, bold: true, color: C.accent3, charSpacing: 1, breakLine: true } }, { text: `CAD ${money(y2)}`, options: { fontSize: 40, bold: true, color: C.background1, breakLine: true } }, { text: `12 × ${money(m)}`, options: { fontSize: 15, color: C.accent5 } }], { x: 7.9, y: Y + 0.6, w: 4.6, h: 2.9, margin: 0, valign: "top", isTextBox: true, objectName: "Yearly" });
     const big = (label, value, body, x, y) => {
       s.addShape(pres.shapes.RECTANGLE, { x, y, w: 3.35, h: 1.55, fill: { color: C.background2 }, line: { color: C.background2, width: 0 }, objectName: `${label} card` });
@@ -439,7 +444,7 @@ async function build(org) {
     };
     s.addText([{ text: "Also worth noting: ", options: { bold: true, color: C.accent1 } }, { text: "with forms completed in the system instead of as PDFs, Adobe licence costs could be reduced by about half.", options: { color: C.accent4 } }], { x: 0.6, y: Y + 3.55, w: 12.1, h: 0.3, fontSize: 12, margin: 0, isTextBox: true, objectName: "Adobe note" });
     timeline(s, 5.75);
-    s.addNotes(`Software estimate and timeline. The proposed system is ${money(m)} a month, which is ${money(y2)} a year. Go-live is planned within four to six weeks. It includes a 48-hour support target, subject to contract, and configuration to the leadership team and employees. As forms are completed in the system instead of as PDFs, Adobe licence costs could be reduced by about half. The path: week 1 requirements and IT and privacy review; weeks 2–4 configuration; weeks 4–6 a short pilot; then go-live.`);
+    s.addNotes(`Software estimate and timeline. ${org.setup ? `There is a one-time setup fee of ${money(org.setup)}, then ` : ""}The proposed system is ${money(m)} a month, which is ${money(y2)} a year. Go-live is planned within four to six weeks. It includes a 48-hour support target, subject to contract, and configuration to the leadership team and employees. As forms are completed in the system instead of as PDFs, Adobe licence costs could be reduced by about half. The path: week 1 requirements and IT and privacy review; weeks 2–4 configuration; weeks 4–6 a short pilot; then go-live.`);
   }
 
   /* ================= Next steps ================= */
